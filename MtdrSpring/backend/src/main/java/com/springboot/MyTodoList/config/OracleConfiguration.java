@@ -4,15 +4,16 @@ package com.springboot.MyTodoList.config;
 import oracle.jdbc.pool.OracleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-///*
+
+/// *
 //    This class grabs the appropriate values for OracleDataSource,
 //    The method that uses env, grabs it from the environment variables set
 //    in the docker container. The method that uses dbSettings is for local testing
@@ -20,15 +21,18 @@ import java.sql.SQLException;
 // */
 //
 //
+@Profile("!localdev")
 @Configuration
 public class OracleConfiguration {
-    Logger logger = LoggerFactory.getLogger(DbSettings.class);
-    @Autowired
-    private DbSettings dbSettings;
-    @Autowired
-    private Environment env;
+    Logger logger = LoggerFactory.getLogger(OracleConfiguration.class);
+    private final Environment env;
+
+    public OracleConfiguration(Environment env) {
+        this.env = env;
+    }
+
     @Bean
-    public DataSource dataSource() throws SQLException{
+    public DataSource dataSource() throws SQLException {
         OracleDataSource ds = new OracleDataSource();
         ds.setDriverType(env.getProperty("driver_class_name"));
         logger.info("Using Driver " + env.getProperty("driver_class_name"));
