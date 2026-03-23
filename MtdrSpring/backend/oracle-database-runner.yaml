@@ -1,0 +1,22 @@
+# oracle-database-runner.yaml (RUN TO START ORACLE DATABASE)
+services:
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart
+    container_name: oracle-dev
+    ports:
+      - "1521:1521"
+    environment:
+      - ORACLE_PASSWORD=YourPassword123
+      - APP_USER=appuser
+      - APP_USER_PASSWORD=YourPassword123
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  oracle-data:
