@@ -1,8 +1,7 @@
-package com.springboot.MyTodoList.controller;
+package com.springboot.MyTodoList.features.todoitem;
 
 import com.springboot.MyTodoList.config.BotProps;
-import com.springboot.MyTodoList.service.DeepSeekService;
-import com.springboot.MyTodoList.service.ToDoItemService;
+import com.springboot.MyTodoList.features.deepseek.DeepSeekService;
 import com.springboot.MyTodoList.util.BotActions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

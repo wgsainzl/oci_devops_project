@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.model;
+package com.springboot.MyTodoList.features.todoitem;
 
 
 import jakarta.persistence.*;
