@@ -1,0 +1,6 @@
+#Local application properties (LOCALDEV profile MUST be active to use this)
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@//localhost:1521/FREEPDB1
+    username: appuser
+    password: YourPassword123
