@@ -20,8 +20,8 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 public class ToDoItemBotController  implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
 	private static final Logger logger = LoggerFactory.getLogger(ToDoItemBotController.class);
-	private ToDoItemService toDoItemService;
-	private DeepSeekService deepSeekService;
+	private final ToDoItemService toDoItemService;
+	private final DeepSeekService deepSeekService;
 	private final TelegramClient telegramClient;
 	
 	private final BotProps botProps;

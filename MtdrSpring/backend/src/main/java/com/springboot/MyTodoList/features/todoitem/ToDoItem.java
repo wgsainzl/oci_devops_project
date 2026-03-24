@@ -2,12 +2,17 @@ package com.springboot.MyTodoList.features.todoitem;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.OffsetDateTime;
 
 /*
     representation of the TODOITEM table that exists already
     in the autonomous database
  */
+@Setter
+@Getter
 @Entity
 @Table(name = "TODOITEM")
 public class ToDoItem {
@@ -27,38 +32,6 @@ public class ToDoItem {
         this.ID = ID;
         this.description = description;
         this.creation_ts = creation_ts;
-        this.done = done;
-    }
-
-    public int getID() {
-        return ID;
-    }
-
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public OffsetDateTime getCreation_ts() {
-        return creation_ts;
-    }
-
-    public void setCreation_ts(OffsetDateTime creation_ts) {
-        this.creation_ts = creation_ts;
-    }
-
-    public boolean isDone() {
-        return done;
-    }
-
-    public void setDone(boolean done) {
         this.done = done;
     }
 
