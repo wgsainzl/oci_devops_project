@@ -1,7 +1,5 @@
-package com.springboot.MyTodoList.service;
+package com.springboot.MyTodoList.features.user;
 
-import com.springboot.MyTodoList.model.User;
-import com.springboot.MyTodoList.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,8 +1,8 @@
 package com.springboot.MyTodoList.util;
 
-import com.springboot.MyTodoList.model.ToDoItem;
-import com.springboot.MyTodoList.service.DeepSeekService;
-import com.springboot.MyTodoList.service.ToDoItemService;
+import com.springboot.MyTodoList.features.todoitem.ToDoItem;
+import com.springboot.MyTodoList.features.deepseek.DeepSeekService;
+import com.springboot.MyTodoList.features.todoitem.ToDoItemService;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
