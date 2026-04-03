@@ -1,0 +1,222 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-page);
+  /* Subtle wavy texture matching the mockup */
+  background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q25 25 50 50 Q75 75 100 50 Q125 25 150 50 Q175 75 200 50' fill='none' stroke='%23d8d0c4' stroke-width='1' opacity='0.6'/%3E%3Cpath d='M0 100 Q25 75 50 100 Q75 125 100 100 Q125 75 150 100 Q175 125 200 100' fill='none' stroke='%23d8d0c4' stroke-width='1' opacity='0.6'/%3E%3Cpath d='M0 150 Q25 125 50 150 Q75 175 100 150 Q125 125 150 150 Q175 175 200 150' fill='none' stroke='%23d8d0c4' stroke-width='1' opacity='0.6'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+.header {
+  height: var(--header-height);
+  background: var(--color-bg-header);
+  flex-shrink: 0;
+}
+
+.headerInner {
+  height: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.menuIcon {
+  display: flex;
+  align-items: center;
+  color: white;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.oracleMark {
+  display: flex;
+  align-items: center;
+}
+
+.oracleMarkIcon {
+  width: 28px;
+  height: 28px;
+  display: block;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.appName {
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  flex: 1;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* ── Content ── */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-10) var(--space-4);
+}
+
+/* Error banner above the card */
+.errorBanner {
+  width: 100%;
+  max-width: 400px;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius-sm);
+  color: var(--color-oracle-red);
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.875rem;
+  text-align: center;
+  animation: shake 250ms ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* ── Card ── */
+.card {
+  background: var(--color-bg-content);
+  border-radius: var(--radius-md);
+  padding: var(--space-8) var(--space-8);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-text-primary);
+}
+
+.secondaryTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-text-primary);
+}
+
+/* ── Fields ── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.fieldLabel {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-2) 0;
+  border: none;
+  border-bottom: 1.5px solid var(--color-border);
+  background: transparent;
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.input:focus {
+  border-bottom-color: var(--color-oracle-red);
+}
+
+.input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.inputCode {
+  font-size: 1.5rem;
+  letter-spacing: 0.3em;
+  text-align: center;
+}
+
+/* ── Buttons ── */
+.btnPrimary {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-header);
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+  margin-top: var(--space-2);
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: #333;
+}
+
+.btnPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnSecondary {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btnSecondary:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-text-muted);
+}
+
+.forgotLink {
+  display: block;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #5b8db8;
+  margin-top: var(--space-1);
+}
+
+.twoFaHint {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.inlineError {
+  font-size: 0.8rem;
+  color: var(--color-oracle-red);
+  text-align: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .card {
+    padding: var(--space-6) var(--space-5);
+  }
+}

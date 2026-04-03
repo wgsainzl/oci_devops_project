@@ -1,0 +1,174 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.content {
+  padding: var(--space-6);
+  flex: 1;
+}
+
+.ganttWrap {
+  background: var(--color-bg-content);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+}
+
+/* ── Table structure ── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.colTask        { width: 200px; }
+.colResponsible { width: 160px; }
+.colStatus      { width: 120px; }
+.colPriority    { width: 110px; }
+.colDue         { width: 110px; }
+.colGantt       { min-width: 360px; }
+
+/* ── Month header row ── */
+.monthRow th {
+  padding: 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.metaCols {
+  border-right: 1px solid var(--color-border-light);
+}
+
+.ganttHead {
+  position: relative;
+  padding: 0 !important;
+}
+
+.monthHeaders {
+  position: relative;
+  height: 28px;
+}
+
+.monthLabel {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-align: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Today indicator */
+.todayLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #7b68ee;
+  border-left: 1px dashed #7b68ee;
+  z-index: 2;
+}
+
+.todayLabel {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 0.65rem;
+  color: #7b68ee;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* ── Column header row ── */
+.colHeadRow th {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-content);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+/* ── Task rows ── */
+.taskRow {
+  border-bottom: 1px solid var(--color-border-light);
+  transition: background var(--transition-fast);
+}
+
+.taskRow:hover {
+  background: var(--color-bg-hover);
+}
+
+.taskRow td {
+  padding: var(--space-3) var(--space-4);
+  vertical-align: middle;
+}
+
+.taskId {
+  display: block;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--color-text-primary);
+}
+
+.taskTitle {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  margin-top: 1px;
+}
+
+.responsible {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.dueDate {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* ── Gantt cells ── */
+.ganttCell {
+  padding: var(--space-3) 0 !important;
+}
+
+.ganttTrack {
+  position: relative;
+  height: 24px;
+  width: 100%;
+}
+
+.ganttBar {
+  position: absolute;
+  top: 4px;
+  height: 16px;
+  border-radius: var(--radius-pill);
+  opacity: 0.9;
+  transition: opacity var(--transition-fast);
+  min-width: 4px;
+}
+
+.ganttBar:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.todayLineRow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(123, 104, 238, 0.4);
+  border-left: 1px dashed rgba(123, 104, 238, 0.4);
+  pointer-events: none;
+}
