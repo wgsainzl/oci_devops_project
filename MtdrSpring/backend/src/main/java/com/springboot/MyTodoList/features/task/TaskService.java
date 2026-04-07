@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ToDoItemService {
+public class TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
