@@ -27,7 +27,7 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public boolean deleteToDoItem(int id){
+    public boolean deleteTaskItem(int id){
         if (taskRepository.existsById(id)){
             taskRepository.deleteById(id);
             return true;
@@ -64,6 +64,22 @@ public class TaskService {
         } else {
             return null;
         }
+    }
+
+    public Task updateTaskStatus(int id, TaskStatus newStatus){
+        Optional<Task> taskData = taskRepository.findById(id);
+        if(taskData.isPresent()){
+            Task task = taskData.get();
+            task.setStatus(newStatus);
+            if (newStatus == TaskStatus.DONE) {
+                task.setCompletedAt(OffsetDateTime.now());
+            } else {
+                task.setCompletedAt(null);
+            }
+
+            return taskRepository.save(task);
+        }
+        return null;
     }
     
 
