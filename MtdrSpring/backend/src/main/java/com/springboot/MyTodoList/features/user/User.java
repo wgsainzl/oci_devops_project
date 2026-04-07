@@ -21,45 +21,45 @@ import jakarta.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int ID;
+    int user_id;
 
-    @Column(name = "PHONENUMBER")
-    String phonenumber;
+    @Column(name = "name")
+    String name;
 
-    @Column(name = "PASSWORD")
-    String userpassword;
+    @Column(name = "email")
+    String email;
 
     public User(){}
 
-    public User(int ID, String number, String password){
-        this.ID=ID;
-        this.phonenumber = number;
-        this.userpassword = password;
+    public User(int user_id, String name, String email){
+        this.user_id = user_id;
+        this.name = name;
+        this.email = email;
     }
 
-    public int getID(){
-        return ID;
+    public int getUserId(){
+        return user_id;
     }
 
-    public void setID(int ID){
-        this.ID=ID;
+    public void setUserId(int user_id){
+        this.user_id=user_id;
     }
 
-    public String getPhoneNumber(){
-        return phonenumber;
+    public String getName(){
+        return name;
     }
 
-    public void setPhoneNumber(String number){
-        this.phonenumber=number;
+    public void setName(String name){
+        this.name=name;
     }
 
     
-    public String getUserPassword(){
-        return userpassword;
+    public String getEmail(){
+        return email;
     }
 
-    public void setUserPassword(String password){
-        this.userpassword=password;
+    public void setEmail(String email){
+        this.email=email;
     }
 
 }
