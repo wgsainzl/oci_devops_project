@@ -3,6 +3,11 @@ package com.springboot.MyTodoList.features.task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.springboot.MyTodoList.features.tasklog.TaskLog;
+import com.springboot.MyTodoList.features.tasklog.TaskLogRepository;
+import com.springboot.MyTodoList.features.user.UserRepository;
+import com.springboot.MyTodoList.features.user.User;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +17,11 @@ public class TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private TaskLogRepository taskLogRepository;
+    @Autowired
+    private UserRepository userRepository;
+    
     public List<Task> findAll(){
         return taskRepository.findAll();
     }
@@ -66,18 +76,35 @@ public class TaskService {
         }
     }
 
-    public Task updateTaskStatus(int id, TaskStatus newStatus){
-        Optional<Task> taskData = taskRepository.findById(id);
-        if(taskData.isPresent()){
-            Task task = taskData.get();
+    public Task updateTaskStatus(int id, TaskStatus newStatus, Integer currentUserId) {
+        Optional<Task> existingData = taskRepository.findById(id);
+        
+        if (existingData.isPresent()) {
+            Task task = existingData.get();
+            TaskStatus oldStatus = task.getStatus(); 
             task.setStatus(newStatus);
+
             if (newStatus == TaskStatus.DONE) {
                 task.setCompletedAt(OffsetDateTime.now());
             } else {
                 task.setCompletedAt(null);
             }
 
-            return taskRepository.save(task);
+            Task savedTask = taskRepository.save(task);
+
+            // CREATE THE LOG
+            if (oldStatus != newStatus) {
+                User currentUser = null; // SET CURRENT USER HOW??? @JUANMA
+                if (currentUserId != null) {
+                    currentUser = userRepository.findById(currentUserId).orElse(null);
+                }
+
+                String oldStatusStr = (oldStatus != null) ? oldStatus.name() : "NONE";
+                String newStatusStr = (newStatus != null) ? newStatus.name() : "NONE";
+                taskLogRepository.save(new TaskLog(savedTask, currentUser, "status", oldStatusStr, newStatusStr));
+            }
+
+            return savedTask;
         }
         return null;
     }

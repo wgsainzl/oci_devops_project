@@ -57,21 +57,28 @@ public class TaskController {
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<Task> updateTaskStatus(@PathVariable int id, @RequestBody Map<String, String> requestBody) {
-        // Extract the status string from the JSON payload { "status": "DONE" }
+        
         String statusString = requestBody.get("status");
         
+        // 1. Read the userId from the frontend payload
+        String userIdString = requestBody.get("userId");
+        Integer currentUserId = null;
+        if (userIdString != null) {
+            currentUserId = Integer.parseInt(userIdString);
+        }
+
         try {
-            // Convert the string to our TaskStatus Enum
             TaskStatus newStatus = TaskStatus.valueOf(statusString.toUpperCase());
             
-            Task updatedTask = taskService.updateTaskStatus(id, newStatus);
+            // 2. Pass the currentUserId into the service!
+            Task updatedTask = taskService.updateTaskStatus(id, newStatus, currentUserId);
+            
             if (updatedTask != null) {
                 return ResponseEntity.ok(updatedTask);
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (IllegalArgumentException e) {
-            // If the frontend sends a bad status string (e.g. "SUPER_DONE")
             return ResponseEntity.badRequest().build();
         }
     }
