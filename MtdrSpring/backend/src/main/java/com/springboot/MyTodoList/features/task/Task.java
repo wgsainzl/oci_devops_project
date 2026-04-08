@@ -2,14 +2,12 @@ package com.springboot.MyTodoList.features.task;
 
 
 import jakarta.persistence.*;
-import jakarta.websocket.Decoder.Text;
 
 import java.time.OffsetDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.fasterxml.jackson.databind.annotation.EnumNaming;
 
 /*
     representation of the TODOITEM table that exists already
