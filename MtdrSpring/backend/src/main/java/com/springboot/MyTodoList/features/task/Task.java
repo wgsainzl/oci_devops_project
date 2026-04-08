@@ -57,6 +57,18 @@ public class Task {
     // CREATOR ID -> ADD USER CONNECTION!
     // responsible_id
     // manager_id
+    // --- RELATIONSHIPS ---
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<com.springboot.MyTodoList.features.tasklog.TaskLog> logs;
+
+    @ManyToMany
+    @JoinTable(
+        name = "dependencies",
+        joinColumns = @JoinColumn(name = "parent_task_id"),
+        inverseJoinColumns = @JoinColumn(name = "child_task_id")
+    )
+    private java.util.Set<Task> dependentTasks;
     @Enumerated(EnumType.STRING)
     @Column(name = "priority")
     private TaskPriority priority;

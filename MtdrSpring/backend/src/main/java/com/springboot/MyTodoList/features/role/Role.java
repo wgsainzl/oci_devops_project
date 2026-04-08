@@ -22,9 +22,6 @@ public class Role {
     @Column(name = "system_protected")
     private Boolean systemProtected; // True if this is an admin role that shouldn't be deleted
 
-    // --- RELATIONSHIPS ---
-
-    // Creates the Role_Permissions join table automatically
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "role_permissions",
@@ -33,9 +30,6 @@ public class Role {
     )
     private Set<Permission> permissions;
 
-    // --- CONSTRUCTORS ---
-
-    // JPA requires a no-args constructor
     public Role() {
     }
 
@@ -52,7 +46,6 @@ public class Role {
     public Integer getId() {
         return id;
     }
-    // No setId() because it is managed by @GeneratedValue
 
     public String getRoleName() {
         return roleName;

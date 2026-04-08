@@ -37,6 +37,14 @@ public class User {
         this.email = email;
     }
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_roles", // The join table
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private java.util.Set<com.springboot.MyTodoList.features.role.Role> roles;
+
     public int getUserId(){
         return user_id;
     }
