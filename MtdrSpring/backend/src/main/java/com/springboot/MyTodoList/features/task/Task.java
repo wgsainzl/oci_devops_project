@@ -73,6 +73,10 @@ public class Task {
     @Column(name = "priority")
     private TaskPriority priority;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sprint_id")
+    private com.springboot.MyTodoList.features.sprint.Sprint sprint;
+
     public Task(){
 
     }
@@ -162,5 +166,12 @@ public class Task {
     }
     public void setPriority(TaskPriority priority) {
         this.priority = priority;
+    }
+
+    public com.springboot.MyTodoList.features.sprint.Sprint getSprint() {
+        return sprint;
+    }
+    public void setSprint(com.springboot.MyTodoList.features.sprint.Sprint sprint) {
+        this.sprint = sprint;
     }
 }

@@ -35,16 +35,18 @@ public class UserService {
     }
 
 
-    public User updateUser(int id, User updatedUser){
+   public User updateUser(int id, User updatedUser){
         Optional<User> existingData = userRepository.findById(id);
         if(existingData.isPresent()){
             User existingUser = existingData.get();
-            if (updatedUser.getName() != null) existingUser.setName(updatedUser.name);
-            if (updatedUser.getEmail() != null) existingUser.setEmail(updatedUser.email);
-            return userRepository.save(updatedUser);
-        }else{
+            if (updatedUser.getName() != null) existingUser.setName(updatedUser.getName()); // Also use getters!
+            if (updatedUser.getEmail() != null) existingUser.setEmail(updatedUser.getEmail());
+            
+            // CORRECTED: Save the existingUser, not updatedUser
+            return userRepository.save(existingUser); 
+        } else {
             return null;
         }
-    }
+    } 
 
 }
