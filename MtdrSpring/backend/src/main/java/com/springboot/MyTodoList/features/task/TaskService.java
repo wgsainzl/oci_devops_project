@@ -29,6 +29,10 @@ public class TaskService {
     public Optional<Task> getTaskById(int id){
         return taskRepository.findById(id);
     }
+
+    public List<Task> getTasksByUserId(Integer userId) {
+        return taskRepository.findByResponsible_Id(userId);
+    }
     
     public Task createTask(Task task){
         if (task.getStatus() == null) {
