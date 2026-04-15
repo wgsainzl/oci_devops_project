@@ -1,6 +1,8 @@
 package com.springboot.MyTodoList.features.deepseek;
 
+import com.springboot.MyTodoList.features.task.Task;
 import java.io.IOException;
+import java.util.List;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -18,15 +20,26 @@ public class DeepSeekService{
         this.httpPost = httpPost;
     }
 
-    public String generateText(String prompt) throws IOException, org.apache.hc.core5.http.ParseException {
-        String requestBody = String.format("{\"model\": \"deepseek-chat\",\"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", prompt);
+    // New Method: Dynamically builds the RAG prompt based on user tasks
+    public String generateSprintReport(Integer userId, List<Task> tasks) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("Generate a brief, professional 1-on-1 sprint report for Developer ID ").append(userId).append(". ");
+        prompt.append("Summarize their progress and highlight any bottlenecks based on the following tasks:\\n");
+        
+        for(Task t : tasks) {
+            String status = t.getStatus() != null ? t.getStatus().name() : "TODO";
+            prompt.append("- [").append(status).append("] ").append(t.getTitle()).append(": ").append(t.getDescription()).append("\\n");
+        }
+
+        String requestBody = String.format("{\"model\": \"deepseek-chat\",\"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", prompt.toString());
 
         try {
             httpPost.setEntity(new StringEntity(requestBody));
             CloseableHttpResponse response = httpClient.execute(httpPost);
             return EntityUtils.toString(response.getEntity());
-        } catch (IOException e) {
-            throw e;
+        } catch (Exception e) {
+            // REQ-FUN-013: Graceful fallback on AI failure
+            return "AI Service is temporarily unavailable or timed out. Please try your report request again later.";
         }
     }
 }
