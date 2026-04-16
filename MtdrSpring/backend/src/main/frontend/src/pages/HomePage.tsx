@@ -55,7 +55,7 @@ type ChartKey =
 const VISIBLE_CHARTS_BY_ROLE: Record<UserRole, ChartKey[]> = {
   ADMIN: ['taskStatus', 'sprintVelocity', 'costPerDeveloper', 'sprintTotals', 'hoursPerDeveloper'],
   MANAGER: ['taskStatus', 'sprintVelocity', 'costPerDeveloper', 'sprintTotals', 'hoursPerDeveloper'],
-  DEVELOPER: ['taskStatus', 'sprintVelocity', 'hoursPerDeveloper'],
+  DEVELOPER: ['taskStatus', 'sprintVelocity'],
 }
 
 const PLACEHOLDER: DashboardData = {
@@ -78,10 +78,11 @@ const PLACEHOLDER: DashboardData = {
     { name: 'Mauricio Villalobos...', pct: 15 },
   ],
   taskStatus: [
-    { label: 'To do',       count: 80  },
-    { label: 'In progress', count: 120 },
-    { label: 'In review',   count: 60  },
-    { label: 'Done',        count: 140 },
+    { developer: 'Sebastian', userId: 'user-mock-1', todo: 2, inProgress: 4, inReview: 1, blocked: 0, done: 10 },
+    { developer: 'Mauricio',  userId: 'user-mock-2', todo: 5, inProgress: 2, inReview: 3, blocked: 1, done: 8 },
+    { developer: 'Guillermo', userId: 'user-mock-3', todo: 1, inProgress: 5, inReview: 2, blocked: 0, done: 12 },
+    { developer: 'Juan Manuel', userId: 'user-mock-4', todo: 3, inProgress: 1, inReview: 0, blocked: 2, done: 5 },
+    { developer: 'Diego', userId: 'user-mock-5', todo: 3, inProgress: 3, inReview: 4, blocked: 1, done: 9 },
   ],
   velocity: [
     { iteration: 1, estimated: 140, actual: 80  },
@@ -97,7 +98,7 @@ const PLACEHOLDER: DashboardData = {
 
 // component
 export default function HomePage(): JSX.Element {
-  const { user } = useAuth()
+  const { user, isManager } = useAuth()
   const teamId = user?.currentTeamId ?? null
   const role: UserRole = user?.role ?? 'DEVELOPER'
   const visibleCharts = VISIBLE_CHARTS_BY_ROLE[role]
@@ -170,8 +171,13 @@ export default function HomePage(): JSX.Element {
           <div className={styles.row3}>
             {canSeeChart('taskStatus') && (
               <section className={`${styles.card} ${styles.chartCard}`}>
-                <h2 className={styles.sectionTitle}>Tasks Status</h2>
-                <TaskStatusChart data={data.taskStatus} />
+                <h2 className={styles.sectionTitle}>
+                  {isManager ? 'Team Tasks Status' : 'My Tasks Status'}
+                </h2>
+                <TaskStatusChart 
+                  data={isManager ? data.taskStatus : data.taskStatus.filter(t => t.userId === user?.userId)}
+                  showDeveloperNames={isManager}
+                />
               </section>
             )}
             {canSeeChart('sprintVelocity') && (

@@ -100,10 +100,11 @@ export const mockWorkload = [
 ]
 
 export const mockTaskStatus = [
-  { label: 'To do', count: 80 },
-  { label: 'In progress', count: 120 },
-  { label: 'In review', count: 60 },
-  { label: 'Done', count: 140 },
+  { developer: 'Sebastian',  userId: 'user-mock-1', todo: 2, inProgress: 4, inReview: 1, blocked: 0, done: 10 },
+  { developer: 'Mauricio',  userId: 'user-mock-2', todo: 5, inProgress: 2, inReview: 3, blocked: 1, done: 8 },
+  { developer: 'Guillermo', userId: 'user-mock-3', todo: 1, inProgress: 5, inReview: 2, blocked: 0, done: 12 },
+  { developer: 'Juan Manuel', userId: 'user-mock-4', todo: 3, inProgress: 1, inReview: 0, blocked: 2, done: 5 },
+  { developer: 'Diego', userId: 'user-mock-5', todo: 3, inProgress: 3, inReview: 4, blocked: 1, done: 9 },
 ]
 
 export const mockSprintVelocity = [

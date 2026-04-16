@@ -111,8 +111,13 @@ export interface WorkloadMember {
 }
  
 export interface TaskStatusEntry {
-  label: string          // "To do" | "In progress" | "In review" | "Done"
-  count: number
+  developer: string
+  userId: string
+  todo: number
+  inProgress: number
+  inReview: number
+  blocked: number
+  done: number
 }
  
 export interface SprintVelocityEntry {
