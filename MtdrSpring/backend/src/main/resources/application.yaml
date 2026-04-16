@@ -29,34 +29,37 @@ spring:
           oci:
             client-id: ${OCI_CLIENT_ID}
             client-secret: ${OCI_CLIENT_SECRET}
-            scope: openid,profile,email
+            scope: openid, profile, email, offline_access
+            client-authentication-method: client_secret_basic
             authorization-grant-type: authorization_code
             redirect-uri: "http://localhost:8080/login/oauth2/code/oci"
         provider:
           oci:
-            authorization-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com:443/oauth2/v1/authorize
-            token-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com:443/oauth2/v1/token
-            jwk-set-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com:443/admin/v1/SigningCert/jwk
-            user-info-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com:443/oauth2/v1/userinfo
+            authorization-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/oauth2/v1/authorize
+            token-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/oauth2/v1/token
+            jwk-set-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/admin/v1/SigningCert/jwk
+            user-info-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/oauth2/v1/userinfo
             user-name-attribute: sub
 
 
-
-logging:
-  level:
-    root: INFO
-    oracle:
-      ucp: WARN
-    org:
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
-          TRACE: INFO
-  file:
-    name: logs.log
+#logging:
+##  level:
+#    #    TODO
+##        org.springframework.security: TRACE
+##        org.springframework.security.oauth2: TRACE
+##    root: INFO
+##  oracle:
+##    ucp: WARN
+##  org:
+##    hibernate:
+##      SQL: DEBUG
+##      type:
+##        descriptor:
+##          sql:
+##            BasicBinder: TRACE
+##        TRACE: INFO
+#  file:
+#    name: logs.log
 
 deepseek:
   api:
@@ -67,3 +70,20 @@ telegram:
   bot:
     token: ${TELEGRAM_KEY}
     name: ${TELEGRAM_BOT_NAME}
+
+oci:
+  domain:
+    url: ${OCI_PROVIDER_URL}
+  client:
+    id: ${OCI_CLIENT_ID}
+    secret: ${OCI_CLIENT_SECRET}
+  group:
+    id: ${OCI_GROUP_ID}
+  tenancy:
+    email: ${TENANCY_EMAIL}
+    ocid: ${TENANCY_OCID}
+    name: ${TENANCY_NAME}
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
