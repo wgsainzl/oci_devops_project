@@ -1,7 +1,7 @@
 package com.springboot.MyTodoList;
 
-import com.springboot.MyTodoList.config.BotProps;
-import com.springboot.MyTodoList.config.DeepSeekConfig;
+import com.springboot.MyTodoList.web.config.BotProps;
+import com.springboot.MyTodoList.web.config.DeepSeekConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
