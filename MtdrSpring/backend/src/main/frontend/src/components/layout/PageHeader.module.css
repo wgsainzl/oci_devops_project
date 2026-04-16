@@ -1,0 +1,90 @@
+.header {
+  position: relative;
+  background-color: #ede7d9;
+  background-image:
+    radial-gradient(circle at 85% 40%, rgba(194, 120, 80, 0.35) 0%, transparent 45%),
+    radial-gradient(circle at 95% 70%, rgba(90, 140, 150, 0.25) 0%, transparent 35%);
+  overflow: hidden;
+  padding: var(--space-6) var(--space-6) 0;
+  min-height: 100px;
+}
+
+/* Decorative abstract blobs (matching the mockup's painted shapes) */
+.decorA {
+  position: absolute;
+  top: -20px;
+  right: 20px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(198, 100, 60, 0.6), rgba(198, 100, 60, 0.1));
+  border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+  transform: rotate(-15deg);
+}
+
+.decorB {
+  position: absolute;
+  top: 10px;
+  right: 100px;
+  width: 70px;
+  height: 70px;
+  background: radial-gradient(circle, rgba(80, 130, 145, 0.55), transparent);
+  border-radius: 40% 60% 30% 70% / 60% 40% 60% 40%;
+}
+
+.decorC {
+  position: absolute;
+  bottom: -10px;
+  right: 60px;
+  width: 90px;
+  height: 50px;
+  background: radial-gradient(circle, rgba(220, 170, 80, 0.5), transparent);
+  border-radius: 50%;
+  transform: rotate(20deg);
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  margin-bottom: var(--space-4);
+}
+
+.titleGroup {}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.toolbar {
+  position: relative;
+  z-index: 1;
+  padding-bottom: var(--space-4);
+}
+
+.filterBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1.5px solid rgba(0,0,0,0.18);
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(4px);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.filterBtn:hover {
+  background: rgba(255,255,255,0.75);
+  border-color: rgba(0,0,0,0.3);
+}
