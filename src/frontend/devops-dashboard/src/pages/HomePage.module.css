@@ -29,6 +29,13 @@
   color: var(--color-text-primary);
 }
 
+/* Small grey hint text inside a section title */
+.sectionHint {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
 /* ── Row 1: Pending + Stats ── */
 .row1 {
   display: grid;
@@ -53,7 +60,7 @@
   align-items: start;
 }
 
-/* ── Row 3: Charts ── */
+/* ── Row 3 (reused for rows 3, 4, 5): two-column charts ── */
 .row3 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -61,7 +68,7 @@
 }
 
 .chartCard {
-  min-height: 280px;
+  min-height: 300px;
 }
 
 /* ── Responsive ── */

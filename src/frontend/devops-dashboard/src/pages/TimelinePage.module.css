@@ -5,15 +5,14 @@
 }
 
 .content {
-  padding: var(--space-6);
+  padding: var(--space-6, 24px);
   flex: 1;
 }
 
 .ganttWrap {
-  background: var(--color-bg-content);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  background: #f4f4f4;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   overflow-x: auto;
 }
 
@@ -21,24 +20,35 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 1000px;
 }
 
-.colTask        { width: 200px; }
-.colResponsible { width: 160px; }
+.table th, .table td {
+  border-right: 1px solid #d4d4d4;
+}
+
+.table th:last-child, .table td:last-child {
+  border-right: none;
+}
+
+.colTask        { width: 220px; }
+.colResponsible { width: 180px; }
 .colStatus      { width: 120px; }
 .colPriority    { width: 110px; }
 .colDue         { width: 110px; }
-.colGantt       { min-width: 360px; }
+.colGantt       { min-width: 450px; }
 
-/* ── Month header row ── */
-.monthRow th {
-  padding: 0;
-  border-bottom: 1px solid var(--color-border-light);
-}
 
-.metaCols {
-  border-right: 1px solid var(--color-border-light);
+/* ── Single Header Row ── */
+.colHeadRow th {
+  background: #dcdcdc;
+  color: #333;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid #ccc;
+  white-space: nowrap;
 }
 
 .ganttHead {
@@ -48,118 +58,147 @@
 
 .monthHeaders {
   position: relative;
-  height: 28px;
+  height: 100%;
+  min-height: 44px;
 }
 
-.monthLabel {
+.monthHeaderCell {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  text-align: center;
-  pointer-events: none;
-  overflow: hidden;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #d4d4d4;
+  box-sizing: border-box;
 }
 
-/* Today indicator */
-.todayLine {
+.monthHeaderCell:last-child {
+  border-right: none;
+}
+
+/* Today indicator in header */
+.todayLineHeader {
   position: absolute;
   top: 0;
   bottom: 0;
   width: 1px;
-  background: #7b68ee;
-  border-left: 1px dashed #7b68ee;
-  z-index: 2;
+  z-index: 10;
 }
 
 .todayLabel {
   position: absolute;
-  top: 2px;
-  left: 4px;
+  bottom: 4px;
+  left: 0;
+  transform: translateX(-50%);
   font-size: 0.65rem;
-  color: #7b68ee;
+  color: #8b5cf6;
   white-space: nowrap;
   font-weight: 600;
 }
 
-/* ── Column header row ── */
-.colHeadRow th {
-  text-align: left;
-  padding: var(--space-3) var(--space-4);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  background: var(--color-bg-content);
-  border-bottom: 1px solid var(--color-border);
-  white-space: nowrap;
-}
 
-/* ── Task rows ── */
+/* task rows */
 .taskRow {
-  border-bottom: 1px solid var(--color-border-light);
-  transition: background var(--transition-fast);
+  background: #f4f4f4;
+  border-bottom: 1px solid #d4d4d4;
 }
 
-.taskRow:hover {
-  background: var(--color-bg-hover);
+.taskRow:nth-child(even) {
+  background: #eaeaea;
 }
 
 .taskRow td {
-  padding: var(--space-3) var(--space-4);
+  padding: 16px 16px;
   vertical-align: middle;
 }
 
 .taskId {
   display: block;
   font-weight: 600;
-  font-size: 0.8rem;
-  color: var(--color-text-primary);
+  font-size: 0.85rem;
+  color: #000;
 }
 
 .taskTitle {
   display: block;
-  font-size: 0.82rem;
-  color: var(--color-text-secondary);
-  margin-top: 1px;
+  font-size: 0.85rem;
+  color: #333;
+  margin-top: 2px;
+}
+
+/* avatars styling */
+.userWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .responsible {
   font-size: 0.85rem;
-  color: var(--color-text-secondary);
-  white-space: nowrap;
+  color: #000;
 }
 
 .dueDate {
   font-size: 0.85rem;
-  color: var(--color-text-secondary);
-  white-space: nowrap;
+  color: #000;
 }
 
-/* ── Gantt cells ── */
+
+/* status / priority badges */
+.statusBadge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap; /* prevents from stacking */
+  text-align: center;
+}
+
+
+/* gantt area */
 .ganttCell {
-  padding: var(--space-3) 0 !important;
+  padding: 0 !important;
+  position: relative;
 }
 
 .ganttTrack {
   position: relative;
-  height: 24px;
+  height: 64px; /* Matches taller row layout in design */
   width: 100%;
+}
+
+.monthGrid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-right: 1px solid #d4d4d4;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.monthGrid:last-child {
+  border-right: none;
 }
 
 .ganttBar {
   position: absolute;
-  top: 4px;
-  height: 16px;
-  border-radius: var(--radius-pill);
-  opacity: 0.9;
-  transition: opacity var(--transition-fast);
-  min-width: 4px;
-}
-
-.ganttBar:hover {
+  top: 50%;
+  transform: translateY(-50%);
+  height: 20px;
+  border-radius: 12px;
   opacity: 1;
+  z-index: 2;
   cursor: pointer;
 }
 
@@ -168,7 +207,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background: rgba(123, 104, 238, 0.4);
-  border-left: 1px dashed rgba(123, 104, 238, 0.4);
+  border-left: 1px dashed #8b5cf6;
   pointer-events: none;
+  z-index: 3;
 }

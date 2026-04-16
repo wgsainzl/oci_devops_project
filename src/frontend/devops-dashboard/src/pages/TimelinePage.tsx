@@ -5,22 +5,24 @@ import type { TimelineTask, TaskStatus, TaskPriority } from '../types'
 import PageHeader from '../components/layout/PageHeader'
 import styles from './TimelinePage.module.css'
 
-// ---------------------------------------------------------------------------
-// Gantt window: Jan 1 → Jun 30 2026
-// ---------------------------------------------------------------------------
-const GANTT_START = new Date('2026-01-01')
-const GANTT_END   = new Date('2026-06-30')
-const TOTAL_DAYS  = Math.ceil(
-  (GANTT_END.getTime() - GANTT_START.getTime()) / 86_400_000,
-)
-const TODAY = new Date('2026-03-30')
+// Use UTC noon to prevent timezone off-by-one shifts during math
+function parseDate(dateStr: string): Date {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d, 12, 0, 0))
+}
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const GANTT_START = new Date(Date.UTC(2026, 0, 1, 12, 0, 0))
+const GANTT_END   = new Date(Date.UTC(2026, 5, 30, 12, 0, 0)) // Jun 30
+const TOTAL_DAYS  = Math.round((GANTT_END.getTime() - GANTT_START.getTime()) / 86_400_000)
 
-// Days from GANTT_START to a given date string
+// Configured to match the 'Today' marker context in the reference image
+const TODAY = new Date(Date.UTC(2026, 1, 16, 12, 0, 0)) 
+
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June']
+
 function dayOffset(dateStr: string): number {
-  const d = new Date(dateStr)
-  return Math.max(0, Math.ceil((d.getTime() - GANTT_START.getTime()) / 86_400_000))
+  const d = parseDate(dateStr)
+  return Math.max(0, (d.getTime() - GANTT_START.getTime()) / 86_400_000)
 }
 
 function toPct(days: number): string {
@@ -35,30 +37,26 @@ interface MonthHeader {
 
 function buildMonthHeaders(): MonthHeader[] {
   const headers: MonthHeader[] = []
-  let d = new Date(GANTT_START)
-  while (d <= GANTT_END) {
-    const month = d.getMonth()
-    const year  = d.getFullYear()
-    const firstOfMonth = new Date(year, month, 1)
-    const lastOfMonth  = new Date(year, month + 1, 0)
-    const start = Math.max(dayOffset(firstOfMonth.toISOString().slice(0, 10)), 0)
-    const end   = Math.min(dayOffset(lastOfMonth.toISOString().slice(0, 10)) + 1, TOTAL_DAYS)
+  for (let month = 0; month <= 5; month++) {
+    const firstOfMonth = new Date(Date.UTC(2026, month, 1, 12, 0, 0))
+    const lastOfMonth  = new Date(Date.UTC(2026, month + 1, 0, 12, 0, 0))
+
+    const start = (firstOfMonth.getTime() - GANTT_START.getTime()) / 86_400_000
+    const end   = (lastOfMonth.getTime() - GANTT_START.getTime()) / 86_400_000 + 1
+
     headers.push({
       label: MONTHS[month],
       startPct: toPct(start),
       widthPct: toPct(end - start),
     })
-    d = new Date(year, month + 1, 1)
   }
   return headers
 }
 
 const MONTH_HEADERS = buildMonthHeaders()
-const TODAY_PCT     = toPct(Math.min(dayOffset(TODAY.toISOString().slice(0, 10)), TOTAL_DAYS))
+const TODAY_PCT     = toPct(Math.min((TODAY.getTime() - GANTT_START.getTime()) / 86_400_000, TOTAL_DAYS))
 
-// ---------------------------------------------------------------------------
 // Display maps
-// ---------------------------------------------------------------------------
 const STATUS_LABEL: Record<TaskStatus, string> = {
   IN_PROGRESS: 'In progress',
   DONE:        'Done',
@@ -67,32 +65,30 @@ const STATUS_LABEL: Record<TaskStatus, string> = {
   IN_REVIEW:   'In review',
 }
 
-const STATUS_CSS_CLASS: Record<TaskStatus, string> = {
-  IN_PROGRESS: 'in-progress',
-  DONE:        'done',
-  TODO:        'todo',
-  BLOCKED:     'blocked',
-  IN_REVIEW:   'in-review',
+// Inline styles for badges to match the target's muted aesthetic perfectly
+const STATUS_STYLE: Record<TaskStatus, React.CSSProperties> = {
+  IN_PROGRESS: { backgroundColor: '#759cac', color: '#000' },
+  DONE:        { backgroundColor: '#6ca67b', color: '#000' },
+  TODO:        { backgroundColor: '#b0b8c4', color: '#000' },
+  BLOCKED:     { backgroundColor: '#d07d70', color: '#000' },
+  IN_REVIEW:   { backgroundColor: '#a07bc4', color: '#000' },
 }
 
-const PRIORITY_CSS_CLASS: Record<TaskPriority, string> = {
-  CRITICAL: 'critical',
-  HIGH:     'high',
-  MEDIUM:   'medium',
-  LOW:      'low',
+const PRIORITY_STYLE: Record<TaskPriority, React.CSSProperties> = {
+  CRITICAL: { backgroundColor: '#cf7b71', color: '#000' },
+  HIGH:     { backgroundColor: '#e29b65', color: '#000' },
+  MEDIUM:   { backgroundColor: '#e0c86c', color: '#000' },
+  LOW:      { backgroundColor: '#8db580', color: '#000' },
 }
 
 const BAR_COLOR: Record<TaskStatus, string> = {
-  IN_PROGRESS: '#5aacbe',
-  DONE:        '#5ba87a',
+  IN_PROGRESS: '#759cac',
+  DONE:        '#6ca67b',
   TODO:        '#b0b8c4',
-  BLOCKED:     '#e07b5a',
+  BLOCKED:     '#d07d70',
   IN_REVIEW:   '#a07bc4',
 }
 
-// ---------------------------------------------------------------------------
-// Placeholder tasks
-// ---------------------------------------------------------------------------
 const PLACEHOLDER_TASKS: TimelineTask[] = [
   {
     id: 'ORC-789',
@@ -118,9 +114,6 @@ const PLACEHOLDER_TASKS: TimelineTask[] = [
   },
 ]
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
 export default function TimelinePage(): JSX.Element {
   const { user } = useAuth()
   const [tasks, setTasks] = useState<TimelineTask[]>(PLACEHOLDER_TASKS)
@@ -151,43 +144,33 @@ export default function TimelinePage(): JSX.Element {
             </colgroup>
 
             <thead>
-              {/* Month labels row */}
-              <tr className={styles.monthRow}>
-                <th colSpan={5} className={styles.metaCols} />
-                <th className={styles.ganttHead}>
-                  <div className={styles.monthHeaders}>
-                    {MONTH_HEADERS.map((m) => (
-                      <span
-                        key={m.label}
-                        className={styles.monthLabel}
-                        style={{ left: m.startPct, width: m.widthPct }}
-                      >
-                        {m.label}
-                      </span>
-                    ))}
-                    {/* Today marker */}
-                    <div
-                      className={styles.todayLine}
-                      style={{ left: TODAY_PCT }}
-                      aria-label="Today"
-                    >
-                      <span className={styles.todayLabel}>
-                        Today {TODAY.getDate()}/
-                        {String(TODAY.getMonth() + 1).padStart(2, '0')}
-                      </span>
-                    </div>
-                  </div>
-                </th>
-              </tr>
-
-              {/* Column headers */}
+              {/* Single unified header row to match the target design */}
               <tr className={styles.colHeadRow}>
                 <th>Task</th>
                 <th>Responsible</th>
                 <th>Status</th>
                 <th>Priority</th>
                 <th>Due Date</th>
-                <th className={styles.ganttHead} />
+                <th className={styles.ganttHead}>
+                  <div className={styles.monthHeaders}>
+                    {MONTH_HEADERS.map((m) => (
+                      <div
+                        key={m.label}
+                        className={styles.monthHeaderCell}
+                        style={{ left: m.startPct, width: m.widthPct }}
+                      >
+                        {m.label}
+                      </div>
+                    ))}
+                    {/* Today marker correctly aligned to the top */}
+                    <div className={styles.todayLineHeader} style={{ left: TODAY_PCT }}>
+                      <span className={styles.todayLabel}>
+                        Today {String(TODAY.getUTCDate()).padStart(2, '0')}/
+                        {String(TODAY.getUTCMonth() + 1).padStart(2, '0')}
+                      </span>
+                    </div>
+                  </div>
+                </th>
               </tr>
             </thead>
 
@@ -204,20 +187,39 @@ export default function TimelinePage(): JSX.Element {
                       <span className={styles.taskId}>{task.id}</span>
                       <span className={styles.taskTitle}>{task.title}</span>
                     </td>
-                    <td className={styles.responsible}>{task.responsible ?? '—'}</td>
+                    <td className={styles.responsible}>
+                      <div className={styles.userWrap}>
+                         <div 
+                           className={styles.avatar} 
+                           style={{ backgroundImage: `url(https://ui-avatars.com/api/?name=${encodeURIComponent(task.responsible ?? 'U')}&background=random)` }} 
+                         />
+                         <span>{task.responsible ?? '—'}</span>
+                      </div>
+                    </td>
                     <td>
-                      <span className={`badge badge--${STATUS_CSS_CLASS[task.status]}`}>
+                      <span className={styles.statusBadge} style={STATUS_STYLE[task.status]}>
                         {STATUS_LABEL[task.status]}
                       </span>
                     </td>
                     <td>
-                      <span className={`badge badge--${PRIORITY_CSS_CLASS[task.priority]}`}>
-                        {task.priority}
+                      <span className={styles.statusBadge} style={PRIORITY_STYLE[task.priority]}>
+                        {task.priority === 'CRITICAL' ? 'Critical' : task.priority}
                       </span>
                     </td>
                     <td className={styles.dueDate}>{dueFormatted}</td>
                     <td className={styles.ganttCell}>
                       <div className={styles.ganttTrack}>
+                        
+                        {/* Vertical Month Grids */}
+                        {MONTH_HEADERS.map((m) => (
+                          <div
+                            key={`grid-${m.label}`}
+                            className={styles.monthGrid}
+                            style={{ left: m.startPct, width: m.widthPct }}
+                          />
+                        ))}
+
+                        {/* Gantt Bar */}
                         <div
                           className={styles.ganttBar}
                           style={{
@@ -227,6 +229,8 @@ export default function TimelinePage(): JSX.Element {
                           }}
                           title={`${task.id}: ${task.startDate} → ${task.dueDate ?? ''}`}
                         />
+
+                        {/* Dashed line matching target */}
                         <div
                           className={styles.todayLineRow}
                           style={{ left: TODAY_PCT }}
