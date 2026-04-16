@@ -31,7 +31,7 @@ public class TaskService {
     }
 
     public List<Task> getTasksByUserId(Integer userId) {
-        return taskRepository.findByResponsible_Id(userId);
+        return taskRepository.findByResponsible_UserId(userId);
     }
     
     public Task createTask(Task task){
@@ -111,6 +111,10 @@ public class TaskService {
             return savedTask;
         }
         return null;
+    }
+
+    public List<Task> getTasksBySprintId(Integer sprintId) {
+        return taskRepository.findBySprint_SprintId(sprintId);
     }
     
 

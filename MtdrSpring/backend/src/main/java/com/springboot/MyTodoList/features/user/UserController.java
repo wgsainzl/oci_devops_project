@@ -13,9 +13,15 @@ public class UserController {
     private UserService userService;
 
     //@CrossOrigin -- delete for privacy reasons?
-    @GetMapping(value = "/users")
+    @GetMapping
     public List<User> getAllUsers(){
         return userService.findAll();
+    }
+
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody User newUser) {
+        User createdUser = userService.createUser(newUser);
+        return ResponseEntity.ok(createdUser);
     }
 
     //@CrossOrigin

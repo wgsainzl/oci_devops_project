@@ -4,7 +4,7 @@ package com.springboot.MyTodoList.features.task;
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -54,14 +54,33 @@ public class Task {
     @Column(name = "status")
     private TaskStatus status;
 
-    // CREATOR ID -> ADD USER CONNECTION!
-    // responsible_id
-    // manager_id
-    // --- RELATIONSHIPS ---
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id")
+    private com.springboot.MyTodoList.features.user.User creator;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "responsible_id")
+    private com.springboot.MyTodoList.features.user.User responsible;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id")
+    private com.springboot.MyTodoList.features.user.User manager;
+
+    // Getters and Setters for the new fields
+    public com.springboot.MyTodoList.features.user.User getCreator() { return creator; }
+    public void setCreator(com.springboot.MyTodoList.features.user.User creator) { this.creator = creator; }
+    
+    public com.springboot.MyTodoList.features.user.User getResponsible() { return responsible; }
+    public void setResponsible(com.springboot.MyTodoList.features.user.User responsible) { this.responsible = responsible; }
+    
+    public com.springboot.MyTodoList.features.user.User getManager() { return manager; }
+    public void setManager(com.springboot.MyTodoList.features.user.User manager) { this.manager = manager; }
+    // --- RELATIONSHIPS ---
+    @JsonIgnore
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<com.springboot.MyTodoList.features.tasklog.TaskLog> logs;
-
+    
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
         name = "dependencies",

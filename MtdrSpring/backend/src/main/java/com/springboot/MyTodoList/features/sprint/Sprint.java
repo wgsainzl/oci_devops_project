@@ -2,9 +2,11 @@ package com.springboot.MyTodoList.features.sprint;
 
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "sprints")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Sprint {
 
     @Id

@@ -9,7 +9,6 @@ public enum BotMessages {
     
     ITEM_DONE("Task marked as DONE! Select /tasks to return to your active list, or /start to go to the main screen."), 
     
-    // NEW: Replaced ITEM_UNDONE since we moved to a state machine
     ITEM_BLOCKED("Task flagged as BLOCKED! Your manager has been notified. Select /tasks to return to your active list."), 
     
     ITEM_DELETED("Task deleted! Select /tasks to return to your active list, or /start to go to the main screen."),

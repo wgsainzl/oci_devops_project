@@ -1,5 +1,6 @@
 package com.springboot.MyTodoList.features.tasklog;
 
+import com.fasterxml.jackson.annotation.JsonIgnore; // 1. ADD THIS IMPORT
 import com.springboot.MyTodoList.features.task.Task;
 import com.springboot.MyTodoList.features.user.User;
 import jakarta.persistence.*;
@@ -17,11 +18,13 @@ public class TaskLog {
     private Integer id;
 
     // Many logs belong to one Task
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
     // Many logs belong to one User (the user who made the change)
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

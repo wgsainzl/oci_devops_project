@@ -10,14 +10,14 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task,Integer> {
     // chat code lol
     // Find all tasks assigned to a specific user (by their User ID)
-    List<Task> findByResponsible_Id(Integer userId);
-
+    List<Task> findByResponsible_UserId(Integer userId);
     // Find all tasks created by a specific user
-    List<Task> findByCreator_Id(Integer userId);
-
-    // Find all tasks with a specific status (e.g., TODO, DONE)
+    List<Task> findByCreator_UserId(Integer userId);
+    // Find all tasks with a specific status 
     List<Task> findByStatus(TaskStatus status);
+    // Assuming your Sprint.java primary key variable is named 'sprintId'
+    List<Task> findBySprint_SprintId(Integer sprintId);
 
     // Find all tasks for a user that are NOT done yet
-    List<Task> findByResponsible_IdAndStatusNot(Integer userId, TaskStatus status);
+    List<Task> findByResponsible_UserIdAndStatusNot(Integer userId, TaskStatus status);
 }

@@ -1,5 +1,5 @@
 package com.springboot.MyTodoList.features.user;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
 
@@ -18,10 +18,11 @@ import jakarta.persistence.*;
  */
 @Entity
 @Table(name = "Users")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int user_id;
+    int userId;
 
     @Column(name = "name")
     String name;
@@ -31,8 +32,8 @@ public class User {
 
     public User(){}
 
-    public User(int user_id, String name, String email){
-        this.user_id = user_id;
+    public User(int userId, String name, String email){
+        this.userId = userId;
         this.name = name;
         this.email = email;
     }
@@ -46,11 +47,11 @@ public class User {
     private java.util.Set<com.springboot.MyTodoList.features.role.Role> roles;
 
     public int getUserId(){
-        return user_id;
+        return userId;
     }
 
-    public void setUserId(int user_id){
-        this.user_id=user_id;
+    public void setUserId(int userId){
+        this.userId=userId;
     }
 
     public String getName(){

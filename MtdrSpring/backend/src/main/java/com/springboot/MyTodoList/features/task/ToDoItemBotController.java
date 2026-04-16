@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.features.todoitem;
+package com.springboot.MyTodoList.features.task;
 
 import com.springboot.MyTodoList.config.BotProps;
 import com.springboot.MyTodoList.features.deepseek.DeepSeekService;
@@ -17,77 +17,74 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Component
-public class ToDoItemBotController  implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
+public class ToDoItemBotController implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
-	private static final Logger logger = LoggerFactory.getLogger(ToDoItemBotController.class);
-	private ToDoItemService toDoItemService;
-	private DeepSeekService deepSeekService;
-	private final TelegramClient telegramClient;
-	
-	private final BotProps botProps;
+    private static final Logger logger = LoggerFactory.getLogger(ToDoItemBotController.class);
+    
+    // Updated variable name for clarity
+    private TaskService taskService; 
+    private DeepSeekService deepSeekService;
+    private final TelegramClient telegramClient;
+    
+    private final BotProps botProps;
 
-	@Value("${telegram.bot.token}")
-	private String telegramBotToken;
+    @Value("${telegram.bot.token}")
+    private String telegramBotToken;
 
-
-	@Override
+    @Override
     public String getBotToken() {
-		if(telegramBotToken != null && !telegramBotToken.trim().isEmpty()){
-        	return telegramBotToken;
-		}else{
-			return botProps.getToken();
-		}
+        if(telegramBotToken != null && !telegramBotToken.trim().isEmpty()){
+            return telegramBotToken;
+        }else{
+            return botProps.getToken();
+        }
     }
 
+    public ToDoItemBotController(BotProps bp, TaskService tsvc, DeepSeekService ds) {
+        this.botProps = bp;
+        this.telegramClient = new OkHttpTelegramClient(getBotToken());
+        this.taskService = tsvc;
+        this.deepSeekService = ds;
+    }
 
-	public ToDoItemBotController( BotProps bp, ToDoItemService tsvc, DeepSeekService ds) {
-		this.botProps = bp;
-		telegramClient = new OkHttpTelegramClient(getBotToken());
-		toDoItemService = tsvc;
-		deepSeekService = ds;
-	}
-
-	@Override
+    @Override
     public LongPollingUpdateConsumer getUpdatesConsumer() {
         return this;
     }
 
-	@Override
-	public void consume(Update update) {
+    @Override
+    public void consume(Update update) {
 
-		if (!update.hasMessage() || !update.getMessage().hasText()) return;
+        if (!update.hasMessage() || !update.getMessage().hasText()) return;
 
-		
+        String messageTextFromTelegram = update.getMessage().getText();
+        long chatId = update.getMessage().getChatId();
 
-		String messageTextFromTelegram = update.getMessage().getText();
-		long chatId = update.getMessage().getChatId();
+        BotActions actions = new BotActions(telegramClient, taskService, deepSeekService);
+        actions.setRequestText(messageTextFromTelegram);
+        actions.setChatId(chatId);
+        
+        if(actions.getTaskService() == null){
+            logger.info("taskService error");
+            // FIXED: Updated to match the new setter in BotActions
+            actions.setTaskService(taskService); 
+        }
 
-		BotActions actions =  new BotActions(telegramClient,toDoItemService,deepSeekService);
-		actions.setRequestText(messageTextFromTelegram);
-		actions.setChatId(chatId);
-		if(actions.getTodoService()==null){
-			logger.info("todosvc error");
-			actions.setTodoService(toDoItemService);
-		}
+        actions.fnStart();
+        actions.fnDone();
+        // FIXED: Swapped fnUndo for the new fnBlock
+        actions.fnBlock(); 
+        actions.fnDelete();
+        actions.fnListAll();
+        actions.fnAddItem();
+        // FIXED: Swapped fnLLM for the new fnReport
+        actions.fnReport(); 
+        actions.fnElse();
 
+    }
 
-		actions.fnStart();
-		actions.fnDone();
-		actions.fnUndo();
-		actions.fnDelete();
-		actions.fnHide();
-		actions.fnListAll();
-		actions.fnAddItem();
-		actions.fnLLM();
-		actions.fnElse();
-
-	}
-
-	@AfterBotRegistration
+    @AfterBotRegistration
     public void afterRegistration(BotSession botSession) {
         System.out.println("Registered bot running state is: " + botSession.isRunning());
     }
-
 }
-
-

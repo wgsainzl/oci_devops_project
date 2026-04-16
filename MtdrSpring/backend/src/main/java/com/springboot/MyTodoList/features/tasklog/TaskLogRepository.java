@@ -14,5 +14,5 @@ public interface TaskLogRepository extends JpaRepository<TaskLog, Integer> {
     List<TaskLog> findAllByOrderByTimestampDesc(Pageable pageable);
 
     // Magic Query: Fetch recent logs for a specific task
-    List<TaskLog> findByTask_IdOrderByTimestampDesc(Integer taskId);
+    List<TaskLog> findByTask_TaskIdOrderByTimestampDesc(Integer taskId);
 }
