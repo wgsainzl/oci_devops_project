@@ -1,137 +1,134 @@
 /**
  * provides authentication state to app
  * handles two-step Oracle sign-in flow:
-     1. Email, password  →  receives 2FA challenge token from backend
-     2. 2FA code          →  receives session cookie and user object
+ 1. Email, password  →  receives 2FA challenge token from backend
+ 2. 2FA code          →  receives session cookie and user object
  */
 
 import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  type ReactNode,
+    createContext,
+    useContext,
+    useState,
+    useCallback,
+    type ReactNode, useEffect,
 } from 'react'
-import { authAPI } from '../API'
-import { mockAuthAPI } from '../mocks'
-import type { SignInResponse, User, UserRole } from '../types'
+import {authAPI} from '../API.ts'
+import {mockAuthAPI} from '../mocks'
+import type {User, UserRole} from '../types.ts'
 
 // Use mock API if VITE_USE_MOCKS=true
 const API = import.meta.env.VITE_USE_MOCKS ? mockAuthAPI : authAPI
 
 // context shape
 interface AuthContextValue {
-  user: User | null
-  loading: boolean
-  error: string | null
-  /*
-  * returns challengeToken or user and token  
-  */
-  signIn: (email: string, password: string) => Promise<SignInResponse>
-  /*
-  * complete 2FA, sets user in state 
-  */
-  verify2FA: (challengeToken: string, code: string) => Promise<User>
-  signOut: () => Promise<void>
-  // RBAC helpers
-  isAdmin: boolean
-  isManager: boolean   // true for both ADMIN / MANAGER roles
-  isDeveloper: boolean
-  hasRole: (role: UserRole) => boolean
+    user: User | null
+    loading: boolean
+    error: string | null
+    loadUser: (token: string) => Promise<void>;
+    signOut: () => Promise<void>
+    // RBAC helpers
+    isAdmin: boolean
+    isManager: boolean   // true for both ADMIN / MANAGER roles
+    isDeveloper: boolean
+    hasRole: (role: UserRole) => boolean
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
-export function AuthProvider({ children }: { children: ReactNode }) {  
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+export function AuthProvider({children}: { children: ReactNode }) {
+    const [user, setUser] = useState<User | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
-  const signIn = useCallback(
-    async (email: string, password: string): Promise<SignInResponse> => {
-      setLoading(true)
-      setError(null)
-      try {
-        const res = await API.signIn(email, password)
-        const data = res.data
-        if ('user' in data && data.user) {
-          const userData = data.user as User
-          if (data.token) localStorage.setItem('auth_token', data.token as string)
-          setUser(userData)
+    const loadUser = useCallback(async (token: string) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const res = await authAPI.getMe(token);
+            setUser(res.data);
+            setLoading(false); // Success, stop loading and show app
+        } catch (err: any) {
+            // If the token is specifically expired or invalid
+            if (err.response?.status === 401) {
+                console.warn("JWT Expired. Triggering silent OCI refresh...");
+
+                // Redirect immediately.
+                // We do NOT set loading(false) so the ProtectedRoute
+                // keeps showing the spinner until the browser leaves.
+                handleExpiredSession();
+            } else {
+                // It's a different error (Server 500, Network error, etc.)
+                console.error("User load failed:", err);
+                setUser(null);
+                setError("Session lost. Please log in again.");
+                setLoading(false);
+            }
         }
-        return data
-      } catch (err: unknown) {
-        const message =
-          (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-          'Incorrect email or password'
-        setError(message)
-        throw err
-      } finally {
-        setLoading(false)
-      }
-    },
-    [],
-  )
+    }, []);
 
-  // 2FA verification
-  const verify2FA = useCallback(
-    async (challengeToken: string, code: string): Promise<User> => {
-      setLoading(true)
-      setError(null)
-      try {
-        const res = await API.verify2FA(challengeToken, code)
-        const { user: userData, token } = res.data
-        if (token) localStorage.setItem('auth_token', token)
-        setUser(userData)
-        return userData
-      } catch (err: unknown) {
-        const message =
-          (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-          'Invalid authentication code'
-        setError(message)
-        throw err
-      } finally {
-        setLoading(false)
-      }
-    },
-    [],
-  )
+    const handleExpiredSession = () => {
+        window.location.href = "http://localhost:8080/oauth2/authorization/oci";
+    };
 
-  const signOut = useCallback(async (): Promise<void> => {
-    try {
-      await API.signOut()
-    } finally {
-      localStorage.removeItem('auth_token')
-      setUser(null)
+    useEffect(() => {
+        const initAuth = async () => {
+            const savedToken = localStorage.getItem('auth_token');
+
+            // 1. If no token exists, we aren't logged in.
+            if (!savedToken) {
+                setLoading(false);
+                return;
+            }
+
+            // 2. If we have a token but no user object yet, fetch it.
+            // We check !user to prevent re-fetching if the data is already there.
+            if (!user) {
+                await loadUser(savedToken);
+            } else {
+                setLoading(false);
+            }
+        };
+
+        initAuth();
+        // Dependency array: loadUser is memoized with useCallback,
+        // so this only runs once on mount.
+    }, [loadUser, user]);
+
+    const logout = useCallback(async (): Promise<void> => {
+        try {
+            localStorage.removeItem('auth_token')
+            setUser(null)
+        } finally {
+            window.location.href = "http://localhost:8080/logout";
+        }
+    }, [])
+
+    const hasRole = useCallback(
+        (role: UserRole): boolean => user?.role === role,
+        [user],
+    )
+
+    const value: AuthContextValue = {
+        user,
+        loading,
+        error,
+        loadUser,
+        signOut: logout,
+        isAdmin: user?.role === 'ADMIN',
+        isManager: user?.role === 'ADMIN' || user?.role === 'MANAGER',
+        isDeveloper: user?.role === 'DEVELOPER',
+        hasRole,
     }
-  }, [])
 
-  const hasRole = useCallback(
-    (role: UserRole): boolean => user?.role === role,
-    [user],
-  )
-
-  const value: AuthContextValue = {
-    user,
-    loading,
-    error,
-    signIn,
-    verify2FA,
-    signOut,
-    isAdmin: user?.role === 'ADMIN',
-    isManager: user?.role === 'ADMIN' || user?.role === 'MANAGER',
-    isDeveloper: user?.role === 'DEVELOPER',
-    hasRole,
-  }
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 /*
-* hook to throw if used outside AuthProvider 
+* hook to throw if used outside AuthProvider
 */
 export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used within <AuthProvider>')
-  return ctx
+    const ctx = useContext(AuthContext)
+    if (!ctx) throw new Error('useAuth must be used within <AuthProvider>')
+    return ctx
 }
