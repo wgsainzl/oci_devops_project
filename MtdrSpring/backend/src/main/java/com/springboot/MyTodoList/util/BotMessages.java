@@ -1,25 +1,31 @@
 package com.springboot.MyTodoList.util;
 
 public enum BotMessages {
-	
-	HELLO_MYTODO_BOT(
-	"Hello! I'm MyTodoList Bot!\nType a new todo item below and press the send button (blue arrow), or select an option below:"),
-	BOT_REGISTERED_STARTED("Bot registered and started succesfully!"),
-	ITEM_DONE("Item done! Select /todolist to return to the list of todo items, or /start to go to the main screen."), 
-	ITEM_UNDONE("Item undone! Select /todolist to return to the list of todo items, or /start to go to the main screen."), 
-	ITEM_DELETED("Item deleted! Select /todolist to return to the list of todo items, or /start to go to the main screen."),
-	TYPE_NEW_TODO_ITEM("Type a new todo item below and press the send button (blue arrow) on the rigth-hand side."),
-	NEW_ITEM_ADDED("New item added! Select /todolist to return to the list of todo items, or /start to go to the main screen."),
-	BYE("Bye! Select /start to resume!");
+    
+    HELLO_MYTODO_BOT(
+    "Hello! I'm your DevOps Task Bot!\nType a new task description below and press the send button, or select an option below:"),
+    
+    BOT_REGISTERED_STARTED("Bot registered and started successfully!"),
+    
+    ITEM_DONE("Task marked as DONE! Select /tasks to return to your active list, or /start to go to the main screen."), 
+    
+    ITEM_BLOCKED("Task flagged as BLOCKED! Your manager has been notified. Select /tasks to return to your active list."), 
+    
+    ITEM_DELETED("Task deleted! Select /tasks to return to your active list, or /start to go to the main screen."),
+    
+    TYPE_NEW_TODO_ITEM("Type a new task description below and press the send button (blue arrow) on the right-hand side."),
+    
+    NEW_ITEM_ADDED("New task added! Select /tasks to return to your active list, or /start to go to the main screen."),
+    
+    BYE("Bye! Select /start to resume!");
 
-	private String message;
+    private String message;
 
-	BotMessages(String enumMessage) {
-		this.message = enumMessage;
-	}
+    BotMessages(String enumMessage) {
+        this.message = enumMessage;
+    }
 
-	public String getMessage() {
-		return message;
-	}
-
+    public String getMessage() {
+        return message;
+    }
 }

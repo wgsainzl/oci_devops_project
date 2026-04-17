@@ -1,8 +1,6 @@
 package com.springboot.MyTodoList.features.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,45 +17,36 @@ public class UserService {
         return users;
     }
 
-    public ResponseEntity<User> getUserById(int id){
-        Optional<User> userById = userRepository.findById(id);
-        if (userById.isPresent()){
-            return new ResponseEntity<>(userById.get(), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public Optional<User> getUserById(int id){
+        return userRepository.findById(id);
     }
 
 
-    public User addUser(User newUser){
-        return userRepository.save(newUser);
-    }
-
-    public User test(){
-        User newUser = new User(88,"someNumber","pwd");
-
+    public User createUser(User newUser){
         return userRepository.save(newUser);
     }
 
     public boolean deleteUser(int id){
-        try{
+        if (userRepository.existsById(id)){
             userRepository.deleteById(id);
             return true;
-        }catch(Exception e){
-            return false;
         }
+        return false;
     }
-    public User updateUser(int id, User user2update){
-        Optional<User> dbUser = userRepository.findById(id);
-        if(dbUser.isPresent()){
-            User user = dbUser.get();
-            user.setID(id);
-            user.setPhoneNumber(user2update.getPhoneNumber());
-            user.setUserPassword(user2update.getUserPassword());
-            return userRepository.save(user);
-        }else{
+
+
+   public User updateUser(int id, User updatedUser){
+        Optional<User> existingData = userRepository.findById(id);
+        if(existingData.isPresent()){
+            User existingUser = existingData.get();
+            if (updatedUser.getName() != null) existingUser.setName(updatedUser.getName()); // Also use getters!
+            if (updatedUser.getEmail() != null) existingUser.setEmail(updatedUser.getEmail());
+            
+            // CORRECTED: Save the existingUser, not updatedUser
+            return userRepository.save(existingUser); 
+        } else {
             return null;
         }
-    }
+    } 
 
 }

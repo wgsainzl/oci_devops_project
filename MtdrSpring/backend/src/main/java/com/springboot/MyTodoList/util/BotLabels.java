@@ -7,9 +7,10 @@ public enum BotLabels {
 	LIST_ALL_ITEMS("List All Items"), 
 	ADD_NEW_ITEM("Add New Item"),
 	DONE("DONE"),
-	UNDO("UNDO"),
+	BLOCK("BLOCK"),          // New: For explicitly blocking tasks
+	START("START"),          // New: For moving to IN_PROGRESS
 	DELETE("DELETE"),
-	MY_TODO_LIST("MY TODO LIST"),
+	MY_TODO_LIST("MY TASK LIST"),
 	DASH("-");
 
 	private String label;
