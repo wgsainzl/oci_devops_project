@@ -2,7 +2,6 @@ import { type JSX, useEffect, useState } from "react";
 import { useAPI } from "../useAPI";
 import { useAuth } from "../hooks/AuthContext";
 import type {
-  UserRole,
   PendingAction,
   DashboardStats,
   ActivityLogItem,
@@ -53,7 +52,7 @@ type ChartKey =
   | "sprintTotals"
   | "hoursPerDeveloper";
 
-const VISIBLE_CHARTS_BY_ROLE: Record<UserRole, ChartKey[]> = {
+/*const VISIBLE_CHARTS_BY_ROLE: Record<UserRole, ChartKey[]> = {
   ADMIN: [
     "taskStatus",
     "sprintVelocity",
@@ -69,7 +68,7 @@ const VISIBLE_CHARTS_BY_ROLE: Record<UserRole, ChartKey[]> = {
     "hoursPerDeveloper",
   ],
   DEVELOPER: ["taskStatus", "sprintVelocity"],
-};
+};*/
 
 // Start with placeholders while loading or if it fails
 const PLACEHOLDER: DashboardData = {
@@ -98,10 +97,10 @@ const PLACEHOLDER: DashboardData = {
 export default function HomePage(): JSX.Element {
   let { user, isManager } = useAuth();
   isManager = true;
-  const role: UserRole = user?.role ?? "DEVELOPER";
-  const visibleCharts = VISIBLE_CHARTS_BY_ROLE[role];
-  const _canSeeChart = (chart: ChartKey): boolean =>
-    visibleCharts.includes(chart);
+  //const role: UserRole = user?.role ?? "DEVELOPER";
+  //const visibleCharts = VISIBLE_CHARTS_BY_ROLE[role];
+  //const _canSeeChart = (chart: ChartKey): boolean =>
+  //  visibleCharts.includes(chart);
   const canSeeChart = (chart: ChartKey) => {
     if (chart) return true;
   };
