@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/AuthContext'
 import styles from './LoginPage.module.css'
 
 const OracleMark = (): JSX.Element => (
@@ -5,8 +7,17 @@ const OracleMark = (): JSX.Element => (
 )
 
 export default function LoginPage(): JSX.Element {
+    const navigate = useNavigate()
+    const { loadUser } = useAuth()
 
     const handleOracleLogin = (): void => {
+        if (import.meta.env.VITE_USE_MOCKS) {
+            void loadUser('mock-token').then(() => {
+                navigate('/home', { replace: true })
+            })
+            return
+        }
+
         // Directly trigger the Spring Boot OAuth2 flow
         window.location.href = 'http://localhost:8080/oauth2/authorization/oci'
     }

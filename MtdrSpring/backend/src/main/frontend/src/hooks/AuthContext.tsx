@@ -13,11 +13,8 @@ import {
     type ReactNode, useEffect,
 } from 'react'
 import {authAPI} from '../API.ts'
-import {mockAuthAPI} from '../mocks'
+import {mockUser} from '../mocks/fixtures'
 import type {User, UserRole} from '../types.ts'
-
-// Use mock API if VITE_USE_MOCKS=true
-const API = import.meta.env.VITE_USE_MOCKS ? mockAuthAPI : authAPI
 
 // context shape
 interface AuthContextValue {
@@ -73,6 +70,19 @@ export function AuthProvider({children}: { children: ReactNode }) {
 
     useEffect(() => {
         const initAuth = async () => {
+            if (import.meta.env.VITE_USE_MOCKS) {
+                setUser({
+                    userId: mockUser.id,
+                    username: `${mockUser.firstName} ${mockUser.lastName}`,
+                    email: mockUser.email,
+                    role: mockUser.role as UserRole,
+                    currentTeamId: mockUser.currentTeamId,
+                })
+                localStorage.setItem('auth_token', 'mock-token')
+                setLoading(false)
+                return
+            }
+
             const savedToken = localStorage.getItem('auth_token');
 
             // 1. If no token exists, we aren't logged in.

@@ -35,9 +35,9 @@ function AppRoutes(): JSX.Element {
             <Route
                 path="/"
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <AppShell/>
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             >
                 <Route index element={<Navigate to="/home" replace/>}/>

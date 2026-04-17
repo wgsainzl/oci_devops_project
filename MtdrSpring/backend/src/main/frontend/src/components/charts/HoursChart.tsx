@@ -10,6 +10,7 @@ import {
   CartesianGrid,
   Cell,
 } from 'recharts'
+import { SPRINT_HOURS } from '../../mocks/sprintData'
 
 // types
 
@@ -67,17 +68,9 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Elem
   )
 }
 
-// ── Placeholder data ──────────────────────────────────────────────────────
-export const HOURS_PLACEHOLDER: HoursEntry[] = [
-  { developer: 'Sebastian',   estimated: 40, actual: 38 },
-  { developer: 'Mauricio',   estimated: 40, actual: 36 },
-  { developer: 'Guillermo', estimated: 35, actual: 35 },
-  { developer: 'Juan Manuel',  estimated: 32, actual: 32 },
-  { developer: 'Diego',    estimated: 36, actual: 36 },
-]
 
-// ── Component ─────────────────────────────────────────────────────────────
-export default function HoursChart({ data = HOURS_PLACEHOLDER }: Props): JSX.Element {
+// hours chart
+export default function HoursChart({ data = SPRINT_HOURS }: Props): JSX.Element {
   return (
     <ResponsiveContainer width="100%" height={240}>
       <BarChart

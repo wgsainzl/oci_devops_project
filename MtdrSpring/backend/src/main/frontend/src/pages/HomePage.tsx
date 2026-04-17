@@ -12,25 +12,26 @@ import type {
 } from '../types'
 
 import PageHeader from '../components/layout/PageHeader'
-import PendingActionsTable from '../components/tasks/PendingActionsTable'
 import StatsCards from '../components/tasks/StatsCards'
-import RecentActivity from '../components/tasks/RecentActivity'
-import TeamWorkload from '../components/tasks/TeamWorkload'
 import TaskStatusChart from '../components/charts/TaskStatusChart'
 import SprintVelocityChart from '../components/charts/SprintVelocityChart'
 import CostPerDeveloperChart, {
-  COST_PLACEHOLDER,
   type CostEntry,
 } from '../components/charts/CostPerDeveloperChart'
 import HoursChart, {
-  HOURS_PLACEHOLDER,
   type HoursEntry,
 } from '../components/charts/HoursChart'
 import SprintCostSummary, {
-  SPRINT_SUMMARY_PLACEHOLDER,
   type SprintSummary,
 } from '../components/charts/SprintCostSummary'
 import styles from './HomePage.module.css'
+import {
+  SPRINT_TASK_STATUS,
+  SPRINT_HOURS,
+  SPRINT_STATS,
+  SPRINT_COST_PER_DEVELOPER,
+  SPRINT_SUMMARIES,
+} from '../mocks/sprintData'
 
 // dashboard data shape
 interface DashboardData {
@@ -66,7 +67,7 @@ const PLACEHOLDER: DashboardData = {
     { id: 'ORC-401', title: 'Cache fix',                   responsible: 'La Fleim',           message: 'Status Mismatch — Code merged in GitHub, task status is still In progress.', action: 'Escalate to Admin' },
     { id: 'ORC-112', title: 'Notification Service',        responsible: 'Mau & 1 other(s)', message: 'Aging in Review — Has been in review for 5 days.', action: 'Ping Reviewers' },
   ],
-  stats: { completed: 13, updated: 41, created: 26, dueSoon: 18, dueNext7: 13 },
+  stats: SPRINT_STATS,
   activity: [
     { id: 1, date: 'Sunday, March 1, 2026', actor: 'System (GitHub)',      action: 'merged Pull Request #42 and changed the status to DONE on ORC-205: OCI Database Setup', status: 'DONE',        time: '10 minutes ago' },
     { id: 2, date: 'Sunday, March 1, 2026', actor: 'Guillermo Sáinz',      action: 'changed the status from TODO to IN_PROGRESS on ORC-401: Database Normalization',        status: 'IN_PROGRESS', time: '2 hours ago' },
@@ -74,16 +75,10 @@ const PLACEHOLDER: DashboardData = {
   ],
   workload: [
     { name: 'Guillermo Sáinz L...',   pct: 30 },
-    { name: 'Sebastian Allet O...',   pct: 24 },
+    { name: 'Sebastian Alett O...',   pct: 24 },
     { name: 'Mauricio Villalobos...', pct: 15 },
   ],
-  taskStatus: [
-    { developer: 'Sebastian', userId: 'user-mock-1', todo: 2, inProgress: 4, inReview: 1, blocked: 0, done: 10 },
-    { developer: 'Mauricio',  userId: 'user-mock-2', todo: 5, inProgress: 2, inReview: 3, blocked: 1, done: 8 },
-    { developer: 'Guillermo', userId: 'user-mock-3', todo: 1, inProgress: 5, inReview: 2, blocked: 0, done: 12 },
-    { developer: 'Juan Manuel', userId: 'user-mock-4', todo: 3, inProgress: 1, inReview: 0, blocked: 2, done: 5 },
-    { developer: 'Diego', userId: 'user-mock-5', todo: 3, inProgress: 3, inReview: 4, blocked: 1, done: 9 },
-  ],
+  taskStatus: SPRINT_TASK_STATUS,
   velocity: [
     { iteration: 1, estimated: 140, actual: 80  },
     { iteration: 2, estimated: 120, actual: 115 },
@@ -91,9 +86,9 @@ const PLACEHOLDER: DashboardData = {
     { iteration: 4, estimated: 120, actual: 105 },
   ],
   // new KPI data 
-  costPerDev:      COST_PLACEHOLDER,
-  hoursPerDev:     HOURS_PLACEHOLDER,
-  sprintSummaries: SPRINT_SUMMARY_PLACEHOLDER,
+  costPerDev:      SPRINT_COST_PER_DEVELOPER,
+  hoursPerDev:     SPRINT_HOURS,
+  sprintSummaries: SPRINT_SUMMARIES,
 }
 
 // component
@@ -145,16 +140,18 @@ export default function HomePage(): JSX.Element {
 
         {/* pending actions and stats */}
         <div className={styles.row1}>
-          <section className={`${styles.card} ${styles.pendingCard}`}>
+          {/* <section className={`${styles.card} ${styles.pendingCard}`}>
             <h2 className={styles.sectionTitle}>Pending actions</h2>
             <PendingActionsTable rows={data.pendingActions} />
-          </section>
+          </section> */}
           <aside className={styles.statsAside}>
             <StatsCards stats={data.stats} />
           </aside>
         </div>
-
-        {/* recent activity and team workload */}
+        
+        {/* INCOMING */}
+        
+        {/* recent activity and team workload
         <div className={styles.row2}>
           <section className={`${styles.card} ${styles.activityCard}`}>
             <h2 className={styles.sectionTitle}>Recent activity</h2>
@@ -164,7 +161,7 @@ export default function HomePage(): JSX.Element {
             <h2 className={styles.sectionTitle}>Team workload</h2>
             <TeamWorkload members={data.workload} />
           </section>
-        </div>
+        </div> */}
 
         {/* task status and sprint velocity */}
         {(canSeeChart('taskStatus') || canSeeChart('sprintVelocity')) && (
