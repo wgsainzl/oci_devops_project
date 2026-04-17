@@ -210,7 +210,6 @@ export default function HomePage(): JSX.Element {
             <section className={`${styles.card}`} style={{ gridColumn: '1 / -1' }}>
               <h2 className={styles.sectionTitle}>
                 Hours per Developer
-                <span className={styles.sectionHint}> — red bar = over estimate</span>
               </h2>
               <HoursChart data={data.hoursPerDev} />
             </section>

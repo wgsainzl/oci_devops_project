@@ -88,7 +88,10 @@ export default function CostPerDeveloperChart({
           tickLine={false}
         />
         <YAxis
-          tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
+          tickFormatter={(v: number) => {
+            if (v >= 1000) return `$${(v / 1000).toFixed(1).replace('.0', '')}k`
+            return `$${v}`
+          }}
           tick={{ fontSize: 11, fill: '#6b6b6b' }}
           axisLine={false}
           tickLine={false}

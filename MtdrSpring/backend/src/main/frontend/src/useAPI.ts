@@ -4,8 +4,8 @@
    otherwise returns real API functions
  */
 
-import { dashboardAPI, tasksAPI, teamsAPI } from './API'
-import { mockDashboardAPI, mockTeamsAPI } from './mocks'
+import { dashboardAPI, tasksAPI, teamsAPI, timelineAPI } from './API'
+import { mockDashboardAPI, mockTeamsAPI, mockTimelineAPI } from './mocks'
 
 const useMocks = import.meta.env.VITE_USE_MOCKS
 
@@ -14,9 +14,12 @@ export const useAPI = {
     return useMocks ? mockDashboardAPI : dashboardAPI
   },
   get tasks() {
-    return tasksAPI // still no mock for this yet
+    return tasksAPI
   },
   get teams() {
     return useMocks ? mockTeamsAPI : teamsAPI
   },
+  get timeline() { // Add this block
+    return useMocks ? mockTimelineAPI : timelineAPI
+  }
 }

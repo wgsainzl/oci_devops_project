@@ -97,7 +97,9 @@ export default function AppShell(): JSX.Element {
             <IconTimeline />
             <span>Timeline</span>
           </NavLink>
-          <TeamSwitcher />
+
+          {/* deprecated */}
+          {/* <TeamSwitcher /> */}
         </nav>
 
         {/* content */}

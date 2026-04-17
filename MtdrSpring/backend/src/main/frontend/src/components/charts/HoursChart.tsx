@@ -8,12 +8,10 @@ import {
   Tooltip,
   Legend,
   CartesianGrid,
-  Cell,
 } from 'recharts'
 import { SPRINT_HOURS } from '../../mocks/sprintData'
 
 // types
-
 export interface HoursEntry {
   developer: string
   estimated: number
@@ -22,6 +20,17 @@ export interface HoursEntry {
 
 interface Props {
   data: HoursEntry[]
+}
+
+// ── Data Transformation for Stacking ──
+// We split the 'actual' value into 'actualOnTrack' (capped at estimated) 
+// and 'actualOverflow' (anything above estimated)
+function formatDataForStacking(data: HoursEntry[]) {
+  return data.map((entry) => ({
+    ...entry,
+    actualOnTrack: Math.min(entry.actual, entry.estimated),
+    actualOverflow: Math.max(0, entry.actual - entry.estimated)
+  }))
 }
 
 // tooltip
@@ -38,10 +47,15 @@ interface CustomTooltipProps {
 
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Element | null => {
   if (!active || !payload?.length) return null
+  
+  // find raw values from payload
   const estimated = payload.find((p) => p.name === 'Estimated')?.value ?? 0
-  const actual    = payload.find((p) => p.name === 'Actual')?.value ?? 0
-  const diff      = actual - estimated
-  const over      = diff > 0
+  const actualOnTrack = payload.find((p) => p.name === 'Actual (On Track)')?.value ?? 0
+  const actualOverflow = payload.find((p) => p.name === 'Actual (Over)')?.value ?? 0
+  const totalActual = actualOnTrack + actualOverflow
+  
+  const diff = totalActual - estimated
+  const over = diff > 0
 
   return (
     <div style={{
@@ -54,14 +68,16 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Elem
       minWidth: 140,
     }}>
       <p style={{ fontWeight: 600, marginBottom: 4 }}>{label}</p>
-      {payload.map((p) => (
-        <p key={p.name} style={{ color: p.color, margin: '2px 0' }}>
-          {p.name}: <strong>{p.value}h</strong>
-        </p>
-      ))}
+      <p style={{ color: '#5aacbe', margin: '2px 0' }}>
+        Estimated: <strong>{estimated}h</strong>
+      </p>
+      <p style={{ color: '#5ba87a', margin: '2px 0' }}>
+        Actual: <strong>{totalActual}h</strong>
+      </p>
+      
       {diff !== 0 && (
         <p style={{ color: over ? '#c74634' : '#5ba87a', margin: '4px 0 0', fontWeight: 600 }}>
-          {over ? `▲ ${diff}h over` : `▼ ${Math.abs(diff)}h under`}
+          {over ? `▲ ${diff.toFixed(1)}h over` : `▼ ${Math.abs(diff).toFixed(1)}h under`}
         </p>
       )}
     </div>
@@ -71,10 +87,12 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Elem
 
 // hours chart
 export default function HoursChart({ data = SPRINT_HOURS }: Props): JSX.Element {
+  const stackedData = formatDataForStacking(data)
+
   return (
     <ResponsiveContainer width="100%" height={240}>
       <BarChart
-        data={data}
+        data={stackedData}
         margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
         barCategoryGap="25%"
         barGap={3}
@@ -97,17 +115,21 @@ export default function HoursChart({ data = SPRINT_HOURS }: Props): JSX.Element 
           iconType="square"
           iconSize={10}
           wrapperStyle={{ fontSize: '0.78rem', paddingTop: 8 }}
+          formatter={(value) => {
+            if (value === 'Actual (On Track)') return 'Actual'
+            if (value === 'Actual (Over)') return 'Over Estimate'
+            return value
+          }}
         />
+        
+        {/* estimated Bar */}
         <Bar dataKey="estimated" name="Estimated" fill="#5aacbe" radius={[3, 3, 0, 0]} maxBarSize={32} />
-        <Bar dataKey="actual"    name="Actual"    radius={[3, 3, 0, 0]} maxBarSize={32}>
-          {data.map((entry) => (
-            <Cell
-              key={entry.developer}
-              // Red if over estimated, green if on track or under
-              fill={entry.actual > entry.estimated ? '#c74634' : '#5ba87a'}
-            />
-          ))}
-        </Bar>
+        
+        {/* stacked bars */}
+        {/* use stackId="a" to group them together */}
+        <Bar dataKey="actualOnTrack" stackId="a" name="Actual (On Track)" fill="#5ba87a" radius={[0, 0, 0, 0]} maxBarSize={32} />
+        <Bar dataKey="actualOverflow" stackId="a" name="Actual (Over)" fill="#c74634" radius={[3, 3, 0, 0]} maxBarSize={32} />
+        
       </BarChart>
     </ResponsiveContainer>
   )
