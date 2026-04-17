@@ -1,4 +1,4 @@
-import type { DashboardStats, TaskStatusEntry } from '../types'
+import type { DashboardStats, TaskStatusEntry, TimelineTask } from '../types'
 import type { CostEntry } from '../components/charts/CostPerDeveloperChart'
 import type { HoursEntry } from '../components/charts/HoursChart'
 import type { SprintSummary } from '../components/charts/SprintCostSummary'
@@ -6,7 +6,7 @@ import type { SprintSummary } from '../components/charts/SprintCostSummary'
 // SPRINT 1 (hardcoded)
 export const SPRINT_TASK_STATUS: TaskStatusEntry[] = [
   { developer: 'Guillermo',   userId: 'user-mock-1', todo: 0, inProgress: 0, inReview: 0, blocked: 0, done: 4 },
-  { developer: 'Sebastián',   userId: 'user-mock-2', todo: 0, inProgress: 1, inReview: 0, blocked: 0, done: 4 },
+  { developer: 'Sebastian',   userId: 'user-mock-2', todo: 0, inProgress: 1, inReview: 0, blocked: 0, done: 4 },
   { developer: 'Mauricio',    userId: 'user-mock-3', todo: 0, inProgress: 0, inReview: 0, blocked: 0, done: 3 },
   { developer: 'Juan Manuel', userId: 'user-mock-4', todo: 0, inProgress: 3, inReview: 0, blocked: 0, done: 2 },
   { developer: 'Diego',       userId: 'user-mock-5', todo: 0, inProgress: 1, inReview: 0, blocked: 0, done: 1 },
@@ -14,7 +14,7 @@ export const SPRINT_TASK_STATUS: TaskStatusEntry[] = [
 
 export const SPRINT_HOURS: HoursEntry[] = [
   { developer: 'Guillermo',   estimated: 7.5,  actual: 5.0 },
-  { developer: 'Sebastián',   estimated: 14.5, actual: 12.5 },
+  { developer: 'Sebastian',   estimated: 14.5, actual: 12.5 },
   { developer: 'Mauricio',    estimated: 5.5,  actual: 6.25 },
   { developer: 'Juan Manuel', estimated: 13.5, actual: 22.8 }, 
   { developer: 'Diego',       estimated: 8.5,  actual: 6.5 },
@@ -23,7 +23,7 @@ export const SPRINT_HOURS: HoursEntry[] = [
 // SPRINT 0 (hardcoded)
 const SPRINT_0_HOURS: Record<string, number> = {
   'Guillermo': 7,
-  'Sebastián': 5,
+  'Sebastian': 5,
   'Mauricio': 6,
   'Juan Manuel': 5,
   'Diego': 7,
@@ -83,4 +83,62 @@ export const SPRINT_SUMMARIES: SprintSummary[] = [
     totalHours: roundCurrency(totalActualHours),
     tasksCompleted: totals.done,
   },
+]
+
+export const SPRINT_TIMELINE_TASKS: TimelineTask[] = [
+  {
+    id: 'ORC-101',
+    title: 'OCI Foundations completed',
+    responsible: 'All Team',
+    status: 'DONE',
+    priority: 'HIGH',
+    type: 'FEATURE',
+    createdAt: '2026-03-01',
+    startDate: '2026-03-05',
+    dueDate: '2026-03-13',
+  },
+  {
+    id: 'ORC-102',
+    title: 'Conectar Microservicios a DB',
+    responsible: 'Mauricio',
+    status: 'DONE',
+    priority: 'CRITICAL',
+    type: 'FEATURE',
+    createdAt: '2026-03-10',
+    startDate: '2026-03-11',
+    dueDate: '2026-04-12',
+  },
+  {
+    id: 'ORC-103',
+    title: 'Auth implementation',
+    responsible: 'Juan Manuel',
+    status: 'IN_PROGRESS',
+    priority: 'CRITICAL',
+    type: 'FEATURE',
+    createdAt: '2026-03-15',
+    startDate: '2026-03-15',
+    dueDate: '2026-04-09',
+  },
+  {
+    id: 'ORC-104',
+    title: 'Develop Web Page',
+    responsible: 'Sebastian & Diego',
+    status: 'DONE',
+    priority: 'HIGH',
+    type: 'FEATURE',
+    createdAt: '2026-03-20',
+    startDate: '2026-03-20',
+    dueDate: '2026-04-07',
+  },
+  {
+    id: 'ORC-105',
+    title: 'Gráfica de trabajo estimado',
+    responsible: 'Sebastian',
+    status: 'DONE',
+    priority: 'MEDIUM',
+    type: 'FEATURE',
+    createdAt: '2026-04-01',
+    startDate: '2026-04-01',
+    dueDate: '2026-04-10',
+  }
 ]

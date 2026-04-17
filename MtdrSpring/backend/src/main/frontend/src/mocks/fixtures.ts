@@ -1,5 +1,5 @@
 // mock fixture data for development testing
-import { SPRINT_STATS, SPRINT_TASK_STATUS } from './sprintData'
+import { SPRINT_STATS, SPRINT_TASK_STATUS, SPRINT_TIMELINE_TASKS } from './sprintData'
 
 export const mockUser = {
   id: 'user-mock-1',
@@ -108,3 +108,5 @@ export const mockTeams = [
   { id: 'team-2', name: 'Frontend', memberCount: 4 },
   { id: 'team-3', name: 'DevOps', memberCount: 3 },
 ]
+
+export const mockTimelineTasks = SPRINT_TIMELINE_TASKS;
