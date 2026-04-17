@@ -1,6 +1,9 @@
 **/node_modules/**
 **/build/**
 **/target/**
+**/wallet/**
 .env
 *.iml
 .idea/
+
+.db_secret

@@ -25,11 +25,10 @@ import type {
 // ==========================================
 // 1. AXIOS CONFIGURATION
 // ==========================================
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
+
 const api = axios.create({
-  // Hardcoded to /api.
-  // Dev: Vite proxy catches it and sends to 8080.
-  // Prod: API Gateway catches it.
-  baseURL: "/api",
+  baseURL: BASE_URL, 
   timeout: 15_000,
   headers: { "Content-Type": "application/json" },
   withCredentials: true,

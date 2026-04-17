@@ -9,3 +9,4 @@ variable "runName" {}
 
 # mtdrKey is a unique generated id
 variable "mtdrKey" {}
+variable "db_ocid" {}
