@@ -9,12 +9,10 @@ spring:
   datasource:
     driver-class-name: oracle.jdbc.OracleDriver
     type: oracle.ucp.jdbc.PoolDataSource
-
     # This is not used when deployed in Kubernetes. Just for local testing
     # url: jdbc:oracle:thin:@adbps_medium?TNS_ADMIN=/Users/psong/Downloads/Wallet_ADBPS
     # username: admin
     # password: WELcome__12345
-
     oracleucp:
       connection-factory-class-name: oracle.jdbc.pool.OracleDataSource
       sql-for-validate-connection: "select * from dual"
@@ -23,33 +21,69 @@ spring:
       min-pool-size: 10
       max-pool-size: 30
 
-logging:
-  level:
-    root: trace
-    oracle:
-      ucp: trace
-    org:
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
-          TRACE: TRACE
-  file:
-    name: logs.log
+  #      Security Config
+  security:
+    oauth2:
+      client:
+        registration:
+          oci:
+            client-id: ${OCI_CLIENT_ID}
+            client-secret: ${OCI_CLIENT_SECRET}
+            scope: openid, profile, email, offline_access
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8080/login/oauth2/code/oci"
+        provider:
+          oci:
+            authorization-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/oauth2/v1/authorize
+            token-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/oauth2/v1/token
+            jwk-set-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/admin/v1/SigningCert/jwk
+            user-info-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/oauth2/v1/userinfo
+            user-name-attribute: sub
+
+
+#logging:
+##  level:
+#    #    TODO
+##        org.springframework.security: TRACE
+##        org.springframework.security.oauth2: TRACE
+##    root: INFO
+##  oracle:
+##    ucp: WARN
+##  org:
+##    hibernate:
+##      SQL: DEBUG
+##      type:
+##        descriptor:
+##          sql:
+##            BasicBinder: TRACE
+##        TRACE: INFO
+#  file:
+#    name: logs.log
 
 deepseek:
   api:
     key: sk-test
     url: https://api.deepseek.com/v1/chat/completions
-# spring:
-#   security:
-#     user:
-#       name: psong
-#       password: WELcome__12345
 
 telegram:
   bot:
     token: ${TELEGRAM_KEY}
     name: ${TELEGRAM_BOT_NAME}
+
+oci:
+  domain:
+    url: ${OCI_PROVIDER_URL}
+  client:
+    id: ${OCI_CLIENT_ID}
+    secret: ${OCI_CLIENT_SECRET}
+  group:
+    id: ${OCI_GROUP_ID}
+  tenancy:
+    email: ${TENANCY_EMAIL}
+    ocid: ${TENANCY_OCID}
+    name: ${TENANCY_NAME}
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
