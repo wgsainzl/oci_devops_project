@@ -44,6 +44,7 @@ frontend/build
 .env.production.local
 env.production
 *.env.production
+*.application.properties
 
 # Misc
 .DS_Store
@@ -59,3 +60,17 @@ frontend/package-lock.json
 
 # Wallet (specific path)
 MtdrSpring/backend/wallet
+
+# Terraform sensitive files
+terraform.tfvars
+*.tfvars
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# ATP Wallet
+wallet/
+*.sso
+*.p12
+*.jks

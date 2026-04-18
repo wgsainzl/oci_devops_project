@@ -7,7 +7,7 @@ spring:
     show-sql: true
 
   datasource:
-    url: jdbc:oracle:thin:@taskmanagementdb_tp?TNS_ADMIN=/mtdrworkshop/creds
+    url: jdbc:oracle:thin:@taskmanagerdb_tp?TNS_ADMIN=/mtdrworkshop/creds
     username: ${DB_USER}
     password: ${DB_PASSWORD}
 

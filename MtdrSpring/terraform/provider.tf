@@ -1,11 +1,16 @@
 terraform {
-  required_providers{
+  required_providers {
     oci = {
-      source = "hashicorp/oci"
-      version = "4.42.0"
+      source  = "oracle/oci"
+      version = "~> 6.0"
     }
   }
 }
-provider "oci"{
-  region = var.ociRegionIdentifier
+
+provider "oci" {
+  region           = var.ociRegionIdentifier
+  tenancy_ocid     = var.ociTenancyOcid
+  user_ocid        = var.ociUserOcid
+  fingerprint      = var.ociFingerprint
+  private_key_path = var.ociPrivateKeyPath
 }
