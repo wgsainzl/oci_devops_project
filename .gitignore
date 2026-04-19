@@ -37,8 +37,6 @@ frontend/coverage
 frontend/build
 
 # Env files (GLOBAL)
-.env
-.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -74,3 +72,4 @@ wallet/
 *.sso
 *.p12
 *.jks
+config.bat
