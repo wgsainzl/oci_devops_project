@@ -1,5 +1,6 @@
 #!/bin/bash
 SCRIPT_DIR=$(pwd)
+DEFAULT_IMAGE_TAG=0.1
 
 #Validation
 if [ -z "$DOCKER_REGISTRY" ]; then
@@ -39,8 +40,8 @@ if [ -z "$UI_USERNAME" ]; then
 fi
 
 if [ -z "$IMAGE_TAG" ]; then
-    export IMAGE_TAG=0.1
-    echo "IMAGE_TAG not set. Defaulting to 0.1"
+    export IMAGE_TAG=$DEFAULT_IMAGE_TAG
+    echo "IMAGE_TAG not set. Defaulting to $DEFAULT_IMAGE_TAG"
 fi
 
 echo "Creating springboot deployment and service"
