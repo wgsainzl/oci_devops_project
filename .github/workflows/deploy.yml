@@ -1,9 +1,15 @@
 name: Build and Deploy
 
 on:
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions UI on any branch
   push:
     branches:
       - main
+      - deployment-ready
+  pull_request: # Runs when a PR is opened against these branches
+    branches:
+      - main
+      - deployment-ready
 
 env:
   IMAGE_TAG: ${{ github.sha }}
@@ -141,6 +147,8 @@ jobs:
     name: Deploy to OKE
     runs-on: ubuntu-latest
     needs: provision-k8s-secrets
+    # Prevents PRs from deploying to your live cluster
+    if: github.event_name != 'pull_request' 
 
     steps:
       - name: Checkout code
@@ -210,7 +218,8 @@ jobs:
     name: Log Deployment
     runs-on: ubuntu-latest
     needs: deploy
-    if: always()
+    # Also skip logging if it's a PR, since we skipped the deploy
+    if: always() && github.event_name != 'pull_request' 
 
     steps:
       - name: Checkout code
