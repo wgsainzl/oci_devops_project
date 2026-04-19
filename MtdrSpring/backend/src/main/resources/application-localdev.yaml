@@ -1,6 +1,6 @@
 #Local application properties (LOCALDEV profile MUST be active to use this)
 spring:
   datasource:
-    url: jdbc:oracle:thin:@taskmanagerdb_tp?TNS_ADMIN=/Users/mauriciovillalobos/Desktop/oci_devops_project/MtdrSpring/wallet
+    url: jdbc:oracle:thin:@taskmanagerdb_tp?TNS_ADMIN=${TNS_ADMIN:./wallet}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
