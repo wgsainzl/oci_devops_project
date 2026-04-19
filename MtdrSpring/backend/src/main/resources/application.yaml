@@ -7,6 +7,10 @@ spring:
     show-sql: true
 
   datasource:
+    url: jdbc:oracle:thin:@taskmanagerdb_tp?TNS_ADMIN=/mtdrworkshop/creds
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
     driver-class-name: oracle.jdbc.OracleDriver
     type: oracle.ucp.jdbc.PoolDataSource
     # This is not used when deployed in Kubernetes. Just for local testing

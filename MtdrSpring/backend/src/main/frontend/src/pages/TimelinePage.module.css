@@ -1,0 +1,213 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.content {
+  padding: var(--space-6, 24px);
+  flex: 1;
+}
+
+.ganttWrap {
+  background: #f4f4f4;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+/* ── Table structure ── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+}
+
+.table th, .table td {
+  border-right: 1px solid #d4d4d4;
+}
+
+.table th:last-child, .table td:last-child {
+  border-right: none;
+}
+
+.colTask        { width: 220px; }
+.colResponsible { width: 180px; }
+.colStatus      { width: 120px; }
+.colPriority    { width: 110px; }
+.colDue         { width: 110px; }
+.colGantt       { min-width: 450px; }
+
+
+/* ── Single Header Row ── */
+.colHeadRow th {
+  background: #dcdcdc;
+  color: #333;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid #ccc;
+  white-space: nowrap;
+}
+
+.ganttHead {
+  position: relative;
+  padding: 0 !important;
+}
+
+.monthHeaders {
+  position: relative;
+  height: 100%;
+  min-height: 44px;
+}
+
+.monthHeaderCell {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #d4d4d4;
+  box-sizing: border-box;
+}
+
+.monthHeaderCell:last-child {
+  border-right: none;
+}
+
+/* Today indicator in header */
+.todayLineHeader {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  z-index: 10;
+}
+
+.todayLabel {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  color: #8b5cf6;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+
+/* task rows */
+.taskRow {
+  background: #f4f4f4;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.taskRow:nth-child(even) {
+  background: #eaeaea;
+}
+
+.taskRow td {
+  padding: 16px 16px;
+  vertical-align: middle;
+}
+
+.taskId {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #000;
+}
+
+.taskTitle {
+  display: block;
+  font-size: 0.85rem;
+  color: #333;
+  margin-top: 2px;
+}
+
+/* avatars styling */
+.userWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.responsible {
+  font-size: 0.85rem;
+  color: #000;
+}
+
+.dueDate {
+  font-size: 0.85rem;
+  color: #000;
+}
+
+
+/* status / priority badges */
+.statusBadge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap; /* prevents from stacking */
+  text-align: center;
+}
+
+
+/* gantt area */
+.ganttCell {
+  padding: 0 !important;
+  position: relative;
+}
+
+.ganttTrack {
+  position: relative;
+  height: 64px; /* Matches taller row layout in design */
+  width: 100%;
+}
+
+.monthGrid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-right: 1px solid #d4d4d4;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.monthGrid:last-child {
+  border-right: none;
+}
+
+.ganttBar {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 20px;
+  border-radius: 12px;
+  opacity: 1;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.todayLineRow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  border-left: 1px dashed #8b5cf6;
+  pointer-events: none;
+  z-index: 3;
+}

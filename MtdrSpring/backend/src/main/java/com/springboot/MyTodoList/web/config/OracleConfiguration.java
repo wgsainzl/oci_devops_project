@@ -22,7 +22,7 @@ import java.sql.SQLException;
 //
 //
 @Profile("!localdev")
-@Configuration
+//@Configuration
 public class OracleConfiguration {
     Logger logger = LoggerFactory.getLogger(OracleConfiguration.class);
     private final Environment env;

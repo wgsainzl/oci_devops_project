@@ -1,0 +1,148 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-bg-page);
+  background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q25 25 50 50 Q75 75 100 50 Q125 25 150 50 Q175 75 200 50' fill='none' stroke='%23d8d0c4' stroke-width='1' opacity='0.6'/%3E%3Cpath d='M0 100 Q25 75 50 100 Q75 125 100 100 Q125 75 150 100 Q175 125 200 100' fill='none' stroke='%23d8d0c4' stroke-width='1' opacity='0.6'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: var(--header-height);
+  background: var(--color-bg-header);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-5);
+  flex-shrink: 0;
+}
+
+.headerLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: inherit;
+  text-decoration: none;
+}
+
+.headerLink:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.oracleMark {
+  display: flex;
+  align-items: center;
+}
+
+.oracleMarkIcon {
+  width: 28px;
+  height: 28px;
+  display: block;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.appName { color: white; font-size: 0.95rem; font-weight: 500; }
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-10) var(--space-4) var(--space-12);
+}
+
+.card {
+  background: var(--color-bg-content);
+  border-radius: var(--radius-md);
+  padding: var(--space-10) var(--space-12);
+  width: 100%;
+  max-width: 560px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.signInPrompt {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.errorBanner {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: var(--color-oracle-red);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.label {
+  width: 140px;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  text-align: right;
+}
+
+.input {
+  flex: 1;
+  padding: var(--space-2) 0;
+  border: none;
+  border-bottom: 1.5px solid var(--color-border);
+  background: transparent;
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.input:focus { border-bottom-color: var(--color-oracle-red); }
+
+.terms {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.btn {
+  align-self: center;
+  padding: var(--space-3) var(--space-10);
+  background: var(--color-bg-header);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.btn:hover:not(:disabled) { background: #333; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+@media (max-width: 600px) {
+  .card { padding: var(--space-6) var(--space-5); }
+  .field { flex-direction: column; gap: var(--space-1); }
+  .label { width: auto; text-align: left; }
+}

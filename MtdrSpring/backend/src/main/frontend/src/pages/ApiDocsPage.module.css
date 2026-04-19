@@ -1,0 +1,38 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.header {
+  padding: var(--space-6) var(--space-6) var(--space-4);
+  border-bottom: 1px solid var(--color-border-light);
+  background: var(--color-bg-content);
+}
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.sub {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
+
+.swaggerWrap {
+  flex: 1;
+  padding: var(--space-6);
+  /* Reset some Swagger UI defaults to fit our design */
+  --swagger-ui-font-family: var(--font-body);
+}
+
+/* Tighten Swagger UI chrome to match our palette */
+.swaggerWrap :global(.swagger-ui .topbar) {
+  display: none;
+}
+
+.swaggerWrap :global(.swagger-ui) {
+  font-family: var(--font-body);
+}

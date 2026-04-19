@@ -1,0 +1,263 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # JOB 1: Build the Docker image and push to OCIR
+  # ---------------------------------------------------------------------------
+  build:
+    name: Build & Push Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Build Spring Boot JAR (includes frontend)
+        working-directory: MtdrSpring/backend
+        run: ./mvnw clean package -DskipTests
+
+      - name: Log in to OCIR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.OCI_REGION }}.ocir.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: MtdrSpring/backend
+          file: MtdrSpring/backend/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_REGISTRY }}/todolistapp-springboot:${{ env.IMAGE_TAG }}
+
+  # ---------------------------------------------------------------------------
+  # JOB 2: Ensure cluster-level K8s secrets exist (idempotent)
+  # ---------------------------------------------------------------------------
+  provision-k8s-secrets:
+    name: Provision K8s Secrets
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Install OCI CLI
+        run: |
+          curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults
+          echo "$HOME/bin" >> $GITHUB_PATH
+
+      - name: Configure OCI credentials
+        run: |
+          mkdir -p ~/.oci
+          echo "${{ secrets.OCI_PRIVATE_KEY }}" > ~/.oci/oci_api_key.pem
+          chmod 600 ~/.oci/oci_api_key.pem
+          cat > ~/.oci/config <<EOF
+          [DEFAULT]
+          user=${{ secrets.OCI_USER_OCID }}
+          fingerprint=${{ secrets.OCI_FINGERPRINT }}
+          key_file=$HOME/.oci/oci_api_key.pem
+          tenancy=${{ secrets.OCI_TENANCY_OCID }}
+          region=${{ secrets.OCI_REGION }}
+          EOF
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          oci ce cluster create-kubeconfig \
+            --cluster-id ${{ secrets.OKE_CLUSTER_OCID }} \
+            --file ~/.kube/config \
+            --region ${{ secrets.OCI_REGION }} \
+            --token-version 2.0.0
+
+      - name: Create mtdrworkshop namespace
+        run: |
+          kubectl create namespace mtdrworkshop --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Create ATP wallet secret
+        run: |
+          # Decode wallet zip and extract files into a temp dir
+          mkdir -p /tmp/wallet
+          echo "${{ secrets.ATP_WALLET_B64 }}" | base64 -d > /tmp/wallet.zip
+          unzip -o /tmp/wallet.zip -d /tmp/wallet
+
+          # Patch sqlnet.ora to point to the mounted path inside the pod
+          cat > /tmp/wallet/sqlnet.ora <<EOF
+          WALLET_LOCATION = (SOURCE = (METHOD = file) (METHOD_DATA = (DIRECTORY="/mtdrworkshop/creds")))
+          SSL_SERVER_DN_MATCH=yes
+          EOF
+
+          # Create or update the K8s secret from wallet files
+          kubectl create secret generic db-wallet-secret \
+            --from-file=/tmp/wallet/cwallet.sso \
+            --from-file=/tmp/wallet/ewallet.p12 \
+            --from-file=/tmp/wallet/keystore.jks \
+            --from-file=/tmp/wallet/ojdbc.properties \
+            --from-file=/tmp/wallet/sqlnet.ora \
+            --from-file=/tmp/wallet/tnsnames.ora \
+            --from-file=/tmp/wallet/truststore.jks \
+            --namespace mtdrworkshop \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Create DB user secret
+        run: |
+          kubectl create secret generic dbuser \
+            --from-literal=dbpassword="${{ secrets.DB_PASSWORD }}" \
+            --namespace mtdrworkshop \
+            --dry-run=client -o yaml | kubectl apply -f -
+            
+      - name: Create app secrets
+        run: |
+          kubectl create secret generic app-secrets \
+            --from-literal=deepseek-api-key="${{ secrets.DEEPSEEK_API_KEY }}" \
+            --from-literal=telegram-key="${{ secrets.TELEGRAM_KEY }}" \
+            --from-literal=telegram-bot-name="${{ secrets.TELEGRAM_BOT_NAME }}" \
+            --namespace mtdrworkshop \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+  # ---------------------------------------------------------------------------
+  # JOB 3: Deploy to OKE
+  # ---------------------------------------------------------------------------
+  deploy:
+    name: Deploy to OKE
+    runs-on: ubuntu-latest
+    needs: provision-k8s-secrets
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install OCI CLI
+        run: |
+          curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults
+          echo "$HOME/bin" >> $GITHUB_PATH
+
+      - name: Configure OCI credentials
+        run: |
+          mkdir -p ~/.oci
+          echo "${{ secrets.OCI_PRIVATE_KEY }}" > ~/.oci/oci_api_key.pem
+          chmod 600 ~/.oci/oci_api_key.pem
+          cat > ~/.oci/config <<EOF
+          [DEFAULT]
+          user=${{ secrets.OCI_USER_OCID }}
+          fingerprint=${{ secrets.OCI_FINGERPRINT }}
+          key_file=$HOME/.oci/oci_api_key.pem
+          tenancy=${{ secrets.OCI_TENANCY_OCID }}
+          region=${{ secrets.OCI_REGION }}
+          EOF
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          oci ce cluster create-kubeconfig \
+            --cluster-id ${{ secrets.OKE_CLUSTER_OCID }} \
+            --file ~/.kube/config \
+            --region ${{ secrets.OCI_REGION }} \
+            --token-version 2.0.0
+
+      - name: Create OCIR image pull secret
+        run: |
+          kubectl create secret docker-registry ocir-secret \
+            --docker-server=${{ secrets.OCI_REGION }}.ocir.io \
+            --docker-username=${{ secrets.DOCKER_USERNAME }} \
+            --docker-password=${{ secrets.DOCKER_PASSWORD }} \
+            --namespace mtdrworkshop \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Substitute manifest variables
+        env:
+          DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          TODO_PDB_NAME: ${{ secrets.TODO_PDB_NAME }}
+          OCI_REGION: ${{ secrets.OCI_REGION }}
+        run: |
+          envsubst < MtdrSpring/backend/src/main/resources/todolistapp-springboot.yaml \
+            > /tmp/todolistapp-springboot-rendered.yaml
+
+      - name: Apply manifest
+        run: |
+          kubectl apply -f /tmp/todolistapp-springboot-rendered.yaml
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/todolistapp-springboot-deployment \
+            --namespace mtdrworkshop \
+            --timeout=300s
+
+  # ---------------------------------------------------------------------------
+  # JOB 4: Log deployment to ATP
+  # ---------------------------------------------------------------------------
+  log-deploy:
+    name: Log Deployment
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install SQLcl
+        run: |
+          curl -L https://download.oracle.com/otn_software/java/sqldeveloper/sqlcl-latest.zip -o /tmp/sqlcl.zip
+          unzip -q /tmp/sqlcl.zip -d /tmp/sqlcl
+          echo "/tmp/sqlcl/sqlcl/bin" >> $GITHUB_PATH
+
+      - name: Set up Java 21 (required for SQLcl)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Decode ATP wallet for SQLcl
+        run: |
+          mkdir -p /tmp/wallet
+          echo "${{ secrets.ATP_WALLET_B64 }}" | base64 -d > /tmp/wallet.zip
+          unzip -o /tmp/wallet.zip -d /tmp/wallet
+
+      - name: Run schema setup (idempotent)
+        env:
+          ATP_ADMIN_PASSWORD: ${{ secrets.ATP_ADMIN_PASSWORD }}
+          CICD_DB_PASSWORD: ${{ secrets.CICD_DB_PASSWORD }}
+          TODO_PDB_NAME: ${{ secrets.TODO_PDB_NAME }}
+        run: |
+          # Substitute the CICD_DB_PASSWORD variable into the setup script
+          envsubst < MtdrSpring/scripts/setup-cicd-schema.sql > /tmp/setup-cicd-schema.sql
+
+          sql -cloudconfig /tmp/wallet.zip \
+            ADMIN/"${ATP_ADMIN_PASSWORD}"@"${TODO_PDB_NAME}_tp" \
+            @/tmp/setup-cicd-schema.sql
+
+      - name: Log deployment result
+        env:
+          ATP_ADMIN_PASSWORD: ${{ secrets.ATP_ADMIN_PASSWORD }}
+          TODO_PDB_NAME: ${{ secrets.TODO_PDB_NAME }}
+          COMMIT_SHA: ${{ github.sha }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          DEPLOY_STATUS: ${{ needs.deploy.result }}
+          TRIGGERED_BY: ${{ github.actor }}
+        run: |
+          envsubst < MtdrSpring/scripts/log-deploy.sql > /tmp/log-deploy.sql
+
+          sql -cloudconfig /tmp/wallet.zip \
+            ADMIN/"${ATP_ADMIN_PASSWORD}"@"${TODO_PDB_NAME}_tp" \
+            @/tmp/log-deploy.sql

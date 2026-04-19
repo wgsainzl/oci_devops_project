@@ -4,9 +4,9 @@ public enum BotCommands {
 
 	START_COMMAND("/start"), 
 	HIDE_COMMAND("/hide"), 
-	TODO_LIST("/todolist"),
-	ADD_ITEM("/additem"),
-	LLM_REQ("/llm");
+	TODO_LIST("/tasks"),
+	ADD_ITEM("/addtask"),
+	LLM_REPORT("/report");
 
 	private String command;
 

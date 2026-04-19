@@ -9,10 +9,16 @@ set -e
 # Create Object Store Bucket (Should be replaced by terraform one day)
 while ! state_done OBJECT_STORE_BUCKET; do
   echo "Checking object storage bucket"
-#  oci os bucket create --compartment-id "$(state_get COMPARTMENT_OCID)" --name "$(state_get RUN_NAME)"
-  if oci os bucket get --name "$(state_get RUN_NAME)-$(state_get MTDR_KEY)"; then
+  OBJECT_STORE_BUCKET_NAME="$(state_get RUN_NAME)-$(state_get MTDR_KEY)"
+  if oci os bucket get --name "$OBJECT_STORE_BUCKET_NAME" >/dev/null 2>&1; then
     state_set_done OBJECT_STORE_BUCKET
     echo "finished checking object storage bucket"
+  elif oci os bucket create --compartment-id "$(state_get COMPARTMENT_OCID)" --name "$OBJECT_STORE_BUCKET_NAME" >/dev/null; then
+    state_set_done OBJECT_STORE_BUCKET
+    echo "finished checking object storage bucket"
+  else
+    echo "Error: Failure creating object storage bucket. Retrying..."
+    sleep 5
   fi
 done
 
@@ -127,25 +133,5 @@ while ! state_done MTDR_DB_PASSWORD_SET; do
   sleep 2
 done
 
-
-# Order DB User, Objects
-while ! state_done TODO_USER; do
-  echo "connecting to mtdr database"
-  U=$TODO_USER
-  SVC=$MTDR_DB_SVC
-  sqlplus /nolog <<!
-WHENEVER SQLERROR EXIT 1
-connect admin/"$DB_PASSWORD"@$SVC
-CREATE USER $U IDENTIFIED BY "$DB_PASSWORD" DEFAULT TABLESPACE data QUOTA UNLIMITED ON data;
-GRANT CREATE SESSION, CREATE VIEW, CREATE SEQUENCE, CREATE PROCEDURE TO $U;
-GRANT CREATE TABLE, CREATE TRIGGER, CREATE TYPE, CREATE MATERIALIZED VIEW TO $U;
-GRANT CONNECT, RESOURCE, pdb_dba, SODA_APP to $U;
-CREATE TABLE TODOUSER.todoitem (id NUMBER GENERATED ALWAYS AS IDENTITY, description VARCHAR2(4000), creation_ts TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, done NUMBER(1,0) , PRIMARY KEY (id));
-insert into TODOUSER.todoitem  (description, done) values ('Manual item insert', 0);
-commit;
-!
-  state_set_done TODO_USER
-  echo "finished connecting to database and creating attributes"
-done
 # DB Setup Done
 state_set_done DB_SETUP

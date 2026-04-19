@@ -1,5 +1,6 @@
 #!/bin/bash
 SCRIPT_DIR=$(pwd)
+DEFAULT_IMAGE_TAG=0.1
 
 #Validation
 if [ -z "$DOCKER_REGISTRY" ]; then
@@ -38,21 +39,21 @@ if [ -z "$UI_USERNAME" ]; then
     exit 1
 fi
 
-echo "Creating springboot deplyoment and service"
+if [ -z "$IMAGE_TAG" ]; then
+    export IMAGE_TAG=$DEFAULT_IMAGE_TAG
+    echo "IMAGE_TAG not set. Defaulting to $DEFAULT_IMAGE_TAG"
+fi
+
+echo "Creating springboot deployment and service"
 export CURRENTTIME=$( date '+%F_%H:%M:%S' )
 echo CURRENTTIME is $CURRENTTIME  ...this will be appended to generated deployment yaml
 cp src/main/resources/todolistapp-springboot.yaml todolistapp-springboot-$CURRENTTIME.yaml
 
 sed -i "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}|g" todolistapp-springboot-$CURRENTTIME.yaml
-
-sed -e "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}|g" todolistapp-springboot-${CURRENTTIME}.yaml > /tmp/todolistapp-springboot-${CURRENTTIME}.yaml
-mv -- /tmp/todolistapp-springboot-$CURRENTTIME.yaml todolistapp-springboot-$CURRENTTIME.yaml
-sed -e "s|%TODO_PDB_NAME%|${TODO_PDB_NAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml > /tmp/todolistapp-springboot-${CURRENTTIME}.yaml
-mv -- /tmp/todolistapp-springboot-$CURRENTTIME.yaml todolistapp-springboot-$CURRENTTIME.yaml
-sed -e "s|%OCI_REGION%|${OCI_REGION}|g" todolistapp-springboot-${CURRENTTIME}.yaml > /tmp/todolistapp-springboot-$CURRENTTIME.yaml
-mv -- /tmp/todolistapp-springboot-$CURRENTTIME.yaml todolistapp-springboot-$CURRENTTIME.yaml
-sed -e "s|%UI_USERNAME%|${UI_USERNAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml > /tmp/todolistapp-springboot-$CURRENTTIME.yaml
-mv -- /tmp/todolistapp-springboot-$CURRENTTIME.yaml todolistapp-springboot-$CURRENTTIME.yaml
+sed -i "s|%IMAGE_TAG%|${IMAGE_TAG}|g" todolistapp-springboot-$CURRENTTIME.yaml
+sed -i "s|%TODO_PDB_NAME%|${TODO_PDB_NAME}|g" todolistapp-springboot-$CURRENTTIME.yaml
+sed -i "s|%OCI_REGION%|${OCI_REGION}|g" todolistapp-springboot-$CURRENTTIME.yaml
+sed -i "s|%UI_USERNAME%|${UI_USERNAME}|g" todolistapp-springboot-$CURRENTTIME.yaml
 if [ -z "$1" ]; then
     kubectl apply -f $SCRIPT_DIR/todolistapp-springboot-$CURRENTTIME.yaml -n mtdrworkshop
 else
