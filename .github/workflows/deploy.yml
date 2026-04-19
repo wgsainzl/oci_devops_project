@@ -188,8 +188,8 @@ jobs:
         run: |
           kubectl create secret docker-registry ocir-secret \
             --docker-server=${{ secrets.OCI_REGION }}.ocir.io \
-            --docker-username=${{ secrets.DOCKER_USERNAME }} \
-            --docker-password=${{ secrets.DOCKER_PASSWORD }} \
+            --docker-username="${{ secrets.DOCKER_USERNAME }}" \
+            --docker-password="${{ secrets.DOCKER_PASSWORD }}" \
             --namespace mtdrworkshop \
             --dry-run=client -o yaml | kubectl apply -f -
 
