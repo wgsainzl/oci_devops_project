@@ -49,11 +49,11 @@ export CURRENTTIME=$( date '+%F_%H:%M:%S' )
 echo CURRENTTIME is $CURRENTTIME  ...this will be appended to generated deployment yaml
 cp src/main/resources/todolistapp-springboot.yaml todolistapp-springboot-$CURRENTTIME.yaml
 
-sed -i "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}|g" todolistapp-springboot-$CURRENTTIME.yaml
-sed -i "s|%IMAGE_TAG%|${IMAGE_TAG}|g" todolistapp-springboot-$CURRENTTIME.yaml
-sed -i "s|%TODO_PDB_NAME%|${TODO_PDB_NAME}|g" todolistapp-springboot-$CURRENTTIME.yaml
-sed -i "s|%OCI_REGION%|${OCI_REGION}|g" todolistapp-springboot-$CURRENTTIME.yaml
-sed -i "s|%UI_USERNAME%|${UI_USERNAME}|g" todolistapp-springboot-$CURRENTTIME.yaml
+sed -i "s|\${DOCKER_REGISTRY}|${DOCKER_REGISTRY}|g" todolistapp-springboot-$CURRENTTIME.yaml
+sed -i "s|\${IMAGE_TAG}|${IMAGE_TAG}|g" todolistapp-springboot-$CURRENTTIME.yaml
+sed -i "s|\${TODO_PDB_NAME}|${TODO_PDB_NAME}|g" todolistapp-springboot-$CURRENTTIME.yaml
+sed -i "s|\${OCI_REGION}|${OCI_REGION}|g" todolistapp-springboot-$CURRENTTIME.yaml
+sed -i "s|\${UI_USERNAME}|${UI_USERNAME}|g" todolistapp-springboot-$CURRENTTIME.yaml
 if [ -z "$1" ]; then
     kubectl apply -f $SCRIPT_DIR/todolistapp-springboot-$CURRENTTIME.yaml -n mtdrworkshop
 else
