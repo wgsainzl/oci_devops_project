@@ -10,7 +10,7 @@ set -e
 while ! state_done OBJECT_STORE_BUCKET; do
   echo "Checking object storage bucket"
   OBJECT_STORE_BUCKET_NAME="$(state_get RUN_NAME)-$(state_get MTDR_KEY)"
-  if oci os bucket get --compartment-id "$(state_get COMPARTMENT_OCID)" --name "$OBJECT_STORE_BUCKET_NAME" >/dev/null 2>&1; then
+  if oci os bucket get --name "$OBJECT_STORE_BUCKET_NAME" >/dev/null 2>&1; then
     state_set_done OBJECT_STORE_BUCKET
     echo "finished checking object storage bucket"
   elif oci os bucket create --compartment-id "$(state_get COMPARTMENT_OCID)" --name "$OBJECT_STORE_BUCKET_NAME" >/dev/null; then
