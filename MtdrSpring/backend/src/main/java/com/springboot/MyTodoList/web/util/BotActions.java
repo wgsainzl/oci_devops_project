@@ -1,8 +1,9 @@
 package com.springboot.MyTodoList.web.util;
 
-import com.springboot.MyTodoList.web.features.todoitem.ToDoItem;
+import com.springboot.MyTodoList.features.task.Task;
+import com.springboot.MyTodoList.features.task.TaskStatus;
 import com.springboot.MyTodoList.web.features.deepseek.DeepSeekService;
-import com.springboot.MyTodoList.web.features.todoitem.ToDoItemService;
+import com.springboot.MyTodoList.features.task.TaskService;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;

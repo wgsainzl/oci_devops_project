@@ -1,8 +1,8 @@
 package com.springboot.MyTodoList.features.task;
 
-import com.springboot.MyTodoList.config.BotProps;
-import com.springboot.MyTodoList.features.deepseek.DeepSeekService;
-import com.springboot.MyTodoList.util.BotActions;
+import com.springboot.MyTodoList.web.config.BotProps;
+import com.springboot.MyTodoList.web.features.deepseek.DeepSeekService;
+import com.springboot.MyTodoList.web.util.BotActions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
