@@ -25,7 +25,7 @@ import type {
 // ==========================================
 // 1. AXIOS CONFIGURATION
 // ==========================================
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
 const api = axios.create({
   baseURL: BASE_URL, 
@@ -210,8 +210,6 @@ export const timelineAPI = {
   ): Promise<AxiosResponse<TimelineTask[]>> =>
     api.get("/timeline", { params: { teamId, ...params } }),
 };
-// Define your base URL
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
 // ==========================================
 // TYPE DEFINITIONS (Inlined)
