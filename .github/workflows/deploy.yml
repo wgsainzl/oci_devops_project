@@ -139,6 +139,7 @@ jobs:
             --from-literal=deepseek-api-key="${{ secrets.DEEPSEEK_API_KEY }}" \
             --from-literal=telegram-key="${{ secrets.TELEGRAM_KEY }}" \
             --from-literal=telegram-bot-name="${{ secrets.TELEGRAM_BOT_NAME }}" \
+            --from-literal=jwt-secret-key="${{ secrets.JWT_SECRET_KEY }}" \
             --namespace mtdrworkshop \
             --dry-run=client -o yaml | kubectl apply -f -
 

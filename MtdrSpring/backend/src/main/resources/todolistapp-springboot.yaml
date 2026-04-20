@@ -53,6 +53,11 @@ spec:
                 secretKeyRef:
                   name: dbuser
                   key: dbpassword
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: jwt-secret-key
             - name: DEEPSEEK_API_KEY
               valueFrom:
                 secretKeyRef:
