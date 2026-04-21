@@ -141,6 +141,12 @@ jobs:
             --from-literal=telegram-bot-name="${{ secrets.TELEGRAM_BOT_NAME }}" \
             --from-literal=jwt-secret-key="${{ secrets.JWT_SECRET_KEY }}" \
             --from-literal=oci-provider-url="${{ secrets.OCI_PROVIDER_URL }}" \
+            --from-literal=oci-client-id="${{ secrets.OCI_CLIENT_ID }}" \
+            --from-literal=oci-client-secret="${{ secrets.OCI_CLIENT_SECRET }}" \
+            --from-literal=oci-group-id="${{ secrets.OCI_GROUP_ID }}" \
+            --from-literal=tenancy-email="${{ secrets.TENANCY_EMAIL }}" \
+            --from-literal=tenancy-ocid="${{ secrets.TENANCY_OCID }}" \
+            --from-literal=tenancy-name="${{ secrets.TENANCY_NAME }}" \
             --namespace mtdrworkshop \
             --dry-run=client -o yaml | kubectl apply -f -
 

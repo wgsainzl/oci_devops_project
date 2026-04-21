@@ -78,6 +78,36 @@ spec:
                 secretKeyRef:
                   name: app-secrets
                   key: oci-provider-url
+            - name: OCI_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: oci-client-id
+            - name: OCI_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: oci-client-secret
+            - name: OCI_GROUP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: oci-group-id
+            - name: TENANCY_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: tenancy-email
+            - name: TENANCY_OCID
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: tenancy-ocid
+            - name: TENANCY_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+      key: tenancy-name
           volumeMounts:
             - name: creds
               mountPath: /mtdrworkshop/creds
