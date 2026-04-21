@@ -73,6 +73,11 @@ spec:
                 secretKeyRef:
                   name: app-secrets
                   key: telegram-bot-name
+            - name: OCI_PROVIDER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: oci-provider-url
           volumeMounts:
             - name: creds
               mountPath: /mtdrworkshop/creds
