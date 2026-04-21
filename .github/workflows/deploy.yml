@@ -140,6 +140,7 @@ jobs:
             --from-literal=telegram-key="${{ secrets.TELEGRAM_KEY }}" \
             --from-literal=telegram-bot-name="${{ secrets.TELEGRAM_BOT_NAME }}" \
             --from-literal=jwt-secret-key="${{ secrets.JWT_SECRET_KEY }}" \
+            --from-literal=oci-provider-url="${{ secrets.OCI_PROVIDER_URL }}" \
             --namespace mtdrworkshop \
             --dry-run=client -o yaml | kubectl apply -f -
 
