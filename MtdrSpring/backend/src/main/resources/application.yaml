@@ -1,7 +1,7 @@
 #Application properties (BASE)
 spring:
   jpa:
-    database-platform: org.hibernate.community.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: update
     show-sql: true
