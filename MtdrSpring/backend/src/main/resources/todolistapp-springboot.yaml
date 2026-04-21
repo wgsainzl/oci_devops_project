@@ -107,7 +107,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: app-secrets
-      key: tenancy-name
+                  key: tenancy-name
           volumeMounts:
             - name: creds
               mountPath: /mtdrworkshop/creds
