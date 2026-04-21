@@ -36,7 +36,7 @@ spec:
           image: ${DOCKER_REGISTRY}/todolistapp-springboot:${IMAGE_TAG}
           imagePullPolicy: Always
           env:
-            - name: DB_USER
+            - name: db_user
               value: "TODOUSER"
             - name: TODO_PDB_NAME
               value: "${TODO_PDB_NAME}"
@@ -48,7 +48,7 @@ spec:
               value: "oracle.jdbc.OracleDriver"
             - name: OCI_REGION
               value: "${OCI_REGION}"
-            - name: DB_PASSWORD
+            - name: dbpassword
               valueFrom:
                 secretKeyRef:
                   name: dbuser
