@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.springboot.MyTodoList.features.tasklog.TaskLog;
 import com.springboot.MyTodoList.features.tasklog.TaskLogRepository;
-import com.springboot.MyTodoList.features.user.UserRepository;
-import com.springboot.MyTodoList.features.user.User;
+import com.springboot.MyTodoList.web.features.user.UserRepository;
+import com.springboot.MyTodoList.web.features.user.User;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -80,7 +80,7 @@ public class TaskService {
         }
     }
 
-    public Task updateTaskStatus(int id, TaskStatus newStatus, Integer currentUserId) {
+    public Task updateTaskStatus(int id, TaskStatus newStatus, Long currentUserId) {
         Optional<Task> existingData = taskRepository.findById(id);
         
         if (existingData.isPresent()) {

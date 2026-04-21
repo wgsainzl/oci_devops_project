@@ -62,9 +62,9 @@ public class TaskController {
         
         // 1. Read the userId from the frontend payload
         String userIdString = requestBody.get("userId");
-        Integer currentUserId = null;
+        Long currentUserId = null;
         if (userIdString != null) {
-            currentUserId = Integer.parseInt(userIdString);
+            currentUserId = Long.parseLong(userIdString);
         }
 
         try {

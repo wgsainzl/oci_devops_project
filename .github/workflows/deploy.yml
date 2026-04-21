@@ -41,7 +41,9 @@ jobs:
 
       - name: Build Spring Boot JAR (includes frontend)
         working-directory: MtdrSpring/backend
-        run: ./mvnw clean package -DskipTests
+        run: |
+          chmod +x mvnw
+          ./mvnw clean package -DskipTests
 
       - name: Log in to OCIR
         uses: docker/login-action@v3
@@ -137,6 +139,14 @@ jobs:
             --from-literal=deepseek-api-key="${{ secrets.DEEPSEEK_API_KEY }}" \
             --from-literal=telegram-key="${{ secrets.TELEGRAM_KEY }}" \
             --from-literal=telegram-bot-name="${{ secrets.TELEGRAM_BOT_NAME }}" \
+            --from-literal=jwt-secret-key="${{ secrets.JWT_SECRET_KEY }}" \
+            --from-literal=oci-provider-url="${{ secrets.OCI_PROVIDER_URL }}" \
+            --from-literal=oci-client-id="${{ secrets.OCI_CLIENT_ID }}" \
+            --from-literal=oci-client-secret="${{ secrets.OCI_CLIENT_SECRET }}" \
+            --from-literal=oci-group-id="${{ secrets.OCI_GROUP_ID }}" \
+            --from-literal=tenancy-email="${{ secrets.TENANCY_EMAIL }}" \
+            --from-literal=tenancy-ocid="${{ secrets.TENANCY_OCID }}" \
+            --from-literal=tenancy-name="${{ secrets.TENANCY_NAME }}" \
             --namespace mtdrworkshop \
             --dry-run=client -o yaml | kubectl apply -f -
 
@@ -186,8 +196,8 @@ jobs:
         run: |
           kubectl create secret docker-registry ocir-secret \
             --docker-server=${{ secrets.OCI_REGION }}.ocir.io \
-            --docker-username=${{ secrets.DOCKER_USERNAME }} \
-            --docker-password=${{ secrets.DOCKER_PASSWORD }} \
+            --docker-username="${{ secrets.DOCKER_USERNAME }}" \
+            --docker-password="${{ secrets.DOCKER_PASSWORD }}" \
             --namespace mtdrworkshop \
             --dry-run=client -o yaml | kubectl apply -f -
 
@@ -252,9 +262,9 @@ jobs:
           # Substitute the CICD_DB_PASSWORD variable into the setup script
           envsubst < MtdrSpring/scripts/setup-cicd-schema.sql > /tmp/setup-cicd-schema.sql
 
-          sql -cloudconfig /tmp/wallet.zip \
-            ADMIN/"${ATP_ADMIN_PASSWORD}"@"${TODO_PDB_NAME}_tp" \
-            @/tmp/setup-cicd-schema.sql
+          export TNS_ADMIN=/tmp/wallet
+          echo 'ADMIN/"'"${ATP_ADMIN_PASSWORD}"'"@'"${TODO_PDB_NAME}_tp" > /tmp/login.txt
+          sql /nolog @/tmp/login.txt @/tmp/setup-cicd-schema.sql
 
       - name: Log deployment result
         env:
@@ -267,6 +277,6 @@ jobs:
         run: |
           envsubst < MtdrSpring/scripts/log-deploy.sql > /tmp/log-deploy.sql
 
-          sql -cloudconfig /tmp/wallet.zip \
-            ADMIN/"${ATP_ADMIN_PASSWORD}"@"${TODO_PDB_NAME}_tp" \
-            @/tmp/log-deploy.sql
+          export TNS_ADMIN=/tmp/wallet
+          echo 'ADMIN/"'"${ATP_ADMIN_PASSWORD}"'"@'"${TODO_PDB_NAME}_tp" > /tmp/login.txt
+          sql /nolog @/tmp/login.txt @/tmp/log-deploy.sql

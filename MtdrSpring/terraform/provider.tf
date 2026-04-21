@@ -8,9 +8,5 @@ terraform {
 }
 
 provider "oci" {
-  region           = var.ociRegionIdentifier
-  tenancy_ocid     = var.ociTenancyOcid
-  user_ocid        = var.ociUserOcid
-  fingerprint      = var.ociFingerprint
-  private_key_path = var.ociPrivateKeyPath
+  config_file_profile = "MAURICK"
 }

@@ -33,26 +33,31 @@ spec:
     spec:
       containers:
         - name: todolistapp-springboot
-          image: %DOCKER_REGISTRY%/todolistapp-springboot:%IMAGE_TAG%
+          image: ${DOCKER_REGISTRY}/todolistapp-springboot:${IMAGE_TAG}
           imagePullPolicy: Always
           env:
             - name: db_user
               value: "TODOUSER"
             - name: TODO_PDB_NAME
-              value: "%TODO_PDB_NAME%"
-            - name: db_url
-              value: "jdbc:oracle:thin:@%TODO_PDB_NAME%_tp?TNS_ADMIN=/mtdrworkshop/creds"
+              value: "${TODO_PDB_NAME}"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:oracle:thin:@${TODO_PDB_NAME}_tp?TNS_ADMIN=/mtdrworkshop/creds"
             - name: todo.table.name
               value: "todoitem"
             - name: driver_class_name
               value: "oracle.jdbc.OracleDriver"
             - name: OCI_REGION
-              value: "%OCI_REGION%"
+              value: "${OCI_REGION}"
             - name: dbpassword
               valueFrom:
                 secretKeyRef:
                   name: dbuser
                   key: dbpassword
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: jwt-secret-key
             - name: DEEPSEEK_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -68,6 +73,41 @@ spec:
                 secretKeyRef:
                   name: app-secrets
                   key: telegram-bot-name
+            - name: OCI_PROVIDER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: oci-provider-url
+            - name: OCI_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: oci-client-id
+            - name: OCI_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: oci-client-secret
+            - name: OCI_GROUP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: oci-group-id
+            - name: TENANCY_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: tenancy-email
+            - name: TENANCY_OCID
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: tenancy-ocid
+            - name: TENANCY_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: tenancy-name
           volumeMounts:
             - name: creds
               mountPath: /mtdrworkshop/creds
