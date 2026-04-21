@@ -1,0 +1,52 @@
+name: Continuous Integration
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - deployment-ready
+  pull_request:
+    branches:
+      - main
+
+env:
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # JOB 1: Build the Docker image and run tests
+  # ---------------------------------------------------------------------------
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Build and Test Spring Boot JAR (includes frontend)
+        working-directory: MtdrSpring/backend
+        run: |
+          chmod +x mvnw
+          ./mvnw clean package
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: MtdrSpring/backend
+          file: MtdrSpring/backend/Dockerfile
+          push: false
+          tags: todolistapp-springboot:${{ env.IMAGE_TAG }}
