@@ -1,7 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import HomePage from './HomePage'; // Ajusta la ruta si HomePage no está en la misma carpeta
+import HomePage from './HomePage';
 import { useAPI } from '../useAPI';
 import { mockPendingActions } from '../mocks/fixtures';
 
@@ -12,7 +12,7 @@ class ResizeObserverMock {
 }
 vi.stubGlobal('ResizeObserver', ResizeObserverMock);
 
-// 1. Mock de la API del Dashboard
+// Mock de la API del Dashboard
 vi.mock('../useAPI', () => ({
   useAPI: {
     dashboard: {
@@ -26,7 +26,7 @@ vi.mock('../useAPI', () => ({
   }
 }));
 
-// 2. NUEVO: Mock del AuthContext (Tema: Mock Modules - Semana 8)
+// Mock del AuthContext
 // Así evitamos que intente cargar authAPI y la lógica real de inicio de sesión
 vi.mock('../hooks/AuthContext', () => ({
   useAuth: () => ({
@@ -46,10 +46,10 @@ describe("REQ: Task List Display", () => {
       </MemoryRouter>
     );
 
-    // 1. Verificamos "Task Name" (El nombre de la tarea está en el documento)
+    // Verificamos "Task Name"
     expect(await screen.findByText(/API Gateway Implementation/i)).toBeInTheDocument();
     
-    // 2. Verificamos "Developer Name" (El responsable asignado a la tarea)
+    // Verificamos "Developer Name"
     expect(screen.getByText(/Mau & 1 other\(s\)/i)).toBeInTheDocument();
   });
 });
