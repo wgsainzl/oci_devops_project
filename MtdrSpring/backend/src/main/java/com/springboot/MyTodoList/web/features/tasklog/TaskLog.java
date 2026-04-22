@@ -1,7 +1,7 @@
-package com.springboot.MyTodoList.features.tasklog;
+package com.springboot.MyTodoList.web.features.tasklog;
 
 import com.fasterxml.jackson.annotation.JsonIgnore; // 1. ADD THIS IMPORT
-import com.springboot.MyTodoList.features.task.Task;
+import com.springboot.MyTodoList.web.features.task.Task;
 import com.springboot.MyTodoList.web.features.user.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;

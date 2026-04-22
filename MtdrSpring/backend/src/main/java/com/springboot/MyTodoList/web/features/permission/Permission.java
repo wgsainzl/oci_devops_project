@@ -24,7 +24,7 @@ public class Permission {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "resource_name")
+    @Column(name = "target_entity")
     private String resource; // e.g., "USER", "ROLE", "REPORT"
 
     @Column(name = "action")
@@ -36,5 +36,6 @@ public class Permission {
         this.resource = resource;
         this.action = action;
     }
+    
 }
 

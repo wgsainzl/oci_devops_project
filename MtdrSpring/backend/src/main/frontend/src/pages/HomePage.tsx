@@ -42,7 +42,7 @@ interface DashboardData {
   costPerDev: CostEntry[];
   hoursPerDev: HoursEntry[];
   sprintSummaries: SprintSummary[];
-  availableSprints: string[]; // NEW: to pass dynamic sprints to the chart
+  availableSprints: string[];
 }
 
 type ChartKey =
@@ -51,24 +51,6 @@ type ChartKey =
   | "costPerDeveloper"
   | "sprintTotals"
   | "hoursPerDeveloper";
-
-/*const VISIBLE_CHARTS_BY_ROLE: Record<UserRole, ChartKey[]> = {
-  ADMIN: [
-    "taskStatus",
-    "sprintVelocity",
-    "costPerDeveloper",
-    "sprintTotals",
-    "hoursPerDeveloper",
-  ],
-  MANAGER: [
-    "taskStatus",
-    "sprintVelocity",
-    "costPerDeveloper",
-    "sprintTotals",
-    "hoursPerDeveloper",
-  ],
-  DEVELOPER: ["taskStatus", "sprintVelocity"],
-};*/
 
 // Start with placeholders while loading or if it fails
 const PLACEHOLDER: DashboardData = {
@@ -97,10 +79,7 @@ const PLACEHOLDER: DashboardData = {
 export default function HomePage(): JSX.Element {
   let { user, isManager } = useAuth();
   isManager = true;
-  //const role: UserRole = user?.role ?? "DEVELOPER";
-  //const visibleCharts = VISIBLE_CHARTS_BY_ROLE[role];
-  //const _canSeeChart = (chart: ChartKey): boolean =>
-  //  visibleCharts.includes(chart);
+
   const canSeeChart = (chart: ChartKey) => {
     if (chart) return true;
   };
@@ -120,9 +99,9 @@ export default function HomePage(): JSX.Element {
         const pendingActions: PendingAction[] = tasks
           .filter((t) => t.status === "BLOCKED" || t.status === "IN_REVIEW")
           .map((t) => ({
-            id: `Task-${t.taskId}`,
+            id: `Task-${t.id}`,
             title: t.title,
-            responsible: t.responsible?.name || "Unassigned",
+            responsible: t.responsible || "Unassigned",
             message:
               t.status === "BLOCKED" ? "Task is blocked" : "Pending Review",
             action: t.status === "BLOCKED" ? "Resolve Blocker" : "Review Task",
@@ -149,7 +128,7 @@ export default function HomePage(): JSX.Element {
         const activeTasks = tasks.filter((t) => t.status !== "DONE");
         const workloadMap: Record<string, number> = {};
         activeTasks.forEach((t) => {
-          const name = t.responsible?.name || "Unassigned";
+          const name = t.responsible || "Unassigned";
           workloadMap[name] = (workloadMap[name] || 0) + 1;
         });
         const totalActive = activeTasks.length || 1;
@@ -163,8 +142,8 @@ export default function HomePage(): JSX.Element {
         // 4. Compute Task Status by Developer
         const statusMap: Record<string, TaskStatusEntry> = {};
         tasks.forEach((t) => {
-          const userId = t.responsible?.userId?.toString() || "unassigned";
-          const developer = t.responsible?.name || "Unassigned";
+          const userId = t.responsible || "unassigned"; // Using name as ID fallback
+          const developer = t.responsible || "Unassigned";
 
           if (!statusMap[userId]) {
             statusMap[userId] = {
@@ -211,7 +190,7 @@ export default function HomePage(): JSX.Element {
         const uniqueSprints = new Set<string>();
 
         tasks.forEach((t) => {
-          const devName = t.responsible?.name?.split(" ")[0] || "Unassigned";
+          const devName = t.responsible?.split(" ")[0] || "Unassigned";
           const sprintName =
             t.sprint?.sprintName || `Sprint ${t.sprint?.sprintId || "?"}`;
 

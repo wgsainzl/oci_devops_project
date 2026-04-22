@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.features.infrastructure;
+package com.springboot.MyTodoList.web.features.infrastructure;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

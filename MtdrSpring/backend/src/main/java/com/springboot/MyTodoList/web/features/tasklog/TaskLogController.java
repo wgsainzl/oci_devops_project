@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.features.tasklog;
+package com.springboot.MyTodoList.web.features.tasklog;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
