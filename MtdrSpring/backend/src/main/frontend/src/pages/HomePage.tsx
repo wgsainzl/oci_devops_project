@@ -31,6 +31,7 @@ import {
   SPRINT_STATS,
   SPRINT_COST_PER_DEVELOPER,
   SPRINT_SUMMARIES,
+  SPRINT_VELOCITY
 } from '../mocks/sprintData'
 
 // dashboard data shape
@@ -79,12 +80,7 @@ const PLACEHOLDER: DashboardData = {
     { name: 'Mauricio Villalobos...', pct: 15 },
   ],
   taskStatus: SPRINT_TASK_STATUS,
-  velocity: [
-    { iteration: 1, estimated: 140, actual: 80  },
-    { iteration: 2, estimated: 120, actual: 115 },
-    { iteration: 3, estimated: 130, actual: 125 },
-    { iteration: 4, estimated: 120, actual: 105 },
-  ],
+  velocity: SPRINT_VELOCITY,
   // new KPI data 
   costPerDev:      SPRINT_COST_PER_DEVELOPER,
   hoursPerDev:     SPRINT_HOURS,

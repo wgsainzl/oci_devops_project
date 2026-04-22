@@ -1,5 +1,5 @@
 // mock fixture data for development testing
-import { SPRINT_STATS, SPRINT_TASK_STATUS, SPRINT_TIMELINE_TASKS } from './sprintData'
+import { SPRINT_STATS, SPRINT_TASK_STATUS, SPRINT_TIMELINE_TASKS, SPRINT_VELOCITY } from './sprintData'
 
 export const mockUser = {
   id: 'user-mock-1',
@@ -96,12 +96,7 @@ export const mockWorkload = [
 
 export const mockTaskStatus = SPRINT_TASK_STATUS
 
-export const mockSprintVelocity = [
-  { iteration: 1, estimated: 140, actual: 80 },
-  { iteration: 2, estimated: 160, actual: 145 },
-  { iteration: 3, estimated: 155, actual: 152 },
-  { iteration: 4, estimated: 170, actual: 0 },
-]
+export const mockSprintVelocity = SPRINT_VELOCITY
 
 export const mockTeams = [
   { id: 'team-1', name: 'Backend', memberCount: 5 },
