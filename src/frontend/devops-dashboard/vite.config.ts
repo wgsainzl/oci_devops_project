@@ -8,6 +8,11 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: "./src/setupTests.ts",
+    tags: [
+      { name: "frontend", description: "Tests written for frontend" },
+      { name: "backend", description: "Tests written for backend" }
+    ],
+    
   },
   server: {
     port: 3000,
