@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.features.sprint;
+package com.springboot.MyTodoList.web.features.sprint;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

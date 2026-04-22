@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.features.sprint;
+package com.springboot.MyTodoList.web.features.sprint;
 
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;

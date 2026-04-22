@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.features.task;
+package com.springboot.MyTodoList.web.features.task;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

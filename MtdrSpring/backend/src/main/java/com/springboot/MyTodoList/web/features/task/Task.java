@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.features.task;
+package com.springboot.MyTodoList.web.features.task;
 
 
 import jakarta.persistence.*;
@@ -24,8 +24,8 @@ public class Task {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description", columnDefinition = "CLOB")
-    private String description;
+    @Column(name = "description", length = 500)
+    private String description; 
 
     @Column(name = "start_date")
     private OffsetDateTime startDate;
@@ -78,7 +78,7 @@ public class Task {
     // --- RELATIONSHIPS ---
     @JsonIgnore
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    private java.util.List<com.springboot.MyTodoList.features.tasklog.TaskLog> logs;
+    private java.util.List<com.springboot.MyTodoList.web.features.tasklog.TaskLog> logs;
     
     @JsonIgnore
     @ManyToMany
@@ -94,7 +94,7 @@ public class Task {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sprint_id")
-    private com.springboot.MyTodoList.features.sprint.Sprint sprint;
+    private com.springboot.MyTodoList.web.features.sprint.Sprint sprint;
 
     public Task(){
 
@@ -187,10 +187,10 @@ public class Task {
         this.priority = priority;
     }
 
-    public com.springboot.MyTodoList.features.sprint.Sprint getSprint() {
+    public com.springboot.MyTodoList.web.features.sprint.Sprint getSprint() {
         return sprint;
     }
-    public void setSprint(com.springboot.MyTodoList.features.sprint.Sprint sprint) {
+    public void setSprint(com.springboot.MyTodoList.web.features.sprint.Sprint sprint) {
         this.sprint = sprint;
     }
 }

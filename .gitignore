@@ -37,6 +37,8 @@ frontend/coverage
 frontend/build
 
 # Env files (GLOBAL)
+# misc
+.DS_Store
 .env.development.local
 .env.test.local
 .env.production.local
@@ -73,3 +75,4 @@ wallet/
 *.p12
 *.jks
 config.bat
+node_modules
