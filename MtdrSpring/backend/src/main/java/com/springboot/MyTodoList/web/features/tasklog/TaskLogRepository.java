@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.features.tasklog;
+package com.springboot.MyTodoList.web.features.tasklog;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Pageable;

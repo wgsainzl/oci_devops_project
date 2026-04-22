@@ -28,7 +28,7 @@ import type {
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
 const api = axios.create({
-  baseURL: BASE_URL, 
+  baseURL: BASE_URL,
   timeout: 15_000,
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
@@ -210,7 +210,6 @@ export const timelineAPI = {
   ): Promise<AxiosResponse<TimelineTask[]>> =>
     api.get("/timeline", { params: { teamId, ...params } }),
 };
-
 // ==========================================
 // TYPE DEFINITIONS (Inlined)
 // ==========================================
@@ -228,27 +227,26 @@ export interface Sprint {
 }
 
 export interface Task {
-  taskId: number;
+  id: string; // Changed from taskId: number
   title: string;
   description: string;
-  startDate: string;
+  startDate: string | null;
   dueDate: string;
   createdAt: string;
-  updatedAt: string;
-  completedAt: string;
-  estimatedHours: number;
-  actualHours: number;
+  updatedAt?: string; // Optional
+  completedAt?: string; // Optional
+  estimatedHours?: number; // Optional
+  actualHours?: number; // Optional
   status: "TODO" | "IN_PROGRESS" | "BLOCKED" | "IN_REVIEW" | "DONE";
-  creator: User;
-  responsible: User;
-  manager: User;
+  creator?: User; // Optional
+  responsible: string; // Changed from User object to string
+  manager?: User; // Optional
   priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-  sprint: Sprint;
+  sprint?: Sprint; // Optional
 }
 
 // Using Partial<Task> so you can pass only the fields you need when creating/updating
 export type NewTaskPayload = Partial<Task>;
-
 // ==========================================
 // TASKS API (Native Fetch)
 // ==========================================

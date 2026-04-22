@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.features.sprint;
+package com.springboot.MyTodoList.web.features.sprint;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ public class SprintController {
     private SprintService sprintService;
 
     @Autowired
-    private com.springboot.MyTodoList.features.task.TaskService taskService;
+    private com.springboot.MyTodoList.web.features.task.TaskService taskService;
 
     @GetMapping
     public ResponseEntity<List<Sprint>> getAllSprints() {
@@ -56,7 +56,7 @@ public class SprintController {
 
 
     @GetMapping("/{id}/tasks")
-    public ResponseEntity<List<com.springboot.MyTodoList.features.task.Task>> getTasksForSprint(@PathVariable int id) {
+    public ResponseEntity<List<com.springboot.MyTodoList.web.features.task.Task>> getTasksForSprint(@PathVariable int id) {
         return ResponseEntity.ok(taskService.getTasksBySprintId(id));
     }
 }
