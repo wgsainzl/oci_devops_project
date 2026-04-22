@@ -13,7 +13,7 @@ export const SPRINT_VELOCITY: SprintVelocityEntry[] = [
 // ── SPRINT 1 (Current Active Sprint) ──
 export const SPRINT_TASK_STATUS: TaskStatusEntry[] = [
   { developer: 'Guillermo',   userId: 'user-mock-1', todo: 0, inProgress: 0, inReview: 0, blocked: 0, done: 4 },
-  { developer: 'Sebastián',   userId: 'user-mock-2', todo: 0, inProgress: 1, inReview: 0, blocked: 0, done: 4 },
+  { developer: 'Sebastian',   userId: 'user-mock-2', todo: 0, inProgress: 1, inReview: 0, blocked: 0, done: 4 },
   { developer: 'Mauricio',    userId: 'user-mock-3', todo: 0, inProgress: 0, inReview: 0, blocked: 0, done: 3 },
   { developer: 'Juan Manuel', userId: 'user-mock-4', todo: 0, inProgress: 3, inReview: 0, blocked: 0, done: 2 },
   { developer: 'Diego',       userId: 'user-mock-5', todo: 0, inProgress: 1, inReview: 0, blocked: 0, done: 1 },
@@ -21,7 +21,7 @@ export const SPRINT_TASK_STATUS: TaskStatusEntry[] = [
 
 export const SPRINT_HOURS: HoursEntry[] = [
   { developer: 'Guillermo',   estimated: 7.5,  actual: 5.0 },
-  { developer: 'Sebastián',   estimated: 14.5, actual: 12.5 },
+  { developer: 'Sebastian',   estimated: 14.5, actual: 12.5 },
   { developer: 'Mauricio',    estimated: 5.5,  actual: 6.25 },
   { developer: 'Juan Manuel', estimated: 13.5, actual: 22.8 }, 
   { developer: 'Diego',       estimated: 8.5,  actual: 6.5 },
@@ -30,7 +30,7 @@ export const SPRINT_HOURS: HoursEntry[] = [
 // ── SPRINT 0 (Historical Data) ──
 const SPRINT_0_HOURS: Record<string, number> = {
   'Guillermo': 7,
-  'Sebastián': 5,
+  'Sebastian': 5,
   'Mauricio': 6,
   'Juan Manuel': 5,
   'Diego': 7,
