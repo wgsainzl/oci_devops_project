@@ -17,7 +17,7 @@ public class Permission {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "resource")
+    @Column(name = "target_entity")
     private String resource;
 
     @Column(name = "action")
