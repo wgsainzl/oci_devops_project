@@ -1,6 +1,14 @@
 **/node_modules/**
 **/build/**
 **/target/**
+**/wallet/**
 .env
 *.iml
 .idea/
+
+.db_secret
+# Local environment-specific state values
+state/MTDR_DB_OCID
+state/DB_OCID
+!state/MTDR_DB_OCID.example
+!state/DB_OCID.example

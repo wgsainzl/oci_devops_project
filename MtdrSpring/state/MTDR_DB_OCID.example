@@ -1,0 +1,2 @@
+# Example only: put your environment-specific Autonomous DB OCID in state/MTDR_DB_OCID locally.
+ocid1.autonomousdatabase.oc1..<your_mtdr_db_ocid>

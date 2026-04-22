@@ -56,25 +56,25 @@ public class Task {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
-    private com.springboot.MyTodoList.features.user.User creator;
+    private com.springboot.MyTodoList.web.features.user.User creator;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "responsible_id")
-    private com.springboot.MyTodoList.features.user.User responsible;
+    private com.springboot.MyTodoList.web.features.user.User responsible;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id")
-    private com.springboot.MyTodoList.features.user.User manager;
+    private com.springboot.MyTodoList.web.features.user.User manager;
 
     // Getters and Setters for the new fields
-    public com.springboot.MyTodoList.features.user.User getCreator() { return creator; }
-    public void setCreator(com.springboot.MyTodoList.features.user.User creator) { this.creator = creator; }
+    public com.springboot.MyTodoList.web.features.user.User getCreator() { return creator; }
+    public void setCreator(com.springboot.MyTodoList.web.features.user.User creator) { this.creator = creator; }
     
-    public com.springboot.MyTodoList.features.user.User getResponsible() { return responsible; }
-    public void setResponsible(com.springboot.MyTodoList.features.user.User responsible) { this.responsible = responsible; }
+    public com.springboot.MyTodoList.web.features.user.User getResponsible() { return responsible; }
+    public void setResponsible(com.springboot.MyTodoList.web.features.user.User responsible) { this.responsible = responsible; }
     
-    public com.springboot.MyTodoList.features.user.User getManager() { return manager; }
-    public void setManager(com.springboot.MyTodoList.features.user.User manager) { this.manager = manager; }
+    public com.springboot.MyTodoList.web.features.user.User getManager() { return manager; }
+    public void setManager(com.springboot.MyTodoList.web.features.user.User manager) { this.manager = manager; }
     // --- RELATIONSHIPS ---
     @JsonIgnore
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
