@@ -1,9 +1,11 @@
-package com.springboot.MyTodoList.web.util;
+package com.springboot.telegrambot.util;
 
-import com.springboot.MyTodoList.web.features.deepseek.DeepSeekService;
-import com.springboot.MyTodoList.web.features.task.Task;
-import com.springboot.MyTodoList.web.features.task.TaskService;
-import com.springboot.MyTodoList.web.features.task.TaskStatus;
+import com.springboot.telegrambot.deepseek.DeepSeekService;
+import com.springboot.telegrambot.dto.TaskDTO;
+import com.springboot.telegrambot.dto.TaskStatus;
+import com.springboot.telegrambot.client.BackendServiceClient;
+import com.springboot.telegrambot.deepseek.DeepSeekService;
+
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -24,20 +26,20 @@ public class BotActions {
     TelegramClient telegramClient;
     boolean exit;
 
-    TaskService taskService; // Replaced ToDoItemService
+    BackendServiceClient backendServiceClient; // Replaced ToDoItemService
     DeepSeekService deepSeekService;
 
-    public BotActions(TelegramClient tc, TaskService ts, DeepSeekService ds) {
+    public BotActions(TelegramClient tc, BackendServiceClient ts, DeepSeekService ds) {
         telegramClient = tc;
-        taskService = ts;
+        backendServiceClient = ts;
         deepSeekService = ds;
         exit = false;
     }
 
     public void setRequestText(String cmd) { requestText = cmd; }
     public void setChatId(long chId) { chatId = chId; }
-    public void setTaskService(TaskService tsvc) { taskService = tsvc; }
-    public TaskService getTaskService() { return taskService; }
+    public void setBackendServiceClient(BackendServiceClient tsvc) { backendServiceClient = tsvc; }
+    public BackendServiceClient getBackendServiceClient() { return backendServiceClient; }
 
     public void fnStart() {
         if (!(requestText.equals(BotCommands.START_COMMAND.getCommand()) || requestText.equals(BotLabels.SHOW_MAIN_SCREEN.getLabel())) || exit) 
@@ -45,8 +47,8 @@ public class BotActions {
 
         BotHelper.sendMessageToTelegram(chatId, BotMessages.HELLO_MYTODO_BOT.getMessage(), telegramClient,  ReplyKeyboardMarkup
             .builder()
-            .keyboardRow(new KeyboardRow(BotLabels.LIST_ALL_ITEMS.getLabel(), BotLabels.ADD_NEW_ITEM.getLabel()))
-            .keyboardRow(new KeyboardRow(BotLabels.SHOW_MAIN_SCREEN.getLabel(), BotLabels.HIDE_MAIN_SCREEN.getLabel()))
+            .keyboardRow(new KeyboardRow(java.util.List.of(new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.LIST_ALL_ITEMS.getLabel()), new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.ADD_NEW_ITEM.getLabel()))))
+            .keyboardRow(new KeyboardRow(java.util.List.of(new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.SHOW_MAIN_SCREEN.getLabel()), new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.HIDE_MAIN_SCREEN.getLabel()))))
             .build()
         );
         exit = true;
@@ -58,7 +60,7 @@ public class BotActions {
             
         Integer id = Integer.valueOf(requestText.substring(0, requestText.indexOf(BotLabels.DASH.getLabel())));
         try {
-            taskService.updateTaskStatus(id, TaskStatus.DONE, null); // passing null for currentUserId for now
+            backendServiceClient.updateTaskStatus(id, "DONE"); // passing null for currentUserId for now
             BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DONE.getMessage(), telegramClient);
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
@@ -72,8 +74,8 @@ public class BotActions {
             
         Integer id = Integer.valueOf(requestText.substring(0, requestText.indexOf(BotLabels.DASH.getLabel())));
         try {
-            taskService.updateTaskStatus(id, TaskStatus.BLOCKED, null);
-            BotHelper.sendMessageToTelegram(chatId, "Task flagged as BLOCKED. Your manager has been notified.", telegramClient);
+            backendServiceClient.updateTaskStatus(id, "BLOCKED");
+            BotHelper.sendMessageToTelegram(chatId, "TaskDTO flagged as BLOCKED. Your manager has been notified.", telegramClient);
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
         }
@@ -85,7 +87,7 @@ public class BotActions {
 
         Integer id = Integer.valueOf(requestText.substring(0, requestText.indexOf(BotLabels.DASH.getLabel())));
         try {
-            taskService.deleteTaskItem(id);
+            backendServiceClient.deleteTask(id);
             BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DELETED.getMessage(), telegramClient);
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
@@ -99,7 +101,7 @@ public class BotActions {
 				|| requestText.equals(BotLabels.MY_TODO_LIST.getLabel())) || exit)
             return;
             
-        List<Task> allItems = taskService.findAll();
+        List<TaskDTO> allItems = backendServiceClient.findAllTasks();
         ReplyKeyboardMarkup keyboardMarkup = ReplyKeyboardMarkup.builder().resizeKeyboard(true).build();
         List<KeyboardRow> keyboard = new ArrayList<>();
 
@@ -108,11 +110,11 @@ public class BotActions {
         keyboard.add(mainScreenRowTop);
 
         // Active Tasks (TODO, IN_PROGRESS, BLOCKED)
-        List<Task> activeItems = allItems.stream()
+        List<TaskDTO> activeItems = allItems.stream()
                 .filter(item -> item.getStatus() != TaskStatus.DONE)
                 .collect(Collectors.toList());
 
-        for (Task item : activeItems) {
+        for (TaskDTO item : activeItems) {
             KeyboardRow currentRow = new KeyboardRow();
             String title = item.getTitle() != null ? item.getTitle() : "Unnamed Task";
             currentRow.add("[" + item.getStatus() + "] " + title);
@@ -135,32 +137,43 @@ public class BotActions {
     }
 
     // NEW: AI Sprint Reporter
-    public void fnReport() {
+        public void fnReport() {
         if (!requestText.startsWith(BotCommands.LLM_REPORT.getCommand()) || exit) return;
         
-        // Expected format: /report 1 (where 1 is the User ID)
+        // Expected format: /report <dev|manager> <id>
         String[] parts = requestText.split(" ");
-        if (parts.length < 2) {
-            BotHelper.sendMessageToTelegram(chatId, "Please specify a developer ID. Example: /report 1", telegramClient, null);
+        if (parts.length < 3) {
+            BotHelper.sendMessageToTelegram(chatId, "Please specify role and ID. Example: /report dev 1  or  /report manager 1", telegramClient, null);
             return;
         }
 
         try {
-            Integer targetUserId = Integer.parseInt(parts[1]);
-            List<Task> devTasks = taskService.getTasksByUserId(targetUserId);
+            String role = parts[1].toLowerCase();
+            Integer targetId = Integer.parseInt(parts[2]);
             
-            if(devTasks.isEmpty()) {
-                BotHelper.sendMessageToTelegram(chatId, "No tasks found for Developer ID " + targetUserId, telegramClient, null);
-                return;
+            if (role.equals("manager")) {
+                BotHelper.sendMessageToTelegram(chatId, "⏳ Analyzing team activity logs for Manager...", telegramClient, null);
+                
+                // For a Manager, query the task logs and summarize recent activity
+                List<Object[]> logs = backendServiceClient.getWeeklyTaskLogsSummary(targetId);
+                String aiSummary = deepSeekService.generateLogsReport(targetId, logs);
+                
+                BotHelper.sendMessageToTelegram(chatId, "📊 **Manager Team Report**\n\n" + aiSummary, telegramClient, null);
+                
+            } else {
+                BotHelper.sendMessageToTelegram(chatId, "⏳ Analyzing weekly tasks for Developer...", telegramClient, null);
+                
+                // For a Developer, query their specific task queue
+                OffsetDateTime weekEnd = OffsetDateTime.now();
+                OffsetDateTime weekStart = weekEnd.minusDays(7);
+                List<TaskDTO> devTasks = backendServiceClient.getWeeklySummaryTasks(targetId, weekStart, weekEnd);
+                String aiSummary = deepSeekService.generateSprintReport(targetId, devTasks);
+                
+                BotHelper.sendMessageToTelegram(chatId, "📊 **Developer Sprint Report**\n\n" + aiSummary, telegramClient, null);
             }
-
-            BotHelper.sendMessageToTelegram(chatId, "⏳ Analyzing sprint data...", telegramClient, null);
-            String aiSummary = deepSeekService.generateSprintReport(targetUserId, devTasks);
-            
-            BotHelper.sendMessageToTelegram(chatId, "📊 **Sprint Report**\\n\\n" + aiSummary, telegramClient, null);
             
         } catch (NumberFormatException e) {
-            BotHelper.sendMessageToTelegram(chatId, "Invalid User ID format.", telegramClient, null);
+            BotHelper.sendMessageToTelegram(chatId, "Invalid ID format.", telegramClient, null);
         }
         exit = true;
     }
@@ -168,11 +181,11 @@ public class BotActions {
     public void fnElse() {
         if(exit) return;
         
-        Task newTask = new Task();
+        TaskDTO newTask = new TaskDTO();
         newTask.setTitle("New Chat Task");
         newTask.setDescription(requestText);
         newTask.setStatus(TaskStatus.TODO);
-        taskService.createTask(newTask);
+        backendServiceClient.createTask(newTask);
 
         BotHelper.sendMessageToTelegram(chatId, BotMessages.NEW_ITEM_ADDED.getMessage(), telegramClient, null);
     }

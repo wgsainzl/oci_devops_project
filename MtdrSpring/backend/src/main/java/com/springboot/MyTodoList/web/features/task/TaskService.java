@@ -117,5 +117,8 @@ public class TaskService {
         return taskRepository.findBySprint_SprintId(sprintId);
     }
     
+    public List<Task> getWeeklySummaryTasks(Integer userId, OffsetDateTime weekStart, OffsetDateTime weekEnd) {
+        return taskRepository.findWeeklySummaryTasks(userId, weekStart, weekEnd);
+    }
 
 }

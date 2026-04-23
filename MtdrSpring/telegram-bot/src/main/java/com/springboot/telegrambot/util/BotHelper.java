@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.web.util;
+package com.springboot.telegrambot.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -25,4 +25,11 @@ public class TaskLogController {
         
         return ResponseEntity.ok(recentLogs);
     }
+
+    @GetMapping("/summary/{userId}")
+    public ResponseEntity<List<Object[]>> getWeeklyTaskLogsSummary(@PathVariable Integer userId) {
+        List<Object[]> weeklyLogs = taskLogRepository.findWeeklyTaskLogsByUser(userId);
+        return ResponseEntity.ok(weeklyLogs);
+    }
+
 }
