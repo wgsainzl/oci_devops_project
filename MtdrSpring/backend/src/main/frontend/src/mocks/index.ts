@@ -8,6 +8,7 @@ import type {
   Team,
   User,
   WorkloadMember,
+  TimelineTask
 } from '../types'
 import * as fixtures from './fixtures'
 
@@ -184,6 +185,22 @@ export const mockDashboardAPI = {
     await delay(MOCK_DELAY)
     return {
       data: fixtures.mockTeams,
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: { headers: {} as any },
+    } as AxiosResponse
+  },
+}
+
+export const mockTimelineAPI = {
+  getTasks: async (
+    _teamId?: string | null,
+    _params?: Record<string, string>,
+  ): Promise<AxiosResponse<TimelineTask[]>> => {
+    await delay(MOCK_DELAY)
+    return {
+      data: fixtures.mockTimelineTasks,
       status: 200,
       statusText: 'OK',
       headers: {},

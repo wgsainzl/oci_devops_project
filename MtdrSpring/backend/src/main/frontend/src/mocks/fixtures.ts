@@ -1,4 +1,5 @@
 // mock fixture data for development testing
+import { SPRINT_STATS, SPRINT_TASK_STATUS, SPRINT_TIMELINE_TASKS, SPRINT_VELOCITY } from './sprintData'
 
 export const mockUser = {
   id: 'user-mock-1',
@@ -57,13 +58,7 @@ export const mockPendingActions = [
   },
 ]
 
-export const mockStats = {
-  completed: 13,
-  updated: 41,
-  created: 26,
-  dueSoon: 18,
-  dueNext7: 13,
-}
+export const mockStats = SPRINT_STATS
 
 export const mockActivity = [
   {
@@ -99,23 +94,14 @@ export const mockWorkload = [
   { name: 'Carlos López', pct: 20 },
 ]
 
-export const mockTaskStatus = [
-  { developer: 'Sebastian',  userId: 'user-mock-1', todo: 2, inProgress: 4, inReview: 1, blocked: 0, done: 10 },
-  { developer: 'Mauricio',  userId: 'user-mock-2', todo: 5, inProgress: 2, inReview: 3, blocked: 1, done: 8 },
-  { developer: 'Guillermo', userId: 'user-mock-3', todo: 1, inProgress: 5, inReview: 2, blocked: 0, done: 12 },
-  { developer: 'Juan Manuel', userId: 'user-mock-4', todo: 3, inProgress: 1, inReview: 0, blocked: 2, done: 5 },
-  { developer: 'Diego', userId: 'user-mock-5', todo: 3, inProgress: 3, inReview: 4, blocked: 1, done: 9 },
-]
+export const mockTaskStatus = SPRINT_TASK_STATUS
 
-export const mockSprintVelocity = [
-  { iteration: 1, estimated: 140, actual: 80 },
-  { iteration: 2, estimated: 160, actual: 145 },
-  { iteration: 3, estimated: 155, actual: 152 },
-  { iteration: 4, estimated: 170, actual: 0 },
-]
+export const mockSprintVelocity = SPRINT_VELOCITY
 
 export const mockTeams = [
   { id: 'team-1', name: 'Backend', memberCount: 5 },
   { id: 'team-2', name: 'Frontend', memberCount: 4 },
   { id: 'team-3', name: 'DevOps', memberCount: 3 },
 ]
+
+export const mockTimelineTasks = SPRINT_TIMELINE_TASKS;

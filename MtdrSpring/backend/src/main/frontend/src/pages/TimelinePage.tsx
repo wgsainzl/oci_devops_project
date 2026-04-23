@@ -1,5 +1,5 @@
 import { type JSX, useEffect, useState } from 'react'
-import { timelineAPI } from '../API'
+import { useAPI } from '../useAPI'
 import { useAuth } from '../hooks/AuthContext'
 import type { TimelineTask, TaskStatus, TaskPriority } from '../types'
 import PageHeader from '../components/layout/PageHeader'
@@ -16,7 +16,7 @@ const GANTT_END   = new Date(Date.UTC(2026, 5, 30, 12, 0, 0)) // Jun 30
 const TOTAL_DAYS  = Math.round((GANTT_END.getTime() - GANTT_START.getTime()) / 86_400_000)
 
 // Configured to match the 'Today' marker context in the reference image
-const TODAY = new Date(Date.UTC(2026, 1, 16, 12, 0, 0)) 
+const TODAY = new Date(Date.UTC(2026, 3, 17, 12, 0, 0)) 
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June']
 
@@ -89,38 +89,13 @@ const BAR_COLOR: Record<TaskStatus, string> = {
   IN_REVIEW:   '#a07bc4',
 }
 
-const PLACEHOLDER_TASKS: TimelineTask[] = [
-  {
-    id: 'ORC-789',
-    title: 'API Gateway Implementation',
-    responsible: 'Mau & 1 other(s)',
-    status: 'IN_PROGRESS',
-    priority: 'CRITICAL',
-    type: 'FEATURE',
-    createdAt: '2026-01-15',
-    startDate: '2026-01-15',
-    dueDate: '2026-03-28',
-  },
-  {
-    id: 'ORC-799',
-    title: 'Database Implementation',
-    responsible: 'La Fleim',
-    status: 'DONE',
-    priority: 'CRITICAL',
-    type: 'FEATURE',
-    createdAt: '2026-02-01',
-    startDate: '2026-02-01',
-    dueDate: '2026-03-14',
-  },
-]
-
 export default function TimelinePage(): JSX.Element {
   const { user } = useAuth()
-  const [tasks, setTasks] = useState<TimelineTask[]>(PLACEHOLDER_TASKS)
+  const [tasks, setTasks] = useState<TimelineTask[]>([])
 
   useEffect(() => {
     let cancelled = false
-    timelineAPI
+    useAPI.timeline // Changed from timelineAPI
       .getTasks(user?.currentTeamId)
       .then((res) => { if (!cancelled) setTasks(res.data) })
       .catch(() => { /* keep placeholder */ })
