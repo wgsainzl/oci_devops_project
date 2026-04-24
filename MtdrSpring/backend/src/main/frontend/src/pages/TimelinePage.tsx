@@ -7,6 +7,7 @@ import styles from './TimelinePage.module.css'
 
 // Use UTC noon to prevent timezone off-by-one shifts during math
 function parseDate(dateStr: string): Date {
+  if (!dateStr) return new Date();
   const [y, m, d] = dateStr.split('-').map(Number)
   return new Date(Date.UTC(y, m - 1, d, 12, 0, 0))
 }
@@ -20,9 +21,16 @@ const TODAY = new Date(Date.UTC(2026, 3, 17, 12, 0, 0))
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June']
 
-function dayOffset(dateStr: string): number {
-  const d = parseDate(dateStr)
-  return Math.max(0, (d.getTime() - GANTT_START.getTime()) / 86_400_000)
+function dayOffset(dateStr: string | null | undefined): number {
+  // if there is no date, default the offset to 0 so it doesn't crash
+  if (!dateStr) return 0;
+  
+  const d = parseDate(dateStr);
+  
+  // safety check to ensure we don't do math on an invalid date (NaN)
+  if (isNaN(d.getTime())) return 0; 
+  
+  return Math.max(0, (d.getTime() - GANTT_START.getTime()) / 86_400_000);
 }
 
 function toPct(days: number): string {
@@ -154,8 +162,9 @@ export default function TimelinePage(): JSX.Element {
                 const startDay = dayOffset(task.startDate)
                 const endDay   = dayOffset(task.dueDate ?? task.startDate)
                 const barWidth = Math.max(endDay - startDay, 1)
-                const dueFormatted = task.dueDate?.split('-').reverse().join('/') ?? '—'
-
+                const dueFormatted = task.dueDate 
+                  ? task.dueDate.split('T')[0].split('-').reverse().join('/') 
+                  : '—';
                 return (
                   <tr key={task.id} className={styles.taskRow}>
                     <td>

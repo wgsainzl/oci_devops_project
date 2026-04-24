@@ -14,15 +14,9 @@ interface Props {
   sprints: SprintSummary[]
 }
 
-// placeholder
-export const SPRINT_SUMMARY_PLACEHOLDER: SprintSummary[] = [
-  { label: 'Sprint 0', totalCost: 2424, totalHours: 62,  tasksCompleted: 14 },
-  { label: 'Sprint 1', totalCost: 2272, totalHours: 60,  tasksCompleted: 13 },
-]
-
 // component
 export default function SprintCostSummary({
-  sprints = SPRINT_SUMMARY_PLACEHOLDER,
+  sprints,
 }: Props): JSX.Element {
   return (
     <div className={styles.grid}>

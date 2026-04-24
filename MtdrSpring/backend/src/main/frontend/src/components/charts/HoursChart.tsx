@@ -9,7 +9,6 @@ import {
   Legend,
   CartesianGrid,
 } from 'recharts'
-import { SPRINT_HOURS } from '../../mocks/sprintData'
 
 // types
 export interface HoursEntry {
@@ -86,7 +85,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Elem
 
 
 // hours chart
-export default function HoursChart({ data = SPRINT_HOURS }: Props): JSX.Element {
+export default function HoursChart({ data }: Props): JSX.Element {
   const stackedData = formatDataForStacking(data)
 
   return (

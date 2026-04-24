@@ -13,6 +13,9 @@ import type {
 
 import PageHeader from '../components/layout/PageHeader'
 import StatsCards from '../components/tasks/StatsCards'
+import PendingActionsTable from '../components/tasks/PendingActionsTable'
+import RecentActivity from '../components/tasks/RecentActivity'
+import TeamWorkload from '../components/tasks/TeamWorkload'
 import TaskStatusChart from '../components/charts/TaskStatusChart'
 import SprintVelocityChart from '../components/charts/SprintVelocityChart'
 import CostPerDeveloperChart, {
@@ -25,14 +28,6 @@ import SprintCostSummary, {
   type SprintSummary,
 } from '../components/charts/SprintCostSummary'
 import styles from './HomePage.module.css'
-import {
-  SPRINT_TASK_STATUS,
-  SPRINT_HOURS,
-  SPRINT_STATS,
-  SPRINT_COST_PER_DEVELOPER,
-  SPRINT_SUMMARIES,
-  SPRINT_VELOCITY
-} from '../mocks/sprintData'
 
 // dashboard data shape
 interface DashboardData {
@@ -60,70 +55,97 @@ const VISIBLE_CHARTS_BY_ROLE: Record<UserRole, ChartKey[]> = {
   DEVELOPER: ['taskStatus', 'sprintVelocity'],
 }
 
-const PLACEHOLDER: DashboardData = {
-  pendingActions: [
-    { id: 'ORC-789', title: 'API Gateway Implementation', responsible: 'Mau & 1 other(s)', message: 'Pending PR Review — PR #42 has been open for 2 days.', action: 'Review PR' },
-    { id: 'ORC-799', title: 'Database Implementation',    responsible: 'La Fleim',           message: 'Bottleneck — Blocked by IT provisioning.',           action: 'Escalate to Admin' },
-    { id: 'ORC-304', title: 'Security Audit',              responsible: 'Mau & 1 other(s)', message: 'Overdue — Due 27/02/2026. In progress.',             action: 'Ping Developers' },
-    { id: 'ORC-401', title: 'Cache fix',                   responsible: 'La Fleim',           message: 'Status Mismatch — Code merged in GitHub, task status is still In progress.', action: 'Escalate to Admin' },
-    { id: 'ORC-112', title: 'Notification Service',        responsible: 'Mau & 1 other(s)', message: 'Aging in Review — Has been in review for 5 days.', action: 'Ping Reviewers' },
-  ],
-  stats: SPRINT_STATS,
-  activity: [
-    { id: 1, date: 'Sunday, March 1, 2026', actor: 'System (GitHub)',      action: 'merged Pull Request #42 and changed the status to DONE on ORC-205: OCI Database Setup', status: 'DONE',        time: '10 minutes ago' },
-    { id: 2, date: 'Sunday, March 1, 2026', actor: 'Guillermo Sáinz',      action: 'changed the status from TODO to IN_PROGRESS on ORC-401: Database Normalization',        status: 'IN_PROGRESS', time: '2 hours ago' },
-    { id: 3, date: 'Sunday, March 1, 2026', actor: 'Mauricio Villalobos',  action: 'opened Pull Request #45 and changed the status to IN_REVIEW on ORC-101: API Gateway Auth Implementation', status: 'IN_REVIEW', time: '1 day ago' },
-  ],
-  workload: [
-    { name: 'Guillermo Sáinz L...',   pct: 30 },
-    { name: 'Sebastian Alett O...',   pct: 24 },
-    { name: 'Mauricio Villalobos...', pct: 15 },
-  ],
-  taskStatus: SPRINT_TASK_STATUS,
-  velocity: SPRINT_VELOCITY,
-  // new KPI data 
-  costPerDev:      SPRINT_COST_PER_DEVELOPER,
-  hoursPerDev:     SPRINT_HOURS,
-  sprintSummaries: SPRINT_SUMMARIES,
+const EMPTY_DASHBOARD: DashboardData = {
+  pendingActions: [],
+  stats: {
+    completed: 0,
+    updated: 0,
+    created: 0,
+    dueSoon: 0,
+  },
+  activity: [],
+  workload: [],
+  taskStatus: [],
+  velocity: [],
+  costPerDev: [],
+  hoursPerDev: [],
+  sprintSummaries: [],
 }
 
 // component
 export default function HomePage(): JSX.Element {
   const { user, isManager } = useAuth()
+  const useMocks = String(import.meta.env.VITE_USE_MOCKS).toLowerCase() === 'true'
   const teamId = user?.currentTeamId ?? null
   const role: UserRole = user?.role ?? 'DEVELOPER'
   const visibleCharts = VISIBLE_CHARTS_BY_ROLE[role]
   const canSeeChart = (chart: ChartKey): boolean => visibleCharts.includes(chart)
-  const [data, setData] = useState<DashboardData>(PLACEHOLDER)
+  const [data, setData] = useState<DashboardData>(EMPTY_DASHBOARD)
+  const safePendingActions = Array.isArray(data.pendingActions) ? data.pendingActions : []
+  const safeActivity = Array.isArray(data.activity) ? data.activity : []
+  const safeWorkload = Array.isArray(data.workload) ? data.workload : []
+  const safeTaskStatus = Array.isArray(data.taskStatus) ? data.taskStatus : []
+  const safeVelocity = Array.isArray(data.velocity) ? data.velocity : []
+  const safeCostPerDev = Array.isArray(data.costPerDev) ? data.costPerDev : []
+  const safeHoursPerDev = Array.isArray(data.hoursPerDev) ? data.hoursPerDev : []
+  const safeSprintSummaries = Array.isArray(data.sprintSummaries) ? data.sprintSummaries : []
 
   useEffect(() => {
     let cancelled = false
 
-    Promise.all([
+    Promise.allSettled([
       useAPI.dashboard.getPendingActions(teamId),
       useAPI.dashboard.getStats(teamId),
       useAPI.dashboard.getRecentActivity(teamId),
       useAPI.dashboard.getWorkload(teamId),
       useAPI.dashboard.getTaskStatusSummary(teamId),
       useAPI.dashboard.getSprintVelocity(teamId),
-      // TODO: wire these three once backend endpoints exist
-      // useAPI.dashboard.getCostPerDeveloper(teamId),
-      // useAPI.dashboard.getHoursPerDeveloper(teamId),
-      // useAPI.dashboard.getSprintSummaries(teamId),
+      useAPI.dashboard.getCostPerDeveloper(teamId),
+      useAPI.dashboard.getHoursPerDeveloper(teamId),
+      useAPI.dashboard.getSprintSummaries(teamId),
     ])
-      .then(([pa, stats, activity, workload, taskStatus, velocity]) => {
+      .then((results) => {
         if (cancelled) return
+        const [pa, stats, activity, workload, taskStatus, velocity, costPerDev, hoursPerDev, sprintSummaries] = results
+
         setData((prev) => ({
           ...prev,
-          pendingActions: pa.data,
-          stats: stats.data,
-          activity: activity.data,
-          workload: workload.data,
-          taskStatus: taskStatus.data,
-          velocity: velocity.data,
+          pendingActions:
+            pa.status === 'fulfilled' && Array.isArray(pa.value.data)
+              ? pa.value.data
+              : prev.pendingActions,
+          stats: stats.status === 'fulfilled' ? stats.value.data : prev.stats,
+          activity:
+            activity.status === 'fulfilled' && Array.isArray(activity.value.data)
+              ? activity.value.data
+              : prev.activity,
+          workload:
+            workload.status === 'fulfilled' && Array.isArray(workload.value.data)
+              ? workload.value.data
+              : prev.workload,
+          taskStatus:
+            taskStatus.status === 'fulfilled' && Array.isArray(taskStatus.value.data)
+              ? taskStatus.value.data
+              : prev.taskStatus,
+          velocity:
+            velocity.status === 'fulfilled' && Array.isArray(velocity.value.data)
+              ? velocity.value.data
+              : prev.velocity,
+          costPerDev:
+            costPerDev.status === 'fulfilled' && Array.isArray(costPerDev.value.data)
+              ? costPerDev.value.data
+              : prev.costPerDev,
+          hoursPerDev:
+            hoursPerDev.status === 'fulfilled' && Array.isArray(hoursPerDev.value.data)
+              ? hoursPerDev.value.data
+              : prev.hoursPerDev,
+          sprintSummaries:
+            sprintSummaries.status === 'fulfilled' && Array.isArray(sprintSummaries.value.data)
+              ? sprintSummaries.value.data
+              : prev.sprintSummaries,
         }))
       })
-      .catch(() => { /* keep placeholder */ })
+      .catch(() => { /* keep current state */ })
 
     return () => { cancelled = true }
   }, [teamId])
@@ -133,13 +155,16 @@ export default function HomePage(): JSX.Element {
       <PageHeader title="Home" subtitle="EasyMoneySnipers" />
 
       <div className={styles.content}>
+        <p className={styles.sectionHint}>
+          Data source: {useMocks ? 'MOCK MODE (fixtures)' : 'BACKEND LIVE'}
+        </p>
 
         {/* pending actions and stats */}
         <div className={styles.row1}>
-          {/* <section className={`${styles.card} ${styles.pendingCard}`}>
+          <section className={`${styles.card} ${styles.pendingCard}`}>
             <h2 className={styles.sectionTitle}>Pending actions</h2>
-            <PendingActionsTable rows={data.pendingActions} />
-          </section> */}
+            <PendingActionsTable rows={safePendingActions} />
+          </section>
           <aside className={styles.statsAside}>
             <StatsCards stats={data.stats} />
           </aside>
@@ -147,17 +172,17 @@ export default function HomePage(): JSX.Element {
         
         {/* INCOMING */}
         
-        {/* recent activity and team workload
+        {/* recent activity and team workload */}
         <div className={styles.row2}>
           <section className={`${styles.card} ${styles.activityCard}`}>
             <h2 className={styles.sectionTitle}>Recent activity</h2>
-            <RecentActivity items={data.activity} />
+            <RecentActivity items={safeActivity} />
           </section>
           <section className={`${styles.card} ${styles.workloadCard}`}>
             <h2 className={styles.sectionTitle}>Team workload</h2>
-            <TeamWorkload members={data.workload} />
+            <TeamWorkload members={safeWorkload} />
           </section>
-        </div> */}
+        </div>
 
         {/* task status and sprint velocity */}
         {(canSeeChart('taskStatus') || canSeeChart('sprintVelocity')) && (
@@ -168,7 +193,7 @@ export default function HomePage(): JSX.Element {
                   {isManager ? 'Team Tasks Status' : 'My Tasks Status'}
                 </h2>
                 <TaskStatusChart 
-                  data={isManager ? data.taskStatus : data.taskStatus.filter(t => t.userId === user?.userId)}
+                  data={isManager ? safeTaskStatus : safeTaskStatus.filter(t => t.userId === user?.userId)}
                   showDeveloperNames={isManager}
                 />
               </section>
@@ -176,7 +201,7 @@ export default function HomePage(): JSX.Element {
             {canSeeChart('sprintVelocity') && (
               <section className={`${styles.card} ${styles.chartCard}`}>
                 <h2 className={styles.sectionTitle}>Team Sprint Velocity</h2>
-                <SprintVelocityChart data={data.velocity} />
+                <SprintVelocityChart data={safeVelocity} />
               </section>
             )}
           </div>
@@ -188,13 +213,13 @@ export default function HomePage(): JSX.Element {
             {canSeeChart('costPerDeveloper') && (
               <section className={`${styles.card} ${styles.chartCard}`}>
                 <h2 className={styles.sectionTitle}>Cost per Developer by Sprint (USD)</h2>
-                <CostPerDeveloperChart data={data.costPerDev} />
+                <CostPerDeveloperChart data={safeCostPerDev} />
               </section>
             )}
             {canSeeChart('sprintTotals') && (
               <section className={`${styles.card} ${styles.chartCard}`}>
                 <h2 className={styles.sectionTitle}>Sprint Totals</h2>
-                <SprintCostSummary sprints={data.sprintSummaries} />
+                <SprintCostSummary sprints={safeSprintSummaries} />
               </section>
             )}
           </div>
@@ -207,7 +232,7 @@ export default function HomePage(): JSX.Element {
               <h2 className={styles.sectionTitle}>
                 Hours per Developer
               </h2>
-              <HoursChart data={data.hoursPerDev} />
+              <HoursChart data={safeHoursPerDev} />
             </section>
           </div>
         )}
