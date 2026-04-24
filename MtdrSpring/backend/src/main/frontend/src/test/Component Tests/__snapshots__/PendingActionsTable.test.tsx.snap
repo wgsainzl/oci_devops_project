@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Component: PendingActionsTable > snapshot: empty state 1`] = `
+<div>
+  <p
+    class="_empty_b3fb78"
+  >
+    No pending actions, you're all caught up
+  </p>
+</div>
+`;
