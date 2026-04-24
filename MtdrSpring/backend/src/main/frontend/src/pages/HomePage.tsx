@@ -79,8 +79,7 @@ const PLACEHOLDER: DashboardData = {
       id: 1,
       date: "Today",
       actor: "System",
-      action:
-        "Historical activity log is currently unavailable (Backend pending)",
+      action: "Historical activity log is currently unavailable (Backend pending)",
       status: "TODO",
       time: "Just now",
     },
@@ -123,8 +122,7 @@ export default function HomePage(): JSX.Element {
             id: `Task-${t.taskId}`,
             title: t.title,
             responsible: t.responsible?.name || "Unassigned",
-            message:
-              t.status === "BLOCKED" ? "Task is blocked" : "Pending Review",
+            message: t.status === "BLOCKED" ? "Task is blocked" : "Pending Review",
             action: t.status === "BLOCKED" ? "Resolve Blocker" : "Review Task",
           }));
 
@@ -136,12 +134,10 @@ export default function HomePage(): JSX.Element {
           updated: tasks.filter((t) => t.updatedAt).length,
           created: tasks.length,
           dueSoon: tasks.filter(
-            (t) =>
-              t.status !== "DONE" && new Date(t.dueDate).getTime() < next7Days,
+            (t) => t.status !== "DONE" && new Date(t.dueDate).getTime() < next7Days,
           ).length,
           dueNext7: tasks.filter(
-            (t) =>
-              t.status !== "DONE" && new Date(t.dueDate).getTime() < next7Days,
+            (t) => t.status !== "DONE" && new Date(t.dueDate).getTime() < next7Days,
           ).length,
         };
 
@@ -222,8 +218,7 @@ export default function HomePage(): JSX.Element {
             costMap[devName] = { developer: devName };
           }
           costMap[devName][sprintName] =
-            (costMap[devName][sprintName] || 0) +
-            (t.actualHours || 0) * HOURLY_RATE;
+            (costMap[devName][sprintName] || 0) + (t.actualHours || 0) * HOURLY_RATE;
 
           // B. Hours per Dev
           if (!hoursMap[devName]) {
@@ -240,8 +235,7 @@ export default function HomePage(): JSX.Element {
               totalHours: 0,
             };
           }
-          sprintSumMap[sprintName].totalCost +=
-            (t.actualHours || 0) * HOURLY_RATE;
+          sprintSumMap[sprintName].totalCost += (t.actualHours || 0) * HOURLY_RATE;
           sprintSumMap[sprintName].totalHours += t.actualHours || 0;
         });
 
@@ -358,16 +352,10 @@ export default function HomePage(): JSX.Element {
         {/* hours per developer */}
         {canSeeChart("hoursPerDeveloper") && (
           <div className={styles.row3}>
-            <section
-              className={`${styles.card}`}
-              style={{ gridColumn: "1 / -1" }}
-            >
+            <section className={`${styles.card}`} style={{ gridColumn: "1 / -1" }}>
               <h2 className={styles.sectionTitle}>
                 Hours per Developer
-                <span className={styles.sectionHint}>
-                  {" "}
-                  — red bar = over estimate
-                </span>
+                <span className={styles.sectionHint}> — red bar = over estimate</span>
               </h2>
               <HoursChart data={data.hoursPerDev} />
             </section>

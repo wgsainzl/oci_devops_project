@@ -76,14 +76,12 @@ export const _tasksAPI = {
   /*
    * fetch all tasks visible to the current user (filtered by team if provided)
    */
-  getAll: (
-    params?: Record<string, string | number>,
-  ): Promise<AxiosResponse<Task[]>> => api.get("/tasks", { params }),
+  getAll: (params?: Record<string, string | number>): Promise<AxiosResponse<Task[]>> =>
+    api.get("/tasks", { params }),
   /*
    * fetch a single task by ID
    */
-  getById: (id: string): Promise<AxiosResponse<Task>> =>
-    api.get(`/tasks/${id}`),
+  getById: (id: string): Promise<AxiosResponse<Task>> => api.get(`/tasks/${id}`),
 
   /*
    * create a new task
@@ -96,26 +94,20 @@ export const _tasksAPI = {
    * update task fields (status, description, etc.)
    * developer can only update their own
    */
-  update: (
-    id: string,
-    updates: Partial<NewTaskPayload>,
-  ): Promise<AxiosResponse<Task>> => api.put(`/tasks/${id}`, updates),
+  update: (id: string, updates: Partial<NewTaskPayload>): Promise<AxiosResponse<Task>> =>
+    api.put(`/tasks/${id}`, updates),
 
   /*
    * delete a task
    * ADMIN/MANAGER only .
    */
-  delete: (id: string): Promise<AxiosResponse<void>> =>
-    api.delete(`/tasks/${id}`),
+  delete: (id: string): Promise<AxiosResponse<void>> => api.delete(`/tasks/${id}`),
 
   /*
     * transition task status:
       (TODO → IN_PROGRESS → BLOCKED → IN_REVIEW → DONE)
     */
-  updateStatus: (
-    id: string,
-    status: Task["status"],
-  ): Promise<AxiosResponse<Task>> =>
+  updateStatus: (id: string, status: Task["status"]): Promise<AxiosResponse<Task>> =>
     api.patch(`/tasks/${id}/status`, { status }),
 };
 
@@ -126,9 +118,7 @@ export const dashboardAPI = {
   /*
    * pending actions list: blocked, overdue, stale PRs
    */
-  getPendingActions: (
-    teamId?: string | null,
-  ): Promise<AxiosResponse<PendingAction[]>> =>
+  getPendingActions: (teamId?: string | null): Promise<AxiosResponse<PendingAction[]>> =>
     api.get("/dashboard/pending-actions", { params: { teamId } }),
 
   /*
@@ -149,9 +139,7 @@ export const dashboardAPI = {
   /*
    * team workload: work distribution % per developer
    */
-  getWorkload: (
-    teamId?: string | null,
-  ): Promise<AxiosResponse<WorkloadMember[]>> =>
+  getWorkload: (teamId?: string | null): Promise<AxiosResponse<WorkloadMember[]>> =>
     api.get("/dashboard/workload", { params: { teamId } }),
 
   /*
@@ -185,8 +173,7 @@ export const dashboardAPI = {
 export const teamsAPI = {
   getAll: (): Promise<AxiosResponse<Team[]>> => api.get("/teams"),
 
-  create: (name: string): Promise<AxiosResponse<Team>> =>
-    api.post("/teams", { name }),
+  create: (name: string): Promise<AxiosResponse<Team>> => api.post("/teams", { name }),
 
   rename: (teamId: string, name: string): Promise<AxiosResponse<Team>> =>
     api.put(`/teams/${teamId}`, { name }),
@@ -272,8 +259,7 @@ export const tasksAPI = {
       headers: { "Content-Type": "application/json" },
     });
 
-    if (!response.ok)
-      throw new Error(`Error fetching tasks: ${response.statusText}`);
+    if (!response.ok) throw new Error(`Error fetching tasks: ${response.statusText}`);
     return response.json();
   },
 
@@ -301,18 +287,14 @@ export const tasksAPI = {
       body: JSON.stringify(task),
     });
 
-    if (!response.ok)
-      throw new Error(`Error creating task: ${response.statusText}`);
+    if (!response.ok) throw new Error(`Error creating task: ${response.statusText}`);
     return response.json();
   },
 
   /*
    * update task fields
    */
-  update: async (
-    id: string | number,
-    updates: NewTaskPayload,
-  ): Promise<Task> => {
+  update: async (id: string | number, updates: NewTaskPayload): Promise<Task> => {
     const response = await fetch(`${BASE_URL}/tasks/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -340,10 +322,7 @@ export const tasksAPI = {
   /*
    * transition task status
    */
-  updateStatus: async (
-    id: string | number,
-    status: Task["status"],
-  ): Promise<Task> => {
+  updateStatus: async (id: string | number, status: Task["status"]): Promise<Task> => {
     const response = await fetch(`${BASE_URL}/tasks/${id}/status`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -352,9 +331,7 @@ export const tasksAPI = {
     });
 
     if (!response.ok)
-      throw new Error(
-        `Error updating status for task ${id}: ${response.statusText}`,
-      );
+      throw new Error(`Error updating status for task ${id}: ${response.statusText}`);
     return response.json();
   },
 };

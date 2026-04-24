@@ -44,7 +44,9 @@
   align-items: start;
 }
 
-.pendingCard { overflow-x: auto; }
+.pendingCard {
+  overflow-x: auto;
+}
 
 .statsAside {
   display: flex;
@@ -73,7 +75,9 @@
 
 /* ── Responsive ── */
 @media (max-width: 1024px) {
-  .row1, .row2, .row3 {
+  .row1,
+  .row2,
+  .row3 {
     grid-template-columns: 1fr;
   }
   .statsAside {
@@ -83,5 +87,7 @@
 }
 
 @media (max-width: 600px) {
-  .content { padding: var(--space-4); }
+  .content {
+    padding: var(--space-4);
+  }
 }

@@ -96,9 +96,7 @@ export default function TeamSwitcher(): JSX.Element {
     if (!name?.trim() || name === team.name) return;
     try {
       await teamsAPI.rename(team.id, name.trim());
-      setTeams((prev) =>
-        prev.map((t) => (t.id === team.id ? { ...t, name } : t)),
-      );
+      setTeams((prev) => prev.map((t) => (t.id === team.id ? { ...t, name } : t)));
     } catch {
       alert("Failed to rename team.");
     }
@@ -106,8 +104,7 @@ export default function TeamSwitcher(): JSX.Element {
   };
 
   const handleDelete = async (team: Team): Promise<void> => {
-    if (!window.confirm(`Delete team "${team.name}"? This cannot be undone.`))
-      return;
+    if (!window.confirm(`Delete team "${team.name}"? This cannot be undone.`)) return;
     try {
       await teamsAPI.delete(team.id);
       setTeams((prev) => {
@@ -136,9 +133,7 @@ export default function TeamSwitcher(): JSX.Element {
       }
 
       const options = res.data
-        .map(
-          (u) => `${u.userId}: TEAMSWITCHER.TSX LN 126 u.username (${u.email})`,
-        )
+        .map((u) => `${u.userId}: TEAMSWITCHER.TSX LN 126 u.username (${u.email})`)
         .join("\n");
 
       const selectedUserId = window.prompt(
@@ -175,10 +170,7 @@ export default function TeamSwitcher(): JSX.Element {
           key={team.id}
           className={`${styles.teamRow} ${activeTeamId === team.id ? styles.teamRowActive : ""}`}
         >
-          <button
-            className={styles.teamName}
-            onClick={() => setActiveTeamId(team.id)}
-          >
+          <button className={styles.teamName} onClick={() => setActiveTeamId(team.id)}>
             {team.name}
           </button>
 

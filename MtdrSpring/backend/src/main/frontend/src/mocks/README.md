@@ -21,6 +21,7 @@ npm run dev:mock
 The app will now intercept all API calls and return mock data with a 300ms simulated delay.
 
 **You'll see in console:**
+
 ```
 Mocking API
 ```
@@ -42,23 +43,25 @@ Mocking API
 Edit `fixtures.ts` to simulate different states:
 
 ### Empty State
+
 ```ts
-export const mockPendingActions = []
+export const mockPendingActions = [];
 ```
 
 ### Error State (simulated)
+
 Update mock functions in `index.ts` to throw errors:
+
 ```ts
 http.get(`${API_BASE}/dashboard/stats`, () => {
-  return HttpResponse.json(
-    { message: 'Server error' },
-    { status: 500 }
-  )
-})
+  return HttpResponse.json({ message: "Server error" }, { status: 500 });
+});
 ```
 
 ### Large Datasets
+
 Expand fixture arrays to test pagination, scrolling, performance:
+
 ```ts
 export const mockActivity = Array.from({ length: 100 }, (_, i) => ({
   id: i,
@@ -83,8 +86,8 @@ Then the app will use real API calls to your backend.
 3. Import `useAPI` in your page instead of `dashboardAPI`:
 
 ```tsx
-import { useAPI } from '../useAPI'
+import { useAPI } from "../useAPI";
 
 // in component:
-useAPI.dashboard.getPendingActions() // uses mock if enabled
+useAPI.dashboard.getPendingActions(); // uses mock if enabled
 ```

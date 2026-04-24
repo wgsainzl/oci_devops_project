@@ -7,13 +7,11 @@ beforeEach(() => {
 
 describe("Unit: tasksAPI (fetch layer)", () => {
   it("Req 4: mark as completed -> PATCH /tasks/:id/status con {status:'DONE'}", async () => {
-    const fetchMock = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ taskId: 123, status: "DONE" }), {
-          status: 200,
-        }),
-      );
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(JSON.stringify({ taskId: 123, status: "DONE" }), {
+        status: 200,
+      }),
+    );
 
     await tasksAPI.updateStatus(123, "DONE");
 

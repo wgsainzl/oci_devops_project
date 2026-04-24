@@ -34,9 +34,7 @@ export default function SprintCostSummary({
           <p className={styles.sprintLabel}>{s.label}</p>
 
           <div className={styles.stat}>
-            <span className={styles.statValue}>
-              ${s.totalCost.toLocaleString()}
-            </span>
+            <span className={styles.statValue}>${s.totalCost.toLocaleString()}</span>
             <span className={styles.statLabel}>Total Cost (USD)</span>
           </div>
 

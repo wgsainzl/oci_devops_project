@@ -1,0 +1,9 @@
+node_modules
+dist
+build
+coverage
+*.lock
+package-lock.json
+vite.config.*
+vitest.config.*
+eslint.config.js

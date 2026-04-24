@@ -38,24 +38,16 @@ export default function NewItem({ onCancel }: Props): JSX.Element {
   const [error, setError] = useState<string | null>(null);
 
   if (!isManager) {
-    return (
-      <p className={styles.denied}>
-        Only Admins and Managers can create tasks.
-      </p>
-    );
+    return <p className={styles.denied}>Only Admins and Managers can create tasks.</p>;
   }
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ): void => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>,
-  ): Promise<void> => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError(null);
     if (!form.title.trim()) {
@@ -132,13 +124,7 @@ export default function NewItem({ onCancel }: Props): JSX.Element {
             onChange={handleChange}
           >
             {(
-              [
-                "TODO",
-                "IN_PROGRESS",
-                "IN_REVIEW",
-                "BLOCKED",
-                "DONE",
-              ] as TaskStatus[]
+              ["TODO", "IN_PROGRESS", "IN_REVIEW", "BLOCKED", "DONE"] as TaskStatus[]
             ).map((s) => (
               <option key={s} value={s}>
                 {s.replace(/_/g, " ")}
@@ -158,13 +144,11 @@ export default function NewItem({ onCancel }: Props): JSX.Element {
             value={form.priority}
             onChange={handleChange}
           >
-            {(["LOW", "MEDIUM", "HIGH", "CRITICAL"] as TaskPriority[]).map(
-              (p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ),
-            )}
+            {(["LOW", "MEDIUM", "HIGH", "CRITICAL"] as TaskPriority[]).map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
           </select>
         </div>
 

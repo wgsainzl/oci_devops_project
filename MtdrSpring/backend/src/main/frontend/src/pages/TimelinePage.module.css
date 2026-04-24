@@ -23,21 +23,34 @@
   min-width: 1000px;
 }
 
-.table th, .table td {
+.table th,
+.table td {
   border-right: 1px solid #d4d4d4;
 }
 
-.table th:last-child, .table td:last-child {
+.table th:last-child,
+.table td:last-child {
   border-right: none;
 }
 
-.colTask        { width: 220px; }
-.colResponsible { width: 180px; }
-.colStatus      { width: 120px; }
-.colPriority    { width: 110px; }
-.colDue         { width: 110px; }
-.colGantt       { min-width: 450px; }
-
+.colTask {
+  width: 220px;
+}
+.colResponsible {
+  width: 180px;
+}
+.colStatus {
+  width: 120px;
+}
+.colPriority {
+  width: 110px;
+}
+.colDue {
+  width: 110px;
+}
+.colGantt {
+  min-width: 450px;
+}
 
 /* ── Single Header Row ── */
 .colHeadRow th {
@@ -97,7 +110,6 @@
   font-weight: 600;
 }
 
-
 /* task rows */
 .taskRow {
   background: #f4f4f4;
@@ -153,7 +165,6 @@
   color: #000;
 }
 
-
 /* status / priority badges */
 .statusBadge {
   display: inline-block;
@@ -164,7 +175,6 @@
   white-space: nowrap; /* prevents from stacking */
   text-align: center;
 }
-
 
 /* gantt area */
 .ganttCell {

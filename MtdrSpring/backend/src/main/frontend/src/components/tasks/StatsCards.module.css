@@ -32,12 +32,26 @@
   display: block;
 }
 
-.iconGreen  { background: #dcfce7; color: #16a34a; }
-.iconBlue   { background: #dbeafe; color: #2563eb; }
-.iconTeal   { background: #ccfbf1; color: #0d9488; }
-.iconOrange { background: #ffedd5; color: #ea580c; }
+.iconGreen {
+  background: #dcfce7;
+  color: #16a34a;
+}
+.iconBlue {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.iconTeal {
+  background: #ccfbf1;
+  color: #0d9488;
+}
+.iconOrange {
+  background: #ffedd5;
+  color: #ea580c;
+}
 
-.text { flex: 1; }
+.text {
+  flex: 1;
+}
 
 .count {
   font-size: 1.1rem;

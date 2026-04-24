@@ -10,9 +10,9 @@
   --color-oracle-red-hover: #a83929;
 
   /* Surface */
-  --color-bg-page: #f5f0e8;        /* main page background */
+  --color-bg-page: #f5f0e8; /* main page background */
   --color-bg-content: #ffffff;
-  --color-bg-header: #1a1a1a;      /* near-black Oracle header */
+  --color-bg-header: #1a1a1a; /* near-black Oracle header */
   --color-bg-sidebar: #ffffff;
   --color-bg-hover: #f0ebe0;
 
@@ -65,13 +65,13 @@
   --space-12: 48px;
 
   /* Typography */
-  --font-body: 'DM Sans', system-ui, sans-serif;
-  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-display: "DM Serif Display", Georgia, serif;
 
   /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
 
   /* Border radius */
   --radius-sm: 4px;
@@ -85,7 +85,9 @@
 }
 
 /* --- Reset --- */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -113,7 +115,12 @@ body {
 }
 
 /* --- Typography Utilities --- */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-body);
   font-weight: 600;
   line-height: 1.25;
@@ -130,7 +137,8 @@ a:hover {
   color: var(--color-oracle-red-hover);
 }
 
-img, svg {
+img,
+svg {
   display: block;
   max-width: 100%;
 }
@@ -143,7 +151,9 @@ button {
   padding: 0;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   font-family: var(--font-body);
   font-size: 1rem;
 }
@@ -191,16 +201,43 @@ input, select, textarea {
   white-space: nowrap;
 }
 
-.badge--in-progress  { background: var(--color-status-in-progress-bg); color: var(--color-status-in-progress-text); }
-.badge--done         { background: var(--color-status-done-bg); color: var(--color-status-done-text); }
-.badge--todo         { background: var(--color-status-todo-bg); color: var(--color-status-todo-text); }
-.badge--blocked      { background: var(--color-status-blocked-bg); color: var(--color-status-blocked-text); }
-.badge--in-review    { background: var(--color-status-in-review-bg); color: var(--color-status-in-review-text); }
+.badge--in-progress {
+  background: var(--color-status-in-progress-bg);
+  color: var(--color-status-in-progress-text);
+}
+.badge--done {
+  background: var(--color-status-done-bg);
+  color: var(--color-status-done-text);
+}
+.badge--todo {
+  background: var(--color-status-todo-bg);
+  color: var(--color-status-todo-text);
+}
+.badge--blocked {
+  background: var(--color-status-blocked-bg);
+  color: var(--color-status-blocked-text);
+}
+.badge--in-review {
+  background: var(--color-status-in-review-bg);
+  color: var(--color-status-in-review-text);
+}
 
-.badge--critical     { background: var(--color-priority-critical-bg); color: var(--color-priority-critical-text); }
-.badge--high         { background: var(--color-priority-high-bg); color: var(--color-priority-high-text); }
-.badge--medium       { background: var(--color-priority-medium-bg); color: var(--color-priority-medium-text); }
-.badge--low          { background: var(--color-priority-low-bg); color: var(--color-priority-low-text); }
+.badge--critical {
+  background: var(--color-priority-critical-bg);
+  color: var(--color-priority-critical-text);
+}
+.badge--high {
+  background: var(--color-priority-high-bg);
+  color: var(--color-priority-high-text);
+}
+.badge--medium {
+  background: var(--color-priority-medium-bg);
+  color: var(--color-priority-medium-text);
+}
+.badge--low {
+  background: var(--color-priority-low-bg);
+  color: var(--color-priority-low-text);
+}
 
 /* --- Card --- */
 .card {

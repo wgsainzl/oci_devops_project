@@ -24,7 +24,9 @@
   align-items: center;
   padding: 2px;
   border-radius: var(--radius-sm);
-  transition: color var(--transition-fast), background var(--transition-fast);
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .addBtn:hover {
@@ -78,7 +80,9 @@
   padding: 4px;
   border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
-  transition: opacity var(--transition-fast), background var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .dotsBtn:hover {
@@ -102,8 +106,14 @@
 }
 
 @keyframes menuIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .menuItem {

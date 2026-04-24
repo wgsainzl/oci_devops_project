@@ -1,131 +1,139 @@
-import { type JSX, useEffect, useState } from 'react'
-import { timelineAPI } from '../API'
-import { useAuth } from '../hooks/AuthContext'
-import type { TimelineTask, TaskStatus, TaskPriority } from '../types'
-import PageHeader from '../components/layout/PageHeader'
-import styles from './TimelinePage.module.css'
+import { type JSX, useEffect, useState } from "react";
+import { timelineAPI } from "../API";
+import { useAuth } from "../hooks/AuthContext";
+import type { TimelineTask, TaskStatus, TaskPriority } from "../types";
+import PageHeader from "../components/layout/PageHeader";
+import styles from "./TimelinePage.module.css";
 
 // Use UTC noon to prevent timezone off-by-one shifts during math
 function parseDate(dateStr: string): Date {
-  const [y, m, d] = dateStr.split('-').map(Number)
-  return new Date(Date.UTC(y, m - 1, d, 12, 0, 0))
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
 }
 
-const GANTT_START = new Date(Date.UTC(2026, 0, 1, 12, 0, 0))
-const GANTT_END   = new Date(Date.UTC(2026, 5, 30, 12, 0, 0)) // Jun 30
-const TOTAL_DAYS  = Math.round((GANTT_END.getTime() - GANTT_START.getTime()) / 86_400_000)
+const GANTT_START = new Date(Date.UTC(2026, 0, 1, 12, 0, 0));
+const GANTT_END = new Date(Date.UTC(2026, 5, 30, 12, 0, 0)); // Jun 30
+const TOTAL_DAYS = Math.round((GANTT_END.getTime() - GANTT_START.getTime()) / 86_400_000);
 
 // Configured to match the 'Today' marker context in the reference image
-const TODAY = new Date(Date.UTC(2026, 1, 16, 12, 0, 0)) 
+const TODAY = new Date(Date.UTC(2026, 1, 16, 12, 0, 0));
 
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June']
+const MONTHS = ["January", "February", "March", "April", "May", "June"];
 
 function dayOffset(dateStr: string): number {
-  const d = parseDate(dateStr)
-  return Math.max(0, (d.getTime() - GANTT_START.getTime()) / 86_400_000)
+  const d = parseDate(dateStr);
+  return Math.max(0, (d.getTime() - GANTT_START.getTime()) / 86_400_000);
 }
 
 function toPct(days: number): string {
-  return `${((days / TOTAL_DAYS) * 100).toFixed(2)}%`
+  return `${((days / TOTAL_DAYS) * 100).toFixed(2)}%`;
 }
 
 interface MonthHeader {
-  label: string
-  startPct: string
-  widthPct: string
+  label: string;
+  startPct: string;
+  widthPct: string;
 }
 
 function buildMonthHeaders(): MonthHeader[] {
-  const headers: MonthHeader[] = []
+  const headers: MonthHeader[] = [];
   for (let month = 0; month <= 5; month++) {
-    const firstOfMonth = new Date(Date.UTC(2026, month, 1, 12, 0, 0))
-    const lastOfMonth  = new Date(Date.UTC(2026, month + 1, 0, 12, 0, 0))
+    const firstOfMonth = new Date(Date.UTC(2026, month, 1, 12, 0, 0));
+    const lastOfMonth = new Date(Date.UTC(2026, month + 1, 0, 12, 0, 0));
 
-    const start = (firstOfMonth.getTime() - GANTT_START.getTime()) / 86_400_000
-    const end   = (lastOfMonth.getTime() - GANTT_START.getTime()) / 86_400_000 + 1
+    const start = (firstOfMonth.getTime() - GANTT_START.getTime()) / 86_400_000;
+    const end = (lastOfMonth.getTime() - GANTT_START.getTime()) / 86_400_000 + 1;
 
     headers.push({
       label: MONTHS[month],
       startPct: toPct(start),
       widthPct: toPct(end - start),
-    })
+    });
   }
-  return headers
+  return headers;
 }
 
-const MONTH_HEADERS = buildMonthHeaders()
-const TODAY_PCT     = toPct(Math.min((TODAY.getTime() - GANTT_START.getTime()) / 86_400_000, TOTAL_DAYS))
+const MONTH_HEADERS = buildMonthHeaders();
+const TODAY_PCT = toPct(
+  Math.min((TODAY.getTime() - GANTT_START.getTime()) / 86_400_000, TOTAL_DAYS),
+);
 
 // Display maps
 const STATUS_LABEL: Record<TaskStatus, string> = {
-  IN_PROGRESS: 'In progress',
-  DONE:        'Done',
-  TODO:        'To do',
-  BLOCKED:     'Blocked',
-  IN_REVIEW:   'In review',
-}
+  IN_PROGRESS: "In progress",
+  DONE: "Done",
+  TODO: "To do",
+  BLOCKED: "Blocked",
+  IN_REVIEW: "In review",
+};
 
 // Inline styles for badges to match the target's muted aesthetic perfectly
 const STATUS_STYLE: Record<TaskStatus, React.CSSProperties> = {
-  IN_PROGRESS: { backgroundColor: '#759cac', color: '#000' },
-  DONE:        { backgroundColor: '#6ca67b', color: '#000' },
-  TODO:        { backgroundColor: '#b0b8c4', color: '#000' },
-  BLOCKED:     { backgroundColor: '#d07d70', color: '#000' },
-  IN_REVIEW:   { backgroundColor: '#a07bc4', color: '#000' },
-}
+  IN_PROGRESS: { backgroundColor: "#759cac", color: "#000" },
+  DONE: { backgroundColor: "#6ca67b", color: "#000" },
+  TODO: { backgroundColor: "#b0b8c4", color: "#000" },
+  BLOCKED: { backgroundColor: "#d07d70", color: "#000" },
+  IN_REVIEW: { backgroundColor: "#a07bc4", color: "#000" },
+};
 
 const PRIORITY_STYLE: Record<TaskPriority, React.CSSProperties> = {
-  CRITICAL: { backgroundColor: '#cf7b71', color: '#000' },
-  HIGH:     { backgroundColor: '#e29b65', color: '#000' },
-  MEDIUM:   { backgroundColor: '#e0c86c', color: '#000' },
-  LOW:      { backgroundColor: '#8db580', color: '#000' },
-}
+  CRITICAL: { backgroundColor: "#cf7b71", color: "#000" },
+  HIGH: { backgroundColor: "#e29b65", color: "#000" },
+  MEDIUM: { backgroundColor: "#e0c86c", color: "#000" },
+  LOW: { backgroundColor: "#8db580", color: "#000" },
+};
 
 const BAR_COLOR: Record<TaskStatus, string> = {
-  IN_PROGRESS: '#759cac',
-  DONE:        '#6ca67b',
-  TODO:        '#b0b8c4',
-  BLOCKED:     '#d07d70',
-  IN_REVIEW:   '#a07bc4',
-}
+  IN_PROGRESS: "#759cac",
+  DONE: "#6ca67b",
+  TODO: "#b0b8c4",
+  BLOCKED: "#d07d70",
+  IN_REVIEW: "#a07bc4",
+};
 
 const PLACEHOLDER_TASKS: TimelineTask[] = [
   {
-    id: 'ORC-789',
-    title: 'API Gateway Implementation',
-    responsible: 'Mau & 1 other(s)',
-    status: 'IN_PROGRESS',
-    priority: 'CRITICAL',
-    type: 'FEATURE',
-    createdAt: '2026-01-15',
-    startDate: '2026-01-15',
-    dueDate: '2026-03-28',
+    id: "ORC-789",
+    title: "API Gateway Implementation",
+    responsible: "Mau & 1 other(s)",
+    status: "IN_PROGRESS",
+    priority: "CRITICAL",
+    type: "FEATURE",
+    createdAt: "2026-01-15",
+    startDate: "2026-01-15",
+    dueDate: "2026-03-28",
   },
   {
-    id: 'ORC-799',
-    title: 'Database Implementation',
-    responsible: 'La Fleim',
-    status: 'DONE',
-    priority: 'CRITICAL',
-    type: 'FEATURE',
-    createdAt: '2026-02-01',
-    startDate: '2026-02-01',
-    dueDate: '2026-03-14',
+    id: "ORC-799",
+    title: "Database Implementation",
+    responsible: "La Fleim",
+    status: "DONE",
+    priority: "CRITICAL",
+    type: "FEATURE",
+    createdAt: "2026-02-01",
+    startDate: "2026-02-01",
+    dueDate: "2026-03-14",
   },
-]
+];
 
 export default function TimelinePage(): JSX.Element {
-  const { user } = useAuth()
-  const [tasks, setTasks] = useState<TimelineTask[]>(PLACEHOLDER_TASKS)
+  const { user } = useAuth();
+  const [tasks, setTasks] = useState<TimelineTask[]>(PLACEHOLDER_TASKS);
 
   useEffect(() => {
-    let cancelled = false
+    let cancelled = false;
     timelineAPI
       .getTasks(user?.currentTeamId)
-      .then((res) => { if (!cancelled) setTasks(res.data) })
-      .catch(() => { /* keep placeholder */ })
-    return () => { cancelled = true }
-  }, [user?.currentTeamId])
+      .then((res) => {
+        if (!cancelled) setTasks(res.data);
+      })
+      .catch(() => {
+        /* keep placeholder */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.currentTeamId]);
 
   return (
     <div className={styles.page}>
@@ -165,8 +173,8 @@ export default function TimelinePage(): JSX.Element {
                     {/* Today marker correctly aligned to the top */}
                     <div className={styles.todayLineHeader} style={{ left: TODAY_PCT }}>
                       <span className={styles.todayLabel}>
-                        Today {String(TODAY.getUTCDate()).padStart(2, '0')}/
-                        {String(TODAY.getUTCMonth() + 1).padStart(2, '0')}
+                        Today {String(TODAY.getUTCDate()).padStart(2, "0")}/
+                        {String(TODAY.getUTCMonth() + 1).padStart(2, "0")}
                       </span>
                     </div>
                   </div>
@@ -176,10 +184,10 @@ export default function TimelinePage(): JSX.Element {
 
             <tbody>
               {tasks.map((task) => {
-                const startDay = dayOffset(task.startDate)
-                const endDay   = dayOffset(task.dueDate ?? task.startDate)
-                const barWidth = Math.max(endDay - startDay, 1)
-                const dueFormatted = task.dueDate?.split('-').reverse().join('/') ?? '—'
+                const startDay = dayOffset(task.startDate);
+                const endDay = dayOffset(task.dueDate ?? task.startDate);
+                const barWidth = Math.max(endDay - startDay, 1);
+                const dueFormatted = task.dueDate?.split("-").reverse().join("/") ?? "—";
 
                 return (
                   <tr key={task.id} className={styles.taskRow}>
@@ -189,27 +197,34 @@ export default function TimelinePage(): JSX.Element {
                     </td>
                     <td className={styles.responsible}>
                       <div className={styles.userWrap}>
-                         <div 
-                           className={styles.avatar} 
-                           style={{ backgroundImage: `url(https://ui-avatars.com/api/?name=${encodeURIComponent(task.responsible ?? 'U')}&background=random)` }} 
-                         />
-                         <span>{task.responsible ?? '—'}</span>
+                        <div
+                          className={styles.avatar}
+                          style={{
+                            backgroundImage: `url(https://ui-avatars.com/api/?name=${encodeURIComponent(task.responsible ?? "U")}&background=random)`,
+                          }}
+                        />
+                        <span>{task.responsible ?? "—"}</span>
                       </div>
                     </td>
                     <td>
-                      <span className={styles.statusBadge} style={STATUS_STYLE[task.status]}>
+                      <span
+                        className={styles.statusBadge}
+                        style={STATUS_STYLE[task.status]}
+                      >
                         {STATUS_LABEL[task.status]}
                       </span>
                     </td>
                     <td>
-                      <span className={styles.statusBadge} style={PRIORITY_STYLE[task.priority]}>
-                        {task.priority === 'CRITICAL' ? 'Critical' : task.priority}
+                      <span
+                        className={styles.statusBadge}
+                        style={PRIORITY_STYLE[task.priority]}
+                      >
+                        {task.priority === "CRITICAL" ? "Critical" : task.priority}
                       </span>
                     </td>
                     <td className={styles.dueDate}>{dueFormatted}</td>
                     <td className={styles.ganttCell}>
                       <div className={styles.ganttTrack}>
-                        
                         {/* Vertical Month Grids */}
                         {MONTH_HEADERS.map((m) => (
                           <div
@@ -227,7 +242,7 @@ export default function TimelinePage(): JSX.Element {
                             width: toPct(barWidth),
                             background: BAR_COLOR[task.status],
                           }}
-                          title={`${task.id}: ${task.startDate} → ${task.dueDate ?? ''}`}
+                          title={`${task.id}: ${task.startDate} → ${task.dueDate ?? ""}`}
                         />
 
                         {/* Dashed line matching target */}
@@ -239,12 +254,12 @@ export default function TimelinePage(): JSX.Element {
                       </div>
                     </td>
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
         </div>
       </div>
     </div>
-  )
+  );
 }

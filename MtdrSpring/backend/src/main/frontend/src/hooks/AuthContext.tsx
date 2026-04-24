@@ -105,10 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const hasRole = useCallback(
-    (role: UserRole): boolean => user?.role === role,
-    [user],
-  );
+  const hasRole = useCallback((role: UserRole): boolean => user?.role === role, [user]);
 
   const value: AuthContextValue = {
     user,

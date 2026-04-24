@@ -82,9 +82,7 @@ export default function CostPerDeveloperChart({
   // Dynamically extract sprint names from the data keys if not provided, avoiding the 'developer' key
   const chartSprints =
     sprints ||
-    (data.length > 0
-      ? Object.keys(data[0]).filter((k) => k !== "developer")
-      : []);
+    (data.length > 0 ? Object.keys(data[0]).filter((k) => k !== "developer") : []);
 
   return (
     <ResponsiveContainer width="100%" height={240}>
@@ -94,11 +92,7 @@ export default function CostPerDeveloperChart({
         barCategoryGap="25%"
         barGap={3}
       >
-        <CartesianGrid
-          strokeDasharray="3 3"
-          stroke="#ede8df"
-          vertical={false}
-        />
+        <CartesianGrid strokeDasharray="3 3" stroke="#ede8df" vertical={false} />
         <XAxis
           dataKey="developer"
           tick={{ fontSize: 11, fill: "#6b6b6b" }}
@@ -111,10 +105,7 @@ export default function CostPerDeveloperChart({
           axisLine={false}
           tickLine={false}
         />
-        <Tooltip
-          content={<CustomTooltip />}
-          cursor={{ fill: "rgba(0,0,0,0.04)" }}
-        />
+        <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(0,0,0,0.04)" }} />
         <Legend
           iconType="square"
           iconSize={10}

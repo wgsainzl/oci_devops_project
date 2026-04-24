@@ -89,9 +89,7 @@ export const HOURS_PLACEHOLDER: HoursEntry[] = [
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────
-export default function HoursChart({
-  data = HOURS_PLACEHOLDER,
-}: Props): JSX.Element {
+export default function HoursChart({ data = HOURS_PLACEHOLDER }: Props): JSX.Element {
   return (
     <ResponsiveContainer width="100%" height={240}>
       <BarChart
@@ -100,11 +98,7 @@ export default function HoursChart({
         barCategoryGap="25%"
         barGap={3}
       >
-        <CartesianGrid
-          strokeDasharray="3 3"
-          stroke="#ede8df"
-          vertical={false}
-        />
+        <CartesianGrid strokeDasharray="3 3" stroke="#ede8df" vertical={false} />
         <XAxis
           dataKey="developer"
           tick={{ fontSize: 11, fill: "#6b6b6b" }}
@@ -117,10 +111,7 @@ export default function HoursChart({
           axisLine={false}
           tickLine={false}
         />
-        <Tooltip
-          content={<CustomTooltip />}
-          cursor={{ fill: "rgba(0,0,0,0.04)" }}
-        />
+        <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(0,0,0,0.04)" }} />
         <Legend
           iconType="square"
           iconSize={10}
@@ -133,12 +124,7 @@ export default function HoursChart({
           radius={[3, 3, 0, 0]}
           maxBarSize={32}
         />
-        <Bar
-          dataKey="actual"
-          name="Actual"
-          radius={[3, 3, 0, 0]}
-          maxBarSize={32}
-        >
+        <Bar dataKey="actual" name="Actual" radius={[3, 3, 0, 0]} maxBarSize={32}>
           {data.map((entry) => (
             <Cell
               key={entry.developer}

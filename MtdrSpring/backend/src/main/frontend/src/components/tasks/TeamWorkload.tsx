@@ -1,12 +1,12 @@
-import { type JSX } from 'react'
-import type { WorkloadMember } from '../../types'
-import styles from './TeamWorkload.module.css'
+import { type JSX } from "react";
+import type { WorkloadMember } from "../../types";
+import styles from "./TeamWorkload.module.css";
 
 interface Props {
-  members: WorkloadMember[]
+  members: WorkloadMember[];
 }
 
-const BAR_COLORS: string[] = ['#5aacbe', '#8ab4c8', '#a0c8b8']
+const BAR_COLORS: string[] = ["#5aacbe", "#8ab4c8", "#a0c8b8"];
 
 export default function TeamWorkload({ members }: Props): JSX.Element {
   return (
@@ -46,5 +46,5 @@ export default function TeamWorkload({ members }: Props): JSX.Element {
         </div>
       ))}
     </div>
-  )
+  );
 }

@@ -58,7 +58,10 @@
   border-color: var(--color-oracle-red);
 }
 
-.textarea { resize: vertical; min-height: 80px; }
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
 
 .actions {
   display: flex;
@@ -77,8 +80,13 @@
   transition: background var(--transition-fast);
 }
 
-.btnPrimary:hover:not(:disabled) { background: #333; }
-.btnPrimary:disabled { opacity: 0.6; cursor: not-allowed; }
+.btnPrimary:hover:not(:disabled) {
+  background: #333;
+}
+.btnPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 .btnSecondary {
   padding: var(--space-2) var(--space-5);
@@ -89,7 +97,9 @@
   transition: background var(--transition-fast);
 }
 
-.btnSecondary:hover { background: var(--color-bg-hover); }
+.btnSecondary:hover {
+  background: var(--color-bg-hover);
+}
 
 .denied {
   padding: var(--space-4);

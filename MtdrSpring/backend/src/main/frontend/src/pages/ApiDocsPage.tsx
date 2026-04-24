@@ -1,7 +1,7 @@
-import { type JSX } from 'react'
-import SwaggerUI from 'swagger-ui-react'
-import 'swagger-ui-react/swagger-ui.css'
-import styles from './ApiDocsPage.module.css'
+import { type JSX } from "react";
+import SwaggerUI from "swagger-ui-react";
+import "swagger-ui-react/swagger-ui.css";
+import styles from "./ApiDocsPage.module.css";
 
 export default function ApiDocsPage(): JSX.Element {
   return (
@@ -17,5 +17,5 @@ export default function ApiDocsPage(): JSX.Element {
         <SwaggerUI url="/swagger_APIs_definition.yaml" />
       </div>
     </div>
-  )
+  );
 }

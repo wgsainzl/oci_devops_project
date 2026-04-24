@@ -43,7 +43,11 @@
   object-fit: contain;
   flex-shrink: 0;
 }
-.appName { color: white; font-size: 0.95rem; font-weight: 500; }
+.appName {
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
 
 .content {
   flex: 1;
@@ -119,7 +123,9 @@
   transition: border-color var(--transition-fast);
 }
 
-.input:focus { border-bottom-color: var(--color-oracle-red); }
+.input:focus {
+  border-bottom-color: var(--color-oracle-red);
+}
 
 .terms {
   font-size: 0.78rem;
@@ -138,11 +144,24 @@
   transition: background var(--transition-fast);
 }
 
-.btn:hover:not(:disabled) { background: #333; }
-.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn:hover:not(:disabled) {
+  background: #333;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 @media (max-width: 600px) {
-  .card { padding: var(--space-6) var(--space-5); }
-  .field { flex-direction: column; gap: var(--space-1); }
-  .label { width: auto; text-align: left; }
+  .card {
+    padding: var(--space-6) var(--space-5);
+  }
+  .field {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .label {
+    width: auto;
+    text-align: left;
+  }
 }

@@ -4,19 +4,19 @@
    otherwise returns real API functions
  */
 
-import { dashboardAPI, tasksAPI, teamsAPI } from './API'
-import { mockDashboardAPI, mockTeamsAPI } from './mocks'
+import { dashboardAPI, tasksAPI, teamsAPI } from "./API";
+import { mockDashboardAPI, mockTeamsAPI } from "./mocks";
 
-const useMocks = import.meta.env.VITE_USE_MOCKS
+const useMocks = import.meta.env.VITE_USE_MOCKS;
 
 export const useAPI = {
   get dashboard() {
-    return useMocks ? mockDashboardAPI : dashboardAPI
+    return useMocks ? mockDashboardAPI : dashboardAPI;
   },
   get tasks() {
-    return tasksAPI // still no mock for this yet
+    return tasksAPI; // still no mock for this yet
   },
   get teams() {
-    return useMocks ? mockTeamsAPI : teamsAPI
+    return useMocks ? mockTeamsAPI : teamsAPI;
   },
-}
+};

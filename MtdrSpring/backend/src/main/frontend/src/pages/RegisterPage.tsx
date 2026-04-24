@@ -61,9 +61,7 @@ export default function RegisterPage(): JSX.Element {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>,
-  ): Promise<void> => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError(null);
     if (form.password !== form.confirm) {
@@ -87,11 +85,7 @@ export default function RegisterPage(): JSX.Element {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <Link
-          to="/login"
-          className={styles.headerLink}
-          aria-label="Go to login page"
-        >
+        <Link to="/login" className={styles.headerLink} aria-label="Go to login page">
           <span className={styles.oracleMark}>
             <OracleMark />
           </span>
@@ -133,9 +127,8 @@ export default function RegisterPage(): JSX.Element {
             ))}
 
             <p className={styles.terms}>
-              By clicking on the &ldquo;Create Account&rdquo; button below, you
-              understand and agree that the use of Oracle&apos;s web site is
-              subject to the{" "}
+              By clicking on the &ldquo;Create Account&rdquo; button below, you understand
+              and agree that the use of Oracle&apos;s web site is subject to the{" "}
               <a
                 href="https://www.oracle.com/legal/terms.html"
                 target="_blank"
