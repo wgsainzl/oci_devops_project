@@ -23,6 +23,7 @@ export default defineConfig({
   test: {
 		globals:true,
 		environment: 'jsdom',
+    setupFiles: './src/test/setupTests.ts',
 		tags: [
 			{name: "frontend", description: "Tests written for frontend"},
 			{name: "backend", description: "Tests written for backend"}
