@@ -133,17 +133,43 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
     }
 
     private void sendMarkdown(long chatId, String markdownText) {
+        String telegramHtml = toTelegramHtml(markdownText);
         SendMessage message = SendMessage.builder()
                 .chatId(chatId)
-                .text(markdownText)
-                .parseMode(ParseMode.MARKDOWN)
+                .text(telegramHtml)
+                .parseMode(ParseMode.HTML)
                 .build();
         try {
             telegramClient.execute(message);
         } catch (TelegramApiException e) {
-            logger.warn("Markdown parsing failed, sending plain text to chatId={}", chatId, e);
+            logger.warn("Formatted message parsing failed, sending plain text to chatId={}", chatId, e);
             sendText(chatId, markdownText);
         }
+    }
+
+    private String toTelegramHtml(String markdownText) {
+        String[] lines = markdownText.split("\\r?\\n");
+        StringBuilder html = new StringBuilder();
+        for (String rawLine : lines) {
+            String line = rawLine == null ? "" : rawLine.trim();
+            if (line.startsWith("## ")) {
+                html.append("<b>").append(escapeHtml(line.substring(3))).append("</b>\n");
+            } else if (line.startsWith("# ")) {
+                html.append("<b>").append(escapeHtml(line.substring(2))).append("</b>\n");
+            } else if (line.startsWith("- ")) {
+                html.append("• ").append(escapeHtml(line.substring(2))).append("\n");
+            } else {
+                html.append(escapeHtml(rawLine)).append("\n");
+            }
+        }
+        return html.toString().trim();
+    }
+
+    private String escapeHtml(String text) {
+        return text
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
     }
 
     @AfterBotRegistration
