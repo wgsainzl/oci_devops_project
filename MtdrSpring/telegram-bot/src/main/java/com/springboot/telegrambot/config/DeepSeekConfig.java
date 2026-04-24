@@ -12,11 +12,18 @@ public class DeepSeekConfig {
     @Value("${deepseek.api.url}")
     private String apiUrl;
 
+    @Value("${deepseek.api.model:phi3:mini}")
+    private String model;
+
     public String getApiKey() {
         return apiKey;
     }
 
     public String getApiUrl() {
         return apiUrl;
+    }
+
+    public String getModel() {
+        return model;
     }
 }

@@ -10,6 +10,7 @@ deepseek:
   api:
     key: ${DEEPSEEK_API_KEY}
     url: ${DEEPSEEK_URL}
+    model: ${DEEPSEEK_MODEL:phi3:mini}
 
 backend:
   url: ${BACKEND_URL:http://localhost:8080}

@@ -49,7 +49,7 @@ public class DeepSeekService {
 
             // Construct payload
             ObjectNode payload = mapper.createObjectNode();
-            payload.put("model", "deepseek-chat");
+            payload.put("model", deepSeekConfig.getModel());
 
             ArrayNode messages = payload.putArray("messages");
             ObjectNode systemMsg = mapper.createObjectNode();
@@ -65,9 +65,8 @@ public class DeepSeekService {
             payload.put("temperature", 0.7);
 
             // Make request
-            String response = WebClient.builder().baseUrl(deepSeekConfig.getApiUrl()).build()
-                    .post()
-                    .header("Authorization", "Bearer " + deepSeekConfig.getApiKey())
+            String response = withOptionalAuth(webClient.post()
+                    .uri(deepSeekConfig.getApiUrl()))
                     .header("Content-Type", "application/json")
                     .bodyValue(mapper.writeValueAsString(payload))
                     .retrieve()
@@ -101,7 +100,7 @@ public class DeepSeekService {
                           + "Logs:\n" + logsSummary.toString();
 
             ObjectNode payload = mapper.createObjectNode();
-            payload.put("model", "deepseek-chat");
+            payload.put("model", deepSeekConfig.getModel());
 
             ArrayNode messages = payload.putArray("messages");
             ObjectNode systemMsg = mapper.createObjectNode();
@@ -116,9 +115,8 @@ public class DeepSeekService {
 
             payload.put("temperature", 0.7);
 
-            String response = webClient.post()
-                    .uri(deepSeekConfig.getApiUrl())
-                    .header("Authorization", "Bearer " + deepSeekConfig.getApiKey())
+            String response = withOptionalAuth(webClient.post()
+                    .uri(deepSeekConfig.getApiUrl()))
                     .header("Content-Type", "application/json")
                     .bodyValue(mapper.writeValueAsString(payload))
                     .retrieve()
@@ -134,5 +132,13 @@ public class DeepSeekService {
             logger.error("Deepseek Error: ", e);
             return "Error contacting DeepSeek AI.";
         }
+    }
+
+    private WebClient.RequestBodySpec withOptionalAuth(WebClient.RequestBodySpec request) {
+        String apiKey = deepSeekConfig.getApiKey();
+        if (apiKey != null && !apiKey.isBlank() && !"dummy".equalsIgnoreCase(apiKey)) {
+            return request.header("Authorization", "Bearer " + apiKey);
+        }
+        return request;
     }
 }

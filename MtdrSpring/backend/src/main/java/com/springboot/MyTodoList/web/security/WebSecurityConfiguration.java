@@ -35,6 +35,9 @@ public class WebSecurityConfiguration {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login**", "/error**", "/oauth2/**").permitAll()
+                        // Telegram bot calls these without a browser session or JWT
+                        .requestMatchers("/summary-jobs", "/summary-jobs/**", "/tasks/summary", "/tasks/summary/**")
+                        .permitAll()
                         .anyRequest().authenticated())
 
                 .oauth2Login(oauth -> oauth.
