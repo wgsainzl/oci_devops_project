@@ -58,20 +58,13 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Elem
   )
 }
 
-// ── Placeholder data (replace with API call) ──────────────────────────────
-export const COST_PLACEHOLDER: CostEntry[] = [
-  { developer: 'Sebastian',  'Sprint 0': 1035, 'Sprint 1': 675 },
-  { developer: 'Mauricio',  'Sprint 0': 532,  'Sprint 1': 494 },
-  { developer: 'Guillermo','Sprint 0': 245,  'Sprint 1': 595 },
-  { developer: 'Juan Manuel', 'Sprint 0': 288,  'Sprint 1': 256 },
-  { developer: 'Diego',   'Sprint 0': 324,  'Sprint 1': 252 },
-]
-
 // ── Component ─────────────────────────────────────────────────────────────
 export default function CostPerDeveloperChart({
-  data = COST_PLACEHOLDER,
-  sprints = ['Sprint 0', 'Sprint 1'],
+  data,
+  sprints,
 }: Props): JSX.Element {
+  const sprintKeys = sprints ?? Object.keys(data[0] ?? {}).filter((key) => key !== 'developer')
+
   return (
     <ResponsiveContainer width="100%" height={240}>
       <BarChart
@@ -102,7 +95,7 @@ export default function CostPerDeveloperChart({
           iconSize={10}
           wrapperStyle={{ fontSize: '0.78rem', paddingTop: 8 }}
         />
-        {sprints.map((sprint, i) => (
+        {sprintKeys.map((sprint, i) => (
           <Bar
             key={sprint}
             dataKey={sprint}

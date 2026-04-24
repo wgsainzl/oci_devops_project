@@ -7,7 +7,7 @@
 import { dashboardAPI, tasksAPI, teamsAPI, timelineAPI } from './API'
 import { mockDashboardAPI, mockTeamsAPI, mockTimelineAPI } from './mocks'
 
-const useMocks = import.meta.env.VITE_USE_MOCKS
+const useMocks = String(import.meta.env.VITE_USE_MOCKS).toLowerCase() === 'true'
 
 export const useAPI = {
   get dashboard() {
