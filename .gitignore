@@ -32,6 +32,8 @@ frontend/.pnp
 
 # testing
 frontend/coverage
+coverage/
+src/frontend/devops-dashboard/coverage/
 
 # production
 frontend/build

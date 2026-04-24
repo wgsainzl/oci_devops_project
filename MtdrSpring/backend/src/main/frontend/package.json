@@ -9,7 +9,11 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+		"test:coverage": "npm test -- --coverage",
+		"format": "prettier --write .",
+		"prebuild": "npm run format && npm run lint && npm run test"
   },
   "dependencies": {
     "axios": "^1.7.2",
