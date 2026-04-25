@@ -1,0 +1,59 @@
+# Telegram long polling: only one replica should use the same bot token.
+apiVersion: v1
+kind: Service
+metadata:
+  name: telegram-bot-service
+  namespace: mtdrworkshop
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8081
+      targetPort: 8081
+      protocol: TCP
+  selector:
+    app: telegram-bot
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telegram-bot-deployment
+  namespace: mtdrworkshop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: telegram-bot
+  template:
+    metadata:
+      labels:
+        app: telegram-bot
+    spec:
+      containers:
+        - name: telegram-bot
+          image: ${DOCKER_REGISTRY}/telegram-bot:${IMAGE_TAG}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+          env:
+            - name: BACKEND_URL
+              value: "http://todolistapp-springboot-service"
+            - name: DEEPSEEK_URL
+              value: "https://api.deepseek.com/v1/chat/completions"
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: telegram-key
+            - name: TELEGRAM_BOT_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: telegram-bot-name
+            - name: DEEPSEEK_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: deepseek-api-key
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: ocir-secret
