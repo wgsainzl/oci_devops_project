@@ -209,12 +209,91 @@ const normalizeAuthUser = (payload: RawAuthEnvelope) => {
   };
 };
 
+const buildPendingActionsFromTasks = (tasks: Task[]): PendingAction[] => {
+  const now = Date.now();
+
+  const highPriorityActions = tasks
+    .filter((task) => {
+      const dueTs = task.dueDate ? new Date(task.dueDate).getTime() : Number.NaN;
+      const isOverdue = Number.isFinite(dueTs) && dueTs < now && task.status !== "DONE";
+      return task.status === "BLOCKED" || task.status === "IN_REVIEW" || isOverdue;
+    })
+    .slice(0, 15)
+    .map((task) => {
+      if (task.status === "BLOCKED") {
+        return {
+          id: task.id,
+          title: task.title,
+          responsible: task.responsible,
+          message: "Blocked task requires escalation.",
+          action: "Escalate",
+        };
+      }
+      if (task.status === "IN_REVIEW") {
+        return {
+          id: task.id,
+          title: task.title,
+          responsible: task.responsible,
+          message: "Waiting for review.",
+          action: "Review",
+        };
+      }
+      return {
+        id: task.id,
+        title: task.title,
+        responsible: task.responsible,
+        message: "Task is overdue.",
+        action: "Follow up",
+      };
+    });
+
+  if (highPriorityActions.length > 0) {
+    return highPriorityActions;
+  }
+
+  return tasks
+    .filter((task) => task.status !== "DONE")
+    .slice(0, 15)
+    .map((task) => ({
+      id: task.id,
+      title: task.title,
+      responsible: task.responsible,
+      message: `Task is ${task.status.toLowerCase().replace("_", " ")}.`,
+      action: task.status === "TODO" ? "Start" : "Update",
+    }));
+};
+
+const buildRecentActivityFromTasks = (tasks: Task[], limit: number): ActivityLogItem[] =>
+  tasks
+    .sort(
+      (a, b) =>
+        new Date(b.updatedAt ?? b.createdAt).getTime() -
+        new Date(a.updatedAt ?? a.createdAt).getTime(),
+    )
+    .slice(0, limit)
+    .map((task, idx) => {
+      const taskDate = new Date(task.updatedAt ?? task.createdAt ?? Date.now());
+      return {
+        id: task.id || String(idx),
+        date: taskDate.toLocaleDateString(undefined, {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        }),
+        actor: task.responsible,
+        action: `Task ${task.title} is currently ${task.status}`,
+        status: task.status,
+        time: toRelativeTime(taskDate),
+      };
+    });
+
 /*
  * auth endpoints
  */
 export const authAPI = {
   getMe: async (token: string) => {
-    const response = await api.get<RawAuthEnvelope>("/auth/me", {
+    const response = await api.get<RawAuthEnvelope>("/api/auth/me", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -284,48 +363,19 @@ export const dashboardAPI = {
     teamId?: string | null,
   ): Promise<AxiosResponse<PendingAction[]>> => {
     try {
-      return await api.get("/dashboard/pending-actions", { params: { teamId } });
+      const response = await api.get("/dashboard/pending-actions", { params: { teamId } });
+      const rows = extractArrayPayload<PendingAction>(response.data);
+      if (rows.length > 0) {
+        return makeAxiosResponse(response, rows);
+      }
+
+      const tasksRes = await _tasksAPI.getAll(teamId ? { teamId } : undefined);
+      const tasks = tasksRes.data.map(normalizeTask);
+      return makeAxiosResponse(tasksRes, buildPendingActionsFromTasks(tasks));
     } catch {
       const tasksRes = await _tasksAPI.getAll(teamId ? { teamId } : undefined);
       const tasks = tasksRes.data.map(normalizeTask);
-      const now = Date.now();
-
-      const actions = tasks
-        .filter((task) => {
-          const dueTs = task.dueDate ? new Date(task.dueDate).getTime() : Number.NaN;
-          const isOverdue = Number.isFinite(dueTs) && dueTs < now && task.status !== "DONE";
-          return task.status === "BLOCKED" || task.status === "IN_REVIEW" || isOverdue;
-        })
-        .slice(0, 15)
-        .map((task) => {
-          if (task.status === "BLOCKED") {
-            return {
-              id: task.id,
-              title: task.title,
-              responsible: task.responsible,
-              message: "Blocked task requires escalation.",
-              action: "Escalate",
-            };
-          }
-          if (task.status === "IN_REVIEW") {
-            return {
-              id: task.id,
-              title: task.title,
-              responsible: task.responsible,
-              message: "Waiting for review.",
-              action: "Review",
-            };
-          }
-          return {
-            id: task.id,
-            title: task.title,
-            responsible: task.responsible,
-            message: "Task is overdue.",
-            action: "Follow up",
-          };
-        });
-
-      return makeAxiosResponse(tasksRes, actions);
+      return makeAxiosResponse(tasksRes, buildPendingActionsFromTasks(tasks));
     }
   },
 
@@ -374,7 +424,8 @@ export const dashboardAPI = {
         { params: { teamId, limit } },
       );
 
-      const mapped = response.data.map((row, index) => {
+      const rows = extractArrayPayload<Record<string, unknown>>(response.data);
+      const mapped = rows.map((row, index) => {
         const timestamp = row.timestamp ? new Date(String(row.timestamp)) : new Date();
         const fieldName = String(row.fieldName ?? "task");
         const oldValue = row.oldValue ? String(row.oldValue) : "";
@@ -399,35 +450,17 @@ export const dashboardAPI = {
         };
       });
 
-      return makeAxiosResponse(response, mapped);
+      if (mapped.length > 0) {
+        return makeAxiosResponse(response, mapped);
+      }
+
+      const tasksRes = await _tasksAPI.getAll(teamId ? { teamId } : undefined);
+      const tasks = tasksRes.data.map(normalizeTask);
+      return makeAxiosResponse(tasksRes, buildRecentActivityFromTasks(tasks, limit));
     } catch {
       const tasksRes = await _tasksAPI.getAll(teamId ? { teamId } : undefined);
       const tasks = tasksRes.data.map(normalizeTask);
-      const fallback = tasks
-        .sort(
-          (a, b) =>
-            new Date(b.updatedAt ?? b.createdAt).getTime() -
-            new Date(a.updatedAt ?? a.createdAt).getTime(),
-        )
-        .slice(0, limit)
-        .map((task, idx) => {
-          const taskDate = new Date(task.updatedAt ?? task.createdAt ?? Date.now());
-          return {
-            id: task.id || String(idx),
-            date: taskDate.toLocaleDateString(undefined, {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            }),
-            actor: task.responsible,
-            action: `Task ${task.title} is currently ${task.status}`,
-            status: task.status,
-            time: toRelativeTime(taskDate),
-          };
-        });
-
-      return makeAxiosResponse(tasksRes, fallback);
+      return makeAxiosResponse(tasksRes, buildRecentActivityFromTasks(tasks, limit));
     }
   },
 
