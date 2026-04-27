@@ -83,6 +83,7 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
             actions.fnDelete();
             actions.fnListAll();
             actions.fnAddItem();
+            actions.fnGenerateReport();
             
             actions.fnElse();
         }
