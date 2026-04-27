@@ -36,6 +36,21 @@ public class UserService {
         }
     }
 
+    public Map<String, Object> getUserByTelegramId(String telegramId) {
+        Optional<User> userOpt = userRepository.findByTelegramUserID(telegramId);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            boolean isManager = user.getRoles().stream()
+                    .anyMatch(role -> role.getName().equalsIgnoreCase("MANAGER") || role.getName().equalsIgnoreCase("ADMIN"));
+            
+            Map<String, Object> result = new HashMap<>();
+            result.put("userId", user.getUserId());
+            result.put("role", isManager ? "MANAGER" : "DEVELOPER");
+            return result;
+        }
+        return null;
+    }
+
 
     public boolean deleteUser(Long id) {
         try {

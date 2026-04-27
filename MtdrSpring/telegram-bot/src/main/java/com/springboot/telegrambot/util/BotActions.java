@@ -137,21 +137,21 @@ public class BotActions {
     }
 
     // NEW: AI Sprint Reporter
-        public void fnReport() {
+    public void fnReport() {
         if (!requestText.startsWith(BotCommands.LLM_REPORT.getCommand()) || exit) return;
         
-        // Expected format: /report <dev|manager> <id>
-        String[] parts = requestText.split(" ");
-        if (parts.length < 3) {
-            BotHelper.sendMessageToTelegram(chatId, "Please specify role and ID. Example: /report dev 1  or  /report manager 1", telegramClient, null);
-            return;
-        }
-
         try {
-            String role = parts[1].toLowerCase();
-            Integer targetId = Integer.parseInt(parts[2]);
-            
-            if (role.equals("manager")) {
+            java.util.Map<String, Object> userInfo = backendServiceClient.getUserRoleByTelegramId(String.valueOf(chatId));
+            if (userInfo == null || userInfo.get("userId") == null) {
+                BotHelper.sendMessageToTelegram(chatId, "Could not find a registered user linked to your Telegram account.", telegramClient, null);
+                exit = true;
+                return;
+            }
+
+            Integer targetId = ((Number) userInfo.get("userId")).intValue();
+            String role = (String) userInfo.get("role");
+
+            if ("MANAGER".equalsIgnoreCase(role)) {
                 BotHelper.sendMessageToTelegram(chatId, "⏳ Analyzing team activity logs for Manager...", telegramClient, null);
                 
                 // For a Manager, query the task logs and summarize recent activity
@@ -172,8 +172,9 @@ public class BotActions {
                 BotHelper.sendMessageToTelegram(chatId, "📊 **Developer Sprint Report**\n\n" + aiSummary, telegramClient, null);
             }
             
-        } catch (NumberFormatException e) {
-            BotHelper.sendMessageToTelegram(chatId, "Invalid ID format.", telegramClient, null);
+        } catch (Exception e) {
+            logger.error("Error generating report", e);
+            BotHelper.sendMessageToTelegram(chatId, "An error occurred while retrieving your report.", telegramClient, null);
         }
         exit = true;
     }

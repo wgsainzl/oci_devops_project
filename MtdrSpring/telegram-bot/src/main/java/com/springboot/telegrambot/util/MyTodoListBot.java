@@ -70,52 +70,47 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
             return;
         }
 
-        sendText(chatId, "Echo: " + messageText + "\n\nUse /report <userId> <weekStartISO> <weekEndISO> to generate your AI weekly summary.");
+        sendText(chatId, "Echo: " + messageText + "\n\nUse /report to generate your AI weekly summary (we will identify your role automatically).");
     }
 
     private void handleReportCommand(long chatId, String telegramUserId, String messageText) {
-        String[] parts = messageText.split("\\s+");
-        if (parts.length < 4) {
-            sendText(chatId, "Usage: /report <userId> <weekStartISO> <weekEndISO>\n"
-                    + "Example: /report 1 2026-04-13T00:00:00Z 2026-04-20T00:00:00Z");
+        if (telegramUserId == null || telegramUserId.isBlank()) {
+            sendText(chatId, "Missing telegram user id in update payload.");
             return;
         }
 
-        Integer userId;
-        OffsetDateTime weekStart;
-        OffsetDateTime weekEnd;
         try {
-            userId = Integer.valueOf(parts[1]);
-            weekStart = OffsetDateTime.parse(parts[2]);
-            weekEnd = OffsetDateTime.parse(parts[3]);
-        } catch (Exception e) {
-            sendText(chatId, "Invalid command format. Usage: /report <userId> <weekStartISO> <weekEndISO>");
-            return;
-        }
-
-        Long jobId = null;
-        try {
-            sendText(chatId, "Generating your AI weekly summary...");
-            if (telegramUserId == null || telegramUserId.isBlank()) {
-                throw new IllegalArgumentException("Missing telegram user id in update payload.");
+            sendText(chatId, "Identifying your role from the database...");
+            java.util.Map<String, Object> userInfo = backendServiceClient.getUserRoleByTelegramId(telegramUserId);
+            if (userInfo == null || userInfo.get("userId") == null) {
+                sendText(chatId, "Could not find a registered user linked to your Telegram account.");
+                return;
             }
 
-            jobId = backendServiceClient.createSummaryJobPending(telegramUserId, weekStart, weekEnd);
+            Integer userId = ((Number) userInfo.get("userId")).intValue();
+            String role = (String) userInfo.get("role");
+
+            OffsetDateTime weekEnd = OffsetDateTime.now();
+            OffsetDateTime weekStart = weekEnd.minusDays(7);
+
+            sendText(chatId, "Generating your AI weekly summary...");
+            Long jobId = backendServiceClient.createSummaryJobPending(telegramUserId, weekStart, weekEnd);
             backendServiceClient.markSummaryJobProcessing(jobId);
 
-            List<TaskDTO> tasks = backendServiceClient.getWeeklySummaryTasks(userId, weekStart, weekEnd);
-            String aiSummary = deepSeekService.generateSprintReport(userId, tasks);
+            String aiSummary;
+            if ("MANAGER".equalsIgnoreCase(role) || "ADMIN".equalsIgnoreCase(role)) {
+                List<Object[]> logs = backendServiceClient.getWeeklyTaskLogsSummary(userId);
+                aiSummary = deepSeekService.generateLogsReport(userId, logs);
+            } else {
+                List<TaskDTO> tasks = backendServiceClient.getWeeklySummaryTasks(userId, weekStart, weekEnd);
+                aiSummary = deepSeekService.generateSprintReport(userId, tasks);
+            }
+
             backendServiceClient.markSummaryJobSent(jobId, aiSummary);
             sendMarkdown(chatId, aiSummary);
+
         } catch (Exception e) {
-            logger.error("Failed to generate AI report for userId={}", userId, e);
-            if (jobId != null) {
-                try {
-                    backendServiceClient.markSummaryJobFailed(jobId, e.getMessage());
-                } catch (Exception nested) {
-                    logger.error("Failed to update summary job as FAILED for jobId={}", jobId, nested);
-                }
-            }
+            logger.error("Failed to generate AI report for telegramUserId={}", telegramUserId, e);
             sendText(chatId, "Could not generate report right now. Please verify backend and DeepSeek settings.");
         }
     }

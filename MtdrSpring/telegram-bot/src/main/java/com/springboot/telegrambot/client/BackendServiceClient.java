@@ -29,6 +29,14 @@ public class BackendServiceClient {
                 .block();
     }
 
+    public Map<String, Object> getUserRoleByTelegramId(String telegramId) {
+        return webClient.get()
+                .uri("/api/users/telegram/" + telegramId + "/role")
+                .retrieve()
+                .bodyToMono(new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {})
+                .block();
+    }
+
     public List<TaskDTO> getWeeklySummaryTasks(Integer userId, OffsetDateTime weekStart, OffsetDateTime weekEnd) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
