@@ -49,6 +49,7 @@ public class BotActions {
             .builder()
             .keyboardRow(new KeyboardRow(java.util.List.of(new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.LIST_ALL_ITEMS.getLabel()), new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.ADD_NEW_ITEM.getLabel()))))
             .keyboardRow(new KeyboardRow(java.util.List.of(new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.SHOW_MAIN_SCREEN.getLabel()), new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.HIDE_MAIN_SCREEN.getLabel()))))
+            .keyboardRow(new KeyboardRow(java.util.List.of(new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.GENERATE_REPORT.getLabel()))))
             .build()
         );
         exit = true;
@@ -60,7 +61,7 @@ public class BotActions {
             
         Integer id = Integer.valueOf(requestText.substring(0, requestText.indexOf(BotLabels.DASH.getLabel())));
         try {
-            backendServiceClient.updateTaskStatus(id, "DONE"); // passing null for currentUserId for now
+            backendServiceClient.updateTaskStatus(id, "DONE");
             BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DONE.getMessage(), telegramClient);
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
@@ -68,7 +69,7 @@ public class BotActions {
         exit = true;
     }
 
-    // NEW: Handles marking a task as BLOCKED
+    // Handles marking a task as BLOCKED
     public void fnBlock() {
         if (!requestText.contains(BotLabels.BLOCK.getLabel()) || exit) return;
             
@@ -134,6 +135,37 @@ public class BotActions {
             return;
         BotHelper.sendMessageToTelegram(chatId, BotMessages.TYPE_NEW_TODO_ITEM.getMessage(), telegramClient);
         exit = true;
+    }
+
+    public void fnGenerateReport() {
+        if (!(requestText.equals(BotCommands.LLM_REPORT.getCommand()) || 
+            requestText.equals(BotCommands.GENERATE_REPORT.getCommand())) || exit) {
+            return;
+        }
+            
+        BotHelper.sendMessageToTelegram(chatId, "Generating your sprint report. Please wait...", telegramClient);
+
+        try {
+
+            Integer userId = (int) chatId;
+            List<TaskDTO> userTasks = backendServiceClient.getWeeklySummaryTasks(userId);
+
+            String reportText = deepSeekService.generateSprintReport(userId, userTasks);
+
+            ReplyKeyboardMarkup keyboardMarkup = ReplyKeyboardMarkup.builder().resizeKeyboard(true).build();
+            List<KeyboardRow> keyboard = new ArrayList<>();
+            KeyboardRow mainScreenRowTop = new KeyboardRow();
+            mainScreenRowTop.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
+            keyboard.add(mainScreenRowTop);
+            keyboardMarkup.setKeyboard(keyboard);
+
+            BotHelper.sendMessageToTelegram(chatId, reportText, telegramClient, keyboardMarkup);
+
+        } catch (Exception e) {
+            BotHelper.sendMessageToTelegram(chatId, "Sorry, I ran into an error while generating your report.", telegramClient);
+        }
+
+        exit = true;    
     }
 
     public void fnElse() {
