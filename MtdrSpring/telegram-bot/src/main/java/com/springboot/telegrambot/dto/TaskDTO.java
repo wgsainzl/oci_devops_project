@@ -1,8 +1,10 @@
 package com.springboot.telegrambot.dto;
 
 import java.time.OffsetDateTime;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TaskDTO {
+    @JsonProperty("id")
     private Integer taskId;
     private String title;
     private String description;

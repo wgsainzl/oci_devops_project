@@ -70,7 +70,22 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
             return;
         }
 
-        sendText(chatId, "Echo: " + messageText + "\n\nUse /report to generate your AI weekly summary (we will identify your role automatically).");
+        BotActions actions = new BotActions(telegramClient, backendServiceClient, deepSeekService);
+        actions.setRequestText(messageText);
+        actions.setChatId(chatId);
+
+        actions.fnStart();
+        if (messageText.equals(BotLabels.HIDE_MAIN_SCREEN.getLabel()) || messageText.equals(BotCommands.HIDE_COMMAND.getCommand())) {
+            BotHelper.sendMessageToTelegram(chatId, BotMessages.BYE.getMessage(), telegramClient);
+        } else {
+            actions.fnDone();
+            actions.fnBlock();
+            actions.fnDelete();
+            actions.fnListAll();
+            actions.fnAddItem();
+            
+            actions.fnElse();
+        }
     }
 
     private void handleReportCommand(long chatId, String telegramUserId, String messageText) {
