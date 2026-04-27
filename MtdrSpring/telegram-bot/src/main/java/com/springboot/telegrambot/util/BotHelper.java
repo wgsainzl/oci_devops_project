@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-
+import org.telegram.telegrambots.meta.api.methods.ParseMode; // Add this to your imports
 public class BotHelper {
 
 	private static final Logger logger = LoggerFactory.getLogger(BotHelper.class);
@@ -53,5 +53,23 @@ public class BotHelper {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 	}
+
+	public static void sendHtmlMessageToTelegram(Long chatId, String text, TelegramClient bot) {
+    try {
+        SendMessage messageToTelegram = 
+                SendMessage
+                .builder()
+                .chatId(chatId)
+                .text(text)
+                .parseMode(ParseMode.HTML)
+                .replyMarkup(new ReplyKeyboardRemove(true))
+                .build();
+
+        bot.execute(messageToTelegram);
+
+    } catch (Exception e) {
+        logger.error(e.getLocalizedMessage(), e);
+    }
+}
 
 }
