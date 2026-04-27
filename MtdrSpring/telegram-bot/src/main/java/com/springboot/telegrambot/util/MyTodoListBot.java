@@ -131,29 +131,57 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
     }
 
     private void sendText(long chatId, String text) {
-        SendMessage message = SendMessage.builder()
-                .chatId(chatId)
-                .text(text)
-                .build();
-        try {
-            telegramClient.execute(message);
-        } catch (TelegramApiException e) {
-            logger.error("Failed to send Telegram message to chatId={}", chatId, e);
+        if (text == null || text.isEmpty()) return;
+        int maxLength = 4000; // Telegram limit is 4096
+        for (int i = 0; i < text.length(); i += maxLength) {
+            String chunk = text.substring(i, Math.min(text.length(), i + maxLength));
+            SendMessage message = SendMessage.builder()
+                    .chatId(chatId)
+                    .text(chunk)
+                    .build();
+            try {
+                telegramClient.execute(message);
+            } catch (TelegramApiException e) {
+                logger.error("Failed to send Telegram message to chatId={}", chatId, e);
+            }
         }
     }
 
     private void sendMarkdown(long chatId, String markdownText) {
         String telegramHtml = toTelegramHtml(markdownText);
+        
+        if (telegramHtml.length() <= 4000) {
+            sendHtmlChunk(chatId, telegramHtml, markdownText);
+            return;
+        }
+
+        // Message is too long, chunk it by lines to avoid breaking HTML tags
+        String[] lines = telegramHtml.split("\n");
+        StringBuilder currentChunk = new StringBuilder();
+        
+        for (String line : lines) {
+            if (currentChunk.length() + line.length() + 1 > 4000) {
+                sendHtmlChunk(chatId, currentChunk.toString(), currentChunk.toString().replaceAll("<[^>]*>", ""));
+                currentChunk = new StringBuilder();
+            }
+            currentChunk.append(line).append("\n");
+        }
+        if (currentChunk.length() > 0) {
+            sendHtmlChunk(chatId, currentChunk.toString(), currentChunk.toString().replaceAll("<[^>]*>", ""));
+        }
+    }
+
+    private void sendHtmlChunk(long chatId, String htmlText, String fallbackText) {
         SendMessage message = SendMessage.builder()
                 .chatId(chatId)
-                .text(telegramHtml)
+                .text(htmlText)
                 .parseMode(ParseMode.HTML)
                 .build();
         try {
             telegramClient.execute(message);
         } catch (TelegramApiException e) {
             logger.warn("Formatted message parsing failed, sending plain text to chatId={}", chatId, e);
-            sendText(chatId, markdownText);
+            sendText(chatId, fallbackText);
         }
     }
 

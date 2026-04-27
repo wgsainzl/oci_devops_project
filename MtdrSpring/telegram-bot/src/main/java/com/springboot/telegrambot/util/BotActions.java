@@ -136,49 +136,6 @@ public class BotActions {
         exit = true;
     }
 
-    // NEW: AI Sprint Reporter
-    public void fnReport() {
-        if (!requestText.startsWith(BotCommands.LLM_REPORT.getCommand()) || exit) return;
-        
-        try {
-            java.util.Map<String, Object> userInfo = backendServiceClient.getUserRoleByTelegramId(String.valueOf(chatId));
-            if (userInfo == null || userInfo.get("userId") == null) {
-                BotHelper.sendMessageToTelegram(chatId, "Could not find a registered user linked to your Telegram account.", telegramClient, null);
-                exit = true;
-                return;
-            }
-
-            Integer targetId = ((Number) userInfo.get("userId")).intValue();
-            String role = (String) userInfo.get("role");
-
-            if ("MANAGER".equalsIgnoreCase(role)) {
-                BotHelper.sendMessageToTelegram(chatId, "⏳ Analyzing team activity logs for Manager...", telegramClient, null);
-                
-                // For a Manager, query the task logs and summarize recent activity
-                List<Object[]> logs = backendServiceClient.getWeeklyTaskLogsSummary(targetId);
-                String aiSummary = deepSeekService.generateLogsReport(targetId, logs);
-                
-                BotHelper.sendMessageToTelegram(chatId, "📊 **Manager Team Report**\n\n" + aiSummary, telegramClient, null);
-                
-            } else {
-                BotHelper.sendMessageToTelegram(chatId, "⏳ Analyzing weekly tasks for Developer...", telegramClient, null);
-                
-                // For a Developer, query their specific task queue
-                OffsetDateTime weekEnd = OffsetDateTime.now();
-                OffsetDateTime weekStart = weekEnd.minusDays(7);
-                List<TaskDTO> devTasks = backendServiceClient.getWeeklySummaryTasks(targetId, weekStart, weekEnd);
-                String aiSummary = deepSeekService.generateSprintReport(targetId, devTasks);
-                
-                BotHelper.sendMessageToTelegram(chatId, "📊 **Developer Sprint Report**\n\n" + aiSummary, telegramClient, null);
-            }
-            
-        } catch (Exception e) {
-            logger.error("Error generating report", e);
-            BotHelper.sendMessageToTelegram(chatId, "An error occurred while retrieving your report.", telegramClient, null);
-        }
-        exit = true;
-    }
-
     public void fnElse() {
         if(exit) return;
         
