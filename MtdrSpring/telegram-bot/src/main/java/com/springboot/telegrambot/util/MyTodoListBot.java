@@ -162,7 +162,9 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
         StringBuilder html = new StringBuilder();
         for (String rawLine : lines) {
             String line = rawLine == null ? "" : rawLine.trim();
-            if (line.startsWith("## ")) {
+            if (line.startsWith("### ")) {
+                html.append("<b>").append(escapeHtml(line.substring(4))).append("</b>\n");
+            } else if (line.startsWith("## ")) {
                 html.append("<b>").append(escapeHtml(line.substring(3))).append("</b>\n");
             } else if (line.startsWith("# ")) {
                 html.append("<b>").append(escapeHtml(line.substring(2))).append("</b>\n");
@@ -172,7 +174,16 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
                 html.append(escapeHtml(rawLine)).append("\n");
             }
         }
-        return html.toString().trim();
+        
+        String result = html.toString().trim();
+        // Convert ** bold ** to <b> bold </b>
+        result = result.replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>");
+        // Convert * italic * to <i> italic </i>
+        result = result.replaceAll("(?<!\\*)\\*(?!\\*)(.*?)(?<!\\*)\\*(?!\\*)", "<i>$1</i>");
+        // Convert ` code ` to <code> code </code>
+        result = result.replaceAll("`([^`]+)`", "<code>$1</code>");
+        
+        return result;
     }
 
     private String escapeHtml(String text) {
