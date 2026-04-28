@@ -1,7 +1,7 @@
 package com.springboot.telegrambot.util;
 
 import com.springboot.telegrambot.client.BackendServiceClient;
-import com.springboot.telegrambot.deepseek.DeepSeekService;
+import com.springboot.telegrambot.gemini.GeminiService;
 import com.springboot.telegrambot.dto.TaskDTO;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,15 +31,15 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
     private final TelegramClient telegramClient;
     private final String telegramBotToken;
     private final BackendServiceClient backendServiceClient;
-    private final DeepSeekService deepSeekService;
+    private final GeminiService geminiService;
 
     public MyTodoListBot(
             @Value("${telegram.bot.token}") String telegramBotToken,
             BackendServiceClient backendServiceClient,
-            DeepSeekService deepSeekService) {
+            GeminiService geminiService) {
         this.telegramBotToken = telegramBotToken;
         this.backendServiceClient = backendServiceClient;
-        this.deepSeekService = deepSeekService;
+        this.geminiService = geminiService;
         this.telegramClient = new OkHttpTelegramClient(telegramBotToken);
     }
 
@@ -70,7 +70,7 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
             return;
         }
 
-        BotActions actions = new BotActions(telegramClient, backendServiceClient, deepSeekService);
+        BotActions actions = new BotActions(telegramClient, backendServiceClient, geminiService);
         actions.setRequestText(messageText);
         actions.setChatId(chatId);
 
@@ -116,10 +116,10 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
             String aiSummary;
             if ("MANAGER".equalsIgnoreCase(role) || "ADMIN".equalsIgnoreCase(role)) {
                 List<Object[]> logs = backendServiceClient.getWeeklyTaskLogsSummary(userId);
-                aiSummary = deepSeekService.generateLogsReport(userId, logs);
+                aiSummary = geminiService.generateLogsReport(userId, logs);
             } else {
                 List<TaskDTO> tasks = backendServiceClient.getWeeklySummaryTasks(userId, weekStart, weekEnd);
-                aiSummary = deepSeekService.generateSprintReport(userId, tasks);
+                aiSummary = geminiService.generateSprintReport(userId, tasks);
             }
 
             backendServiceClient.markSummaryJobSent(jobId, aiSummary);
@@ -127,7 +127,7 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
 
         } catch (Exception e) {
             logger.error("Failed to generate AI report for telegramUserId={}", telegramUserId, e);
-            sendText(chatId, "Could not generate report right now. Please verify backend and DeepSeek settings.");
+            sendText(chatId, "Could not generate report right now. Please verify backend and Gemini settings.");
         }
     }
 

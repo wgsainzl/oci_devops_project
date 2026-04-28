@@ -1,10 +1,9 @@
 package com.springboot.telegrambot.util;
 
-import com.springboot.telegrambot.deepseek.DeepSeekService;
+import com.springboot.telegrambot.gemini.GeminiService;
 import com.springboot.telegrambot.dto.TaskDTO;
 import com.springboot.telegrambot.dto.TaskStatus;
 import com.springboot.telegrambot.client.BackendServiceClient;
-import com.springboot.telegrambot.deepseek.DeepSeekService;
 
 
 import java.time.OffsetDateTime;
@@ -27,12 +26,12 @@ public class BotActions {
     boolean exit;
 
     BackendServiceClient backendServiceClient; // Replaced ToDoItemService
-    DeepSeekService deepSeekService;
+    GeminiService geminiService;
 
-    public BotActions(TelegramClient tc, BackendServiceClient ts, DeepSeekService ds) {
+    public BotActions(TelegramClient tc, BackendServiceClient ts, GeminiService ds) {
         telegramClient = tc;
         backendServiceClient = ts;
-        deepSeekService = ds;
+        geminiService = ds;
         exit = false;
     }
 
@@ -172,7 +171,7 @@ public class BotActions {
             OffsetDateTime weekStart = weekEnd.minusDays(7);
             List<TaskDTO> userTasks = backendServiceClient.getWeeklySummaryTasks(userId, weekStart, weekEnd);
 
-            String reportText = deepSeekService.generateSprintReport(userId, userTasks);
+            String reportText = geminiService.generateSprintReport(userId, userTasks);
 
             ReplyKeyboardMarkup keyboardMarkup = ReplyKeyboardMarkup.builder().resizeKeyboard(true).build();
             List<KeyboardRow> keyboard = new ArrayList<>();
