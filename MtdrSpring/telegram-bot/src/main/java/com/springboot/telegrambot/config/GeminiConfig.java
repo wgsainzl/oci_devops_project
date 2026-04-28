@@ -4,16 +4,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class DeepSeekConfig {
+public class GeminiConfig {
 
-    @Value("${deepseek.api.key}")
+    @Value("${gemini.api.key}")
     private String apiKey;
 
-    @Value("${deepseek.api.url}")
+    @Value("${gemini.api.url}")
     private String apiUrl;
-
-    @Value("${deepseek.api.model:phi3:mini}")
-    private String model;
 
     public String getApiKey() {
         return apiKey;
@@ -21,9 +18,5 @@ public class DeepSeekConfig {
 
     public String getApiUrl() {
         return apiUrl;
-    }
-
-    public String getModel() {
-        return model;
     }
 }

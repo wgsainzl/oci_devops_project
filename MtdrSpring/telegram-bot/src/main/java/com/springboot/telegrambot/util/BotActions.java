@@ -1,9 +1,13 @@
 package com.springboot.telegrambot.util;
 
 import com.springboot.telegrambot.client.BackendServiceClient;
-import com.springboot.telegrambot.deepseek.DeepSeekService;
 import com.springboot.telegrambot.dto.TaskDTO;
 import com.springboot.telegrambot.dto.TaskStatus;
+import com.springboot.telegrambot.gemini.GeminiService;
+import com.springboot.telegrambot.dto.TaskDTO;
+import com.springboot.telegrambot.dto.TaskStatus;
+import com.springboot.telegrambot.client.BackendServiceClient;
+
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -25,13 +29,13 @@ public class BotActions {
     TelegramClient telegramClient;
     boolean exit;
 
-    BackendServiceClient backendServiceClient;
-    DeepSeekService deepSeekService;
+    BackendServiceClient backendServiceClient; // Replaced ToDoItemService
+    GeminiService geminiService;
 
-    public BotActions(TelegramClient tc, BackendServiceClient ts, DeepSeekService ds) {
+    public BotActions(TelegramClient tc, BackendServiceClient ts, GeminiService ds) {
         telegramClient = tc;
         backendServiceClient = ts;
-        deepSeekService = ds;
+        geminiService = ds;
         exit = false;
     }
 
@@ -63,11 +67,26 @@ public class BotActions {
         if (!(requestText.equals(BotCommands.START_COMMAND.getCommand()) || requestText.equals(BotLabels.SHOW_MAIN_SCREEN.getLabel())) || exit) 
             return;
 
+        KeyboardRow row1 = new KeyboardRow();
+        row1.add(BotLabels.LIST_ALL_ITEMS.getLabel());
+        row1.add(BotLabels.ADD_NEW_ITEM.getLabel());
+
+        KeyboardRow row2 = new KeyboardRow();
+        row2.add(BotLabels.SHOW_MAIN_SCREEN.getLabel());
+        row2.add(BotLabels.HIDE_MAIN_SCREEN.getLabel());
+
+        KeyboardRow row3 = new KeyboardRow();
+        row3.add(BotLabels.GENERATE_REPORT.getLabel());
+
         BotHelper.sendMessageToTelegram(chatId, BotMessages.HELLO_MYTODO_BOT.getMessage(), telegramClient,  ReplyKeyboardMarkup
             .builder()
             .keyboardRow(new KeyboardRow(List.of(new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.LIST_ALL_ITEMS.getLabel()), new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.ADD_NEW_ITEM.getLabel()))))
             .keyboardRow(new KeyboardRow(List.of(new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.SHOW_MAIN_SCREEN.getLabel()), new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.HIDE_MAIN_SCREEN.getLabel()))))
             .keyboardRow(new KeyboardRow(List.of(new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.GENERATE_REPORT.getLabel()))))
+            .keyboardRow(row1)
+            .keyboardRow(row2)
+            .keyboardRow(row3)
+            .resizeKeyboard(true)
             .build()
         );
         exit = true;
@@ -162,7 +181,7 @@ public class BotActions {
     public void fnGenerateReport() {
         // Left untouched as requested
         if (!(requestText.equals(BotCommands.LLM_REPORT.getCommand()) || 
-            requestText.equals(BotCommands.GENERATE_REPORT.getCommand())) || exit) {
+            requestText.equals(BotLabels.GENERATE_REPORT.getLabel())) || exit) {
             return;
         }
             
@@ -173,7 +192,20 @@ public class BotActions {
             // Assuming this uses the overloaded method or default week span if not specified in your implementation
             List<TaskDTO> userTasks = backendServiceClient.getWeeklySummaryTasks(userId, OffsetDateTime.now().minusDays(7), OffsetDateTime.now());
 
-            String reportText = deepSeekService.generateSprintReport(userId, userTasks);
+            java.util.Map<String, Object> userInfo = backendServiceClient.getUserRoleByTelegramId(String.valueOf(chatId));
+            if (userInfo == null || userInfo.get("userId") == null) {
+                BotHelper.sendMessageToTelegram(chatId, "Could not find a registered user linked to your Telegram account.", telegramClient);
+                exit = true;
+                return;
+            }
+
+            Integer userId = ((Number) userInfo.get("userId")).intValue();
+
+            OffsetDateTime weekEnd = OffsetDateTime.now();
+            OffsetDateTime weekStart = weekEnd.minusDays(7);
+            List<TaskDTO> userTasks = backendServiceClient.getWeeklySummaryTasks(userId, weekStart, weekEnd);
+
+            String reportText = geminiService.generateSprintReport(userId, userTasks);
 
             ReplyKeyboardMarkup keyboardMarkup = ReplyKeyboardMarkup.builder().resizeKeyboard(true).build();
             List<KeyboardRow> keyboard = new ArrayList<>();
@@ -182,7 +214,15 @@ public class BotActions {
             keyboard.add(mainScreenRowTop);
             keyboardMarkup.setKeyboard(keyboard);
 
-            BotHelper.sendMessageToTelegram(chatId, reportText, telegramClient, keyboardMarkup);
+            if (reportText.length() > 4000) {
+                for (int i = 0; i < reportText.length(); i += 4000) {
+                    String chunk = reportText.substring(i, Math.min(reportText.length(), i + 4000));
+                    boolean isLast = (i + 4000) >= reportText.length();
+                    BotHelper.sendMessageToTelegram(chatId, chunk, telegramClient, isLast ? keyboardMarkup : null);
+                }
+            } else {
+                BotHelper.sendMessageToTelegram(chatId, reportText, telegramClient, keyboardMarkup);
+            }
 
         } catch (Exception e) {
             BotHelper.sendMessageToTelegram(chatId, "Sorry, I ran into an error while generating your report.", telegramClient);

@@ -6,11 +6,10 @@ telegram:
     name: ${TELEGRAM_BOT_NAME}
     token: ${TELEGRAM_BOT_TOKEN}
 
-deepseek:
+gemini:
   api:
-    key: ${DEEPSEEK_API_KEY}
-    url: ${DEEPSEEK_URL}
-    model: ${DEEPSEEK_MODEL:phi3:mini}
+    key: ${GEMINI_API_KEY}
+    url: ${GEMINI_URL}
 
 backend:
   url: ${BACKEND_URL:http://localhost:8080}
