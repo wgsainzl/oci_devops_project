@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   CartesianGrid,
+  Cell // <-- 1. Import Cell to color individual bars
 } from 'recharts'
 import type { TaskStatusEntry } from '../../types'
 import styles from './TaskStatusChart.module.css'
@@ -44,6 +45,45 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Elem
 }
 
 export default function TaskStatusChart({ data, showDeveloperNames = true }: Props): JSX.Element {
+  
+  // 2. INTERCEPT PERSONAL VIEW
+  if (!showDeveloperNames) {
+    // Transform the single developer's object into an array of statuses
+    const userStats = data[0] || { todo: 0, inProgress: 0, inReview: 0, blocked: 0, done: 0 };
+    
+    const personalData = [
+      { name: 'To do', value: userStats.todo, fill: '#b0b8c4' },
+      { name: 'In progress', value: userStats.inProgress, fill: '#5aacbe' },
+      { name: 'In review', value: userStats.inReview, fill: '#c4a86a' },
+      // Optional: hide 'Blocked' if it's 0 to keep the chart cleaner, matching your mockup
+      ...(userStats.blocked > 0 ? [{ name: 'Blocked', value: userStats.blocked, fill: '#e07b5a' }] : []),
+      { name: 'Done', value: userStats.done, fill: '#5ba87a' }
+    ];
+
+    return (
+      <ResponsiveContainer width="100%" height={240}>
+        <BarChart 
+          data={personalData} 
+          margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+          barCategoryGap="25%"
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="#ede8df" vertical={false} />
+          <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#6b6b6b' }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fontSize: 11, fill: '#6b6b6b' }} axisLine={false} tickLine={false} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
+          
+          {/* We only need one Bar element here, and we use Cell to map the colors */}
+          <Bar dataKey="value" name="Tasks" radius={[3, 3, 0, 0]} maxBarSize={70}>
+            {personalData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.fill} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    )
+  }
+
+  // 3. FALLBACK TO TEAM VIEW (Your original code)
   return (
     <ResponsiveContainer width="100%" height={240}>
       <BarChart 
@@ -55,8 +95,8 @@ export default function TaskStatusChart({ data, showDeveloperNames = true }: Pro
         <CartesianGrid strokeDasharray="3 3" stroke="#ede8df" vertical={false} />
         <XAxis
           dataKey="developer"
-          tick={showDeveloperNames ? { fontSize: 11, fill: '#6b6b6b' } : false}
-          interval={showDeveloperNames ? 0 : 'preserveEnd'}
+          tick={{ fontSize: 11, fill: '#6b6b6b' }}
+          interval={0}
           axisLine={false}
           tickLine={false}
         />
