@@ -17,28 +17,28 @@ interface CardConfig {
 const CARDS: CardConfig[] = [
   {
     key: 'completed',
-    icon: '/stats_card/task-done.svg',
+    icon: '/stats_card/Check square.png',
     iconClass: 'iconGreen',
     label: 'tasks completed',
     sub: () => 'in the last 7 days',
   },
   {
     key: 'updated',
-    icon: '/stats_card/update.svg',
+    icon: '/stats_card/Pen tool.png',
     iconClass: 'iconBlue',
     label: 'tasks updated',
     sub: () => 'in the last 7 days',
   },
   {
     key: 'created',
-    icon: '/stats_card/add-circle.svg',
+    icon: '/stats_card/add_circle.png',
     iconClass: 'iconTeal',
     label: 'tasks created',
     sub: () => 'in the last 7 days',
   },
   {
     key: 'dueSoon',
-    icon: '/stats_card/calendar-icon.svg',
+    icon: '/stats_card/Calendar.png',
     iconClass: 'iconOrange',
     label: 'tasks due soon',
     sub: (s) => `${s.dueNext7 ?? ''} in the next 7 days`,

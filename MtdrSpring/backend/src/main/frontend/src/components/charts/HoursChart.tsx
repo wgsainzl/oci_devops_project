@@ -1,4 +1,4 @@
-import React, { type JSX } from 'react'
+import { type JSX } from 'react'
 import {
   ResponsiveContainer,
   BarChart,
@@ -9,6 +9,7 @@ import {
   Legend,
   CartesianGrid,
 } from 'recharts'
+import styles from './HoursChart.module.css'
 
 // types
 export interface HoursEntry {
@@ -57,25 +58,17 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Elem
   const over = diff > 0
 
   return (
-    <div style={{
-      background: 'white',
-      border: '1px solid #e0d8cc',
-      borderRadius: 6,
-      padding: '8px 12px',
-      fontSize: '0.8rem',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-      minWidth: 140,
-    }}>
-      <p style={{ fontWeight: 600, marginBottom: 4 }}>{label}</p>
-      <p style={{ color: '#5aacbe', margin: '2px 0' }}>
+    <div className={styles.tooltip}>
+      <p className={styles.tooltipTitle}>{label}</p>
+      <p className={styles.tooltipItem} style={{ color: '#5aacbe' }}>
         Estimated: <strong>{estimated}h</strong>
       </p>
-      <p style={{ color: '#5ba87a', margin: '2px 0' }}>
+      <p className={styles.tooltipItem} style={{ color: '#5ba87a' }}>
         Actual: <strong>{totalActual}h</strong>
       </p>
       
       {diff !== 0 && (
-        <p style={{ color: over ? '#c74634' : '#5ba87a', margin: '4px 0 0', fontWeight: 600 }}>
+        <p className={styles.tooltipDelta} style={{ color: over ? '#c74634' : '#5ba87a' }}>
           {over ? `▲ ${diff.toFixed(1)}h over` : `▼ ${Math.abs(diff).toFixed(1)}h under`}
         </p>
       )}

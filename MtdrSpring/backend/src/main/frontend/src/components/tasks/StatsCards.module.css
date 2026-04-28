@@ -1,18 +1,18 @@
 .card {
-  background: var(--color-bg-content);
+  background: #fbf9f8;
   border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md);
+  border-radius: 5px;
   padding: var(--space-4) var(--space-5);
-  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
   transition: box-shadow var(--transition-fast);
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
-.card:hover {
+/* .card:hover {
   box-shadow: var(--shadow-md);
-}
+} */
 
 .icon {
   width: 32px;
@@ -23,36 +23,43 @@
   justify-content: center;
   font-size: 1rem;
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 8px;
 }
 
 .iconImage {
-  width: 18px;
-  height: 18px;
+  width: 50px;
+  height: 35px;
   display: block;
 }
 
-.iconGreen  { background: #dcfce7; color: #16a34a; }
-.iconBlue   { background: #dbeafe; color: #2563eb; }
-.iconTeal   { background: #ccfbf1; color: #0d9488; }
-.iconOrange { background: #ffedd5; color: #ea580c; }
-
-.text { flex: 1; }
+.text {
+  flex: 1.5;
+  
+}
 
 .count {
-  font-size: 1.1rem;
-  font-weight: 700;
   color: var(--color-text-primary);
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
 }
 
 .label {
-  font-size: 0.85rem;
   color: var(--color-text-primary);
-  font-weight: 500;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
 }
 
 .sub {
   font-size: 0.78rem;
   color: var(--color-text-muted);
   margin-top: 2px;
+  font-size: 16px;
+  color: #000000;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
 }

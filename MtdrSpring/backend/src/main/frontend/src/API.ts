@@ -282,7 +282,7 @@ const buildRecentActivityFromTasks = (tasks: Task[], limit: number): ActivityLog
           year: "numeric",
         }),
         actor: task.responsible,
-        action: `Task ${task.title} is currently ${task.status}`,
+        action: `Task ${task.title}`,
         status: task.status,
         time: toRelativeTime(taskDate),
       };

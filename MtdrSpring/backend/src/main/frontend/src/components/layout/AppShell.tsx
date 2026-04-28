@@ -1,7 +1,6 @@
-import { type JSX, useState } from 'react'
+import { type JSX, useState, useEffect } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/AuthContext'
-import TeamSwitcher from './TeamSwitcher'
 import styles from './AppShell.module.css'
 
 // inline SVG icons 
@@ -22,16 +21,6 @@ const IconUser = (): JSX.Element => (
     <path d="M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0H3z" />
   </svg>
 )
-const IconHome = (): JSX.Element => (
-  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-    <path d="M10.707 2.293a1 1 0 0 0-1.414 0l-7 7A1 1 0 0 0 3 11h1v7a1 1 0 0 0 1 1h4v-5h2v5h4a1 1 0 0 0 1-1v-7h1a1 1 0 0 0 .707-1.707l-7-7z" />
-  </svg>
-)
-const IconTimeline = (): JSX.Element => (
-  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-    <path d="M3 4a1 1 0 0 1 1-1h12a1 1 0 0 1 0 2H4a1 1 0 0 1-1-1zm0 5a1 1 0 0 1 1-1h12a1 1 0 0 1 0 2H4a1 1 0 0 1-1-1zm1 4a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2H4z" />
-  </svg>
-)
 const OracleMark = (): JSX.Element => (
   <img src="/oracle-icon.svg" alt="Oracle" className={styles.oracleMarkIcon} />
 )
@@ -39,8 +28,27 @@ const OracleMark = (): JSX.Element => (
 // appshell component
 export default function AppShell(): JSX.Element {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true)
+  const [itemsVisible, setItemsVisible] = useState<boolean>(true)
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
+
+  // Delay showing items when sidebar opens, hide immediately when it closes
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>
+    
+    if (sidebarOpen) {
+      // Faster initial opening - only 20ms delay
+      timeoutId = setTimeout(() => setItemsVisible(true), 20)
+    } else {
+      // Hide immediately, no delay
+      setItemsVisible(false)
+    }
+    
+    // Always cleanup pending timeout
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId)
+    }
+  }, [sidebarOpen])
 
   const handleSignOut = async (): Promise<void> => {
     await signOut()
@@ -69,9 +77,6 @@ export default function AppShell(): JSX.Element {
         </div>
 
         <div className={styles.headerRight}>
-          <button className={styles.iconBtn} aria-label="Notifications">
-            <IconBell />
-          </button>
           <button
             className={styles.iconBtn}
             aria-label="User menu"
@@ -88,18 +93,14 @@ export default function AppShell(): JSX.Element {
         <nav
           className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : styles.sidebarClosed}`}
           aria-label="Main navigation"
+          data-items-visible={itemsVisible}
         >
           <NavLink to="/home" className={navClass}>
-            <IconHome />
             <span>Home</span>
           </NavLink>
           <NavLink to="/timeline" className={navClass}>
-            <IconTimeline />
             <span>Timeline</span>
           </NavLink>
-
-          {/* deprecated */}
-          {/* <TeamSwitcher /> */}
         </nav>
 
         {/* content */}
