@@ -10,6 +10,7 @@ import com.springboot.telegrambot.client.BackendServiceClient;
 
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,9 +81,6 @@ public class BotActions {
 
         BotHelper.sendMessageToTelegram(chatId, BotMessages.HELLO_MYTODO_BOT.getMessage(), telegramClient,  ReplyKeyboardMarkup
             .builder()
-            .keyboardRow(new KeyboardRow(List.of(new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.LIST_ALL_ITEMS.getLabel()), new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.ADD_NEW_ITEM.getLabel()))))
-            .keyboardRow(new KeyboardRow(List.of(new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.SHOW_MAIN_SCREEN.getLabel()), new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.HIDE_MAIN_SCREEN.getLabel()))))
-            .keyboardRow(new KeyboardRow(List.of(new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton(BotLabels.GENERATE_REPORT.getLabel()))))
             .keyboardRow(row1)
             .keyboardRow(row2)
             .keyboardRow(row3)
@@ -188,10 +186,6 @@ public class BotActions {
         BotHelper.sendMessageToTelegram(chatId, "Generating your sprint report. Please wait...", telegramClient);
 
         try {
-            Integer userId = (int) chatId;
-            // Assuming this uses the overloaded method or default week span if not specified in your implementation
-            List<TaskDTO> userTasks = backendServiceClient.getWeeklySummaryTasks(userId, OffsetDateTime.now().minusDays(7), OffsetDateTime.now());
-
             java.util.Map<String, Object> userInfo = backendServiceClient.getUserRoleByTelegramId(String.valueOf(chatId));
             if (userInfo == null || userInfo.get("userId") == null) {
                 BotHelper.sendMessageToTelegram(chatId, "Could not find a registered user linked to your Telegram account.", telegramClient);
