@@ -3,12 +3,58 @@
     flex-direction: column;
     height: 100vh;
     background: #fff;
+    background-image: url('/bg-oci.png');
+    background-repeat: repeat;
+    background-position: center top;
+    background-size: auto;
 }
 
+.banner {
+    background-image: url('/banner_timeline.png');
+
+}
 .header {
     background: #F3EFE3;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
     padding: 16px 40px;
-    border-bottom: 1px solid #A6A6A6;
+    position: relative;
+    min-height: 120px;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(243, 239, 227, 0.7);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.titleGroup {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.titleGroup h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+}
+
+.titleGroup p {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: #666;
 }
 
 .outerContainer {
@@ -16,7 +62,7 @@
     overflow: hidden;
     margin: 20px;
     border: 1px solid #A6A6A6;
-    border-radius: 8px;
+    /* border-radius: 8px; */
 }
 
 .scrollViewport {
