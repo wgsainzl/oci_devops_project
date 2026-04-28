@@ -3,6 +3,7 @@ import { useAPI } from '../useAPI'
 import { useAuth } from '../hooks/AuthContext'
 import type {
   UserRole,
+  Task,
   PendingAction,
   DashboardStats,
   ActivityLogItem,
@@ -13,8 +14,7 @@ import type {
 
 import PageHeader from '../components/layout/PageHeader'
 import StatsCards from '../components/tasks/StatsCards'
-import PendingActionsTable from '../components/tasks/PendingActionsTable'
-import RecentActivity from '../components/tasks/RecentActivity'
+import RecentActivity from '../components/tasks/RecentActivity/RecentActivity'
 import TeamWorkload from '../components/tasks/TeamWorkload'
 import TaskStatusChart from '../components/charts/TaskStatusChart'
 import SprintVelocityChart from '../components/charts/SprintVelocityChart'
@@ -72,16 +72,74 @@ const EMPTY_DASHBOARD: DashboardData = {
   sprintSummaries: [],
 }
 
+const formatActivityDate = (value: string): string => {
+  const d = new Date(value)
+  if (Number.isNaN(d.getTime())) return 'Unknown date'
+  return d.toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+const toRelativeTime = (value: string): string => {
+  const d = new Date(value)
+  if (Number.isNaN(d.getTime())) return 'Recently'
+  const diffMs = Date.now() - d.getTime()
+  const mins = Math.max(1, Math.floor(diffMs / 60000))
+  if (mins < 60) return `${mins} minute${mins === 1 ? '' : 's'} ago`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours} hour${hours === 1 ? '' : 's'} ago`
+  const days = Math.floor(hours / 24)
+  return `${days} day${days === 1 ? '' : 's'} ago`
+}
+
+const buildMyActivityFromTasks = (
+  tasks: Task[],
+  userId?: string,
+  username?: string,
+): ActivityLogItem[] => {
+  const myId = String(userId ?? '').trim()
+  const myName = String(username ?? '').trim().toLowerCase()
+
+  return tasks
+    .filter((task) => {
+      const src = task as Task & { responsibleId?: string; updatedAt?: string }
+      const byId = myId.length > 0 && String(src.responsibleId ?? '').trim() === myId
+      const byName = myName.length > 0 && String(task.responsible ?? '').trim().toLowerCase() === myName
+      return byId || byName
+    })
+    .sort((a, b) => {
+      const aSrc = a as Task & { updatedAt?: string }
+      const bSrc = b as Task & { updatedAt?: string }
+      const aTs = new Date(aSrc.updatedAt ?? a.startDate ?? a.createdAt).getTime()
+      const bTs = new Date(bSrc.updatedAt ?? b.startDate ?? b.createdAt).getTime()
+      return bTs - aTs
+    })
+    .map((task) => {
+      const src = task as Task & { updatedAt?: string }
+      const dateSeed = src.updatedAt ?? task.startDate ?? task.createdAt
+      const statusText = task.status.replace(/_/g, ' ')
+      return {
+        id: task.id,
+        date: formatActivityDate(dateSeed),
+        actor: task.responsible ?? 'Unassigned',
+        action: `updated task status to ${statusText} on`,
+        status: task.status,
+        time: toRelativeTime(dateSeed),
+      }
+    })
+}
+
 // component
 export default function HomePage(): JSX.Element {
   const { user, isManager } = useAuth()
-  const useMocks = String(import.meta.env.VITE_USE_MOCKS).toLowerCase() === 'true'
   const teamId = user?.currentTeamId ?? null
   const role: UserRole = user?.role ?? 'DEVELOPER'
   const visibleCharts = VISIBLE_CHARTS_BY_ROLE[role]
   const canSeeChart = (chart: ChartKey): boolean => visibleCharts.includes(chart)
   const [data, setData] = useState<DashboardData>(EMPTY_DASHBOARD)
-  const safePendingActions = Array.isArray(data.pendingActions) ? data.pendingActions : []
   const safeActivity = Array.isArray(data.activity) ? data.activity : []
   const safeWorkload = Array.isArray(data.workload) ? data.workload : []
   const safeTaskStatus = Array.isArray(data.taskStatus) ? data.taskStatus : []
@@ -96,7 +154,7 @@ export default function HomePage(): JSX.Element {
     Promise.allSettled([
       useAPI.dashboard.getPendingActions(teamId),
       useAPI.dashboard.getStats(teamId),
-      useAPI.dashboard.getRecentActivity(teamId),
+      useAPI.tasks.getAll(teamId ? { teamId } : undefined),
       useAPI.dashboard.getWorkload(teamId),
       useAPI.dashboard.getTaskStatusSummary(teamId),
       useAPI.dashboard.getSprintVelocity(teamId),
@@ -106,7 +164,12 @@ export default function HomePage(): JSX.Element {
     ])
       .then((results) => {
         if (cancelled) return
-        const [pa, stats, activity, workload, taskStatus, velocity, costPerDev, hoursPerDev, sprintSummaries] = results
+        const [pa, stats, tasksRes, workload, taskStatus, velocity, costPerDev, hoursPerDev, sprintSummaries] = results
+
+        const myActivity =
+          tasksRes.status === 'fulfilled' && Array.isArray(tasksRes.value)
+            ? buildMyActivityFromTasks(tasksRes.value as Task[], user?.userId, user?.username)
+            : []
 
         setData((prev) => ({
           ...prev,
@@ -115,10 +178,7 @@ export default function HomePage(): JSX.Element {
               ? pa.value.data
               : prev.pendingActions,
           stats: stats.status === 'fulfilled' ? stats.value.data : prev.stats,
-          activity:
-            activity.status === 'fulfilled' && Array.isArray(activity.value.data)
-              ? activity.value.data
-              : prev.activity,
+          activity: myActivity.length > 0 ? myActivity : prev.activity,
           workload:
             workload.status === 'fulfilled' && Array.isArray(workload.value.data)
               ? workload.value.data
@@ -148,61 +208,64 @@ export default function HomePage(): JSX.Element {
       .catch(() => { /* keep current state */ })
 
     return () => { cancelled = true }
-  }, [teamId])
+  }, [teamId, user?.userId, user?.username])
 
   return (
     <div className={styles.page}>
       <PageHeader title="Home" subtitle="EasyMoneySnipers" />
 
       <div className={styles.content}>
-        <p className={styles.sectionHint}>
+        {/* <p className={styles.sectionHint}>
           Data source: {useMocks ? 'MOCK MODE (fixtures)' : 'BACKEND LIVE'}
-        </p>
+        </p> */}
 
         {/* pending actions and stats */}
-        <div className={styles.row1}>
-          <section className={`${styles.card} ${styles.pendingCard}`}>
-            <h2 className={styles.sectionTitle}>Pending actions</h2>
-            <PendingActionsTable rows={safePendingActions} />
-          </section>
-          <aside className={styles.statsAside}>
-            <StatsCards stats={data.stats} />
-          </aside>
+        <div className={styles.sectionBlock}>
+          <h2 className={styles.sectionTitle}>Recent activity</h2>
+          <div className={styles.row1}>
+            <section className={`${styles.card} ${styles.activityCard}`}>
+              <RecentActivity items={safeActivity} />
+            </section>
+            <aside className={styles.statsAside}>
+              <StatsCards stats={data.stats} />
+            </aside>
+          </div>
         </div>
         
-        {/* INCOMING */}
         
         {/* recent activity and team workload */}
         <div className={styles.row2}>
-          <section className={`${styles.card} ${styles.activityCard}`}>
-            <h2 className={styles.sectionTitle}>Recent activity</h2>
-            <RecentActivity items={safeActivity} />
-          </section>
-          <section className={`${styles.card} ${styles.workloadCard}`}>
+          <div className={styles.sectionBlock}>
             <h2 className={styles.sectionTitle}>Team workload</h2>
-            <TeamWorkload members={safeWorkload} />
-          </section>
+            <section className={`${styles.card} ${styles.workloadCard}`}>
+              <TeamWorkload members={safeWorkload} />
+            </section>
+          </div>
         </div>
 
         {/* task status and sprint velocity */}
         {(canSeeChart('taskStatus') || canSeeChart('sprintVelocity')) && (
           <div className={styles.row3}>
             {canSeeChart('taskStatus') && (
-              <section className={`${styles.card} ${styles.chartCard}`}>
+              <div className={styles.sectionBlock}>
                 <h2 className={styles.sectionTitle}>
                   {isManager ? 'Team Tasks Status' : 'My Tasks Status'}
                 </h2>
-                <TaskStatusChart 
-                  data={isManager ? safeTaskStatus : safeTaskStatus.filter(t => t.userId === user?.userId)}
-                  showDeveloperNames={isManager}
-                />
-              </section>
+                <section className={`${styles.card} ${styles.chartCard}`}>
+                  <TaskStatusChart 
+                    data={isManager ? safeTaskStatus : safeTaskStatus.filter(t => t.userId === user?.userId)}
+                    showDeveloperNames={isManager}
+                  />
+                </section>
+              </div>
             )}
             {canSeeChart('sprintVelocity') && (
-              <section className={`${styles.card} ${styles.chartCard}`}>
+              <div className={styles.sectionBlock}>
                 <h2 className={styles.sectionTitle}>Team Sprint Velocity</h2>
-                <SprintVelocityChart data={safeVelocity} />
-              </section>
+                <section className={`${styles.card} ${styles.chartCard}`}>
+                  <SprintVelocityChart data={safeVelocity} />
+                </section>
+              </div>
             )}
           </div>
         )}
@@ -211,16 +274,20 @@ export default function HomePage(): JSX.Element {
         {(canSeeChart('costPerDeveloper') || canSeeChart('sprintTotals')) && (
           <div className={styles.row3}>
             {canSeeChart('costPerDeveloper') && (
-              <section className={`${styles.card} ${styles.chartCard}`}>
+              <div className={styles.sectionBlock}>
                 <h2 className={styles.sectionTitle}>Cost per Developer by Sprint (USD)</h2>
-                <CostPerDeveloperChart data={safeCostPerDev} />
-              </section>
+                <section className={`${styles.card} ${styles.chartCard}`}>
+                  <CostPerDeveloperChart data={safeCostPerDev} />
+                </section>
+              </div>
             )}
             {canSeeChart('sprintTotals') && (
-              <section className={`${styles.card} ${styles.chartCard}`}>
+              <div className={styles.sectionBlock}>
                 <h2 className={styles.sectionTitle}>Sprint Totals</h2>
-                <SprintCostSummary sprints={safeSprintSummaries} />
-              </section>
+                <section className={`${styles.card} ${styles.chartCard}`}>
+                  <SprintCostSummary sprints={safeSprintSummaries} />
+                </section>
+              </div>
             )}
           </div>
         )}
@@ -228,12 +295,14 @@ export default function HomePage(): JSX.Element {
         {/* hours per developer */}
         {canSeeChart('hoursPerDeveloper') && (
           <div className={styles.row3}>
-            <section className={`${styles.card}`} style={{ gridColumn: '1 / -1' }}>
+            <div className={styles.sectionBlock} style={{ gridColumn: '1 / -1' }}>
               <h2 className={styles.sectionTitle}>
                 Hours per Developer
               </h2>
-              <HoursChart data={safeHoursPerDev} />
-            </section>
+              <section className={styles.card}>
+                <HoursChart data={safeHoursPerDev} />
+              </section>
+            </div>
           </div>
         )}
 

@@ -1,0 +1,270 @@
+.tableWrapper {
+  max-height: 28rem;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: none; 
+  background: transparent;
+  box-shadow: none !important;
+  filter: none !important;
+  scrollbar-width: thin;
+  scrollbar-color: #b8c3d1 transparent;
+}
+
+.tableWrapper::-webkit-scrollbar {
+  width: 10px; /* vertical scrollbar width */
+  height: 0;   /* hide horizontal scrollbar track */
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+  background: #b8c3d1;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+  background: #96a9bc;
+  background-clip: content-box;
+}
+
+/* Hide horizontal scrollbar track while keeping vertical visible */
+.tableWrapper::-webkit-scrollbar:horizontal {
+  height: 0 !important;
+}
+.tableWrapper::-webkit-scrollbar:vertical {
+  width: 10px !important;
+}
+
+/* Make track transparent (no visible strip under table) */
+.tableWrapper::-webkit-scrollbar-track {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Firefox: prefer thin vertical scrollbar and no horizontal track */
+.tableWrapper {
+  scrollbar-width: thin;
+  -ms-overflow-style: auto;
+}
+
+.table {
+  width: 100%;
+  /* border-collapse: collapse; Changed from separate to collapse for cleaner lines */
+  border-spacing: 0;
+  table-layout: auto;
+  font-size: 0.85rem;
+  box-shadow: none !important;
+  border: none; /* Ensure no outer table border */
+}
+
+/* Vertical lines between columns, but not on the far left or right */
+.table th:not(:last-child),
+.table td:not(:last-child) {
+  border-right: 1px solid #d4d4d4;
+}
+
+/* Horizontal lines between rows */
+.table tbody tr {
+  border-bottom: 1px solid #d4d4d4;
+  background: #f3f3f3;
+}
+
+/* Remove the bottom border from the very last row if desired */
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table thead tr {
+  border-bottom: 1px solid #bdbdbd;
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #d9d9d9;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.65rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #111111;
+  white-space: normal;
+}
+
+.table th:not(:last-child),
+.table td:not(:last-child) {
+  border-right: 1px solid #c8c8c8;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid #d4d4d4;
+  transition: background var(--transition-fast);
+  background: #f3f3f3;
+  box-shadow: none;
+}
+
+.table tbody tr:nth-child(even) {
+  background: #ededed;
+}
+
+.table tbody tr:hover {
+  background: #e3e3e3;
+}
+
+.table td {
+  padding: 0.75rem 1rem;
+  vertical-align: top;
+  min-width: 0;
+}
+
+.taskId {
+  display: block;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  margin-bottom: 2px;
+}
+
+.taskTitle {
+  display: block;
+  font-size: 1rem;
+  color: #303030;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.responsible {
+  font-size: 0.96rem;
+  color: #353535;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.message {
+  font-size: 0.97rem;
+  color: #2f2f2f;
+  max-width: 280px;
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.actionBtn {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: #202020;
+  white-space: normal;
+  text-align: left;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  padding: 0;
+  border: none;
+  background: transparent;
+  transition: color var(--transition-fast);
+}
+
+.actionBtn svg {
+  flex: 0 0 auto;
+}
+
+.table td {
+  overflow: hidden;
+}
+
+@media (max-width: 820px) {
+  .table th:nth-child(4),
+  .table td:nth-child(4) {
+    min-width: 7rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.65rem 0.7rem;
+  }
+}
+
+.actionBtn:hover {
+  color: #1d4f91;
+}
+
+.empty {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: var(--space-8);
+}
+
+.responsibleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatarPlaceholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #ccc;
+  flex-shrink: 0;
+}
+
+.avatarPlaceholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Format the Message column with the bold header and detail layout */
+.messageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.messageTitle {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+}
+
+.messageDetail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+/* Fix the table header background to be the lighter grey seen in the target image */
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #e0e0e0; /* Matches the lighter grey in the mockup */
+  border-bottom: 1px solid #bdbdbd;
+  padding: 0.65rem 1rem;
+  color: #111111;
+  text-align: left;
+}
+
+/* Ensure the task titles wrap or show more clearly as in the design */
+.taskTitle {
+  max-width: 220px; /* Increased from 160px */
+  white-space: normal; /* Allow wrapping like the design */
+  line-height: 1.2;
+}

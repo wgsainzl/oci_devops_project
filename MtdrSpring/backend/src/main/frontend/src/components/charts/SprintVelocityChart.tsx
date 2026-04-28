@@ -10,6 +10,7 @@ import {
   CartesianGrid,
 } from 'recharts'
 import type { SprintVelocityEntry } from '../../types'
+import styles from './SprintVelocityChart.module.css'
 
 interface Props {
   data: SprintVelocityEntry[]
@@ -30,19 +31,10 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Element | null => {
   if (!active || !payload?.length) return null
   return (
-    <div
-      style={{
-        background: 'white',
-        border: '1px solid #e0d8cc',
-        borderRadius: 6,
-        padding: '8px 12px',
-        fontSize: '0.8rem',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-      }}
-    >
-      <p style={{ marginBottom: 4, fontWeight: 600 }}>Iteration {label}</p>
+    <div className={styles.tooltip}>
+      <p className={styles.tooltipTitle}>Iteration {label}</p>
       {payload.map((p) => (
-        <p key={p.name} style={{ color: p.color, margin: 0 }}>
+        <p key={p.name} className={styles.tooltipItem} style={{ color: p.color }}>
           {p.name}: {p.value}
         </p>
       ))}

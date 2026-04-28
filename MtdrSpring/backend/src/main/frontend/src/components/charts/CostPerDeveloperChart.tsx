@@ -9,6 +9,7 @@ import {
   Legend,
   CartesianGrid,
 } from 'recharts'
+import styles from './CostPerDeveloperChart.module.css'
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
@@ -40,17 +41,10 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Element | null => {
   if (!active || !payload?.length) return null
   return (
-    <div style={{
-      background: 'white',
-      border: '1px solid #e0d8cc',
-      borderRadius: 6,
-      padding: '8px 12px',
-      fontSize: '0.8rem',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    }}>
-      <p style={{ fontWeight: 600, marginBottom: 4 }}>{label}</p>
+    <div className={styles.tooltip}>
+      <p className={styles.tooltipTitle}>{label}</p>
       {payload.map((p) => (
-        <p key={p.name} style={{ color: p.color, margin: '2px 0' }}>
+        <p key={p.name} className={styles.tooltipItem} style={{ color: p.color }}>
           {p.name}: <strong>${p.value.toLocaleString()}</strong>
         </p>
       ))}
