@@ -1,234 +1,232 @@
-import { type JSX, useEffect, useState } from 'react'
-import { useAPI } from '../useAPI'
-import { useAuth } from '../hooks/AuthContext'
-import type { TimelineTask, TaskStatus, TaskPriority } from '../types'
-import PageHeader from '../components/layout/PageHeader'
+import {type JSX, useEffect, useState, useMemo, useRef, useCallback} from 'react'
+import {useAPI} from '../useAPI'
+import {useAuth} from '../hooks/AuthContext'
+import type {TimelineTask} from '../types'
 import styles from './TimelinePage.module.css'
 
-// Use UTC noon to prevent timezone off-by-one shifts during math
-function parseDate(dateStr: string): Date {
-  if (!dateStr) return new Date();
-  const [y, m, d] = dateStr.split('-').map(Number)
-  return new Date(Date.UTC(y, m - 1, d, 12, 0, 0))
-}
-
-const GANTT_START = new Date(Date.UTC(2026, 0, 1, 12, 0, 0))
-const GANTT_END   = new Date(Date.UTC(2026, 5, 30, 12, 0, 0)) // Jun 30
-const TOTAL_DAYS  = Math.round((GANTT_END.getTime() - GANTT_START.getTime()) / 86_400_000)
-
-// Configured to match the 'Today' marker context in the reference image
-const TODAY = new Date(Date.UTC(2026, 3, 17, 12, 0, 0)) 
-
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June']
-
-function dayOffset(dateStr: string | null | undefined): number {
-  // if there is no date, default the offset to 0 so it doesn't crash
-  if (!dateStr) return 0;
-  
-  const d = parseDate(dateStr);
-  
-  // safety check to ensure we don't do math on an invalid date (NaN)
-  if (isNaN(d.getTime())) return 0; 
-  
-  return Math.max(0, (d.getTime() - GANTT_START.getTime()) / 86_400_000);
-}
-
-function toPct(days: number): string {
-  return `${((days / TOTAL_DAYS) * 100).toFixed(2)}%`
-}
-
-interface MonthHeader {
-  label: string
-  startPct: string
-  widthPct: string
-}
-
-function buildMonthHeaders(): MonthHeader[] {
-  const headers: MonthHeader[] = []
-  for (let month = 0; month <= 5; month++) {
-    const firstOfMonth = new Date(Date.UTC(2026, month, 1, 12, 0, 0))
-    const lastOfMonth  = new Date(Date.UTC(2026, month + 1, 0, 12, 0, 0))
-
-    const start = (firstOfMonth.getTime() - GANTT_START.getTime()) / 86_400_000
-    const end   = (lastOfMonth.getTime() - GANTT_START.getTime()) / 86_400_000 + 1
-
-    headers.push({
-      label: MONTHS[month],
-      startPct: toPct(start),
-      widthPct: toPct(end - start),
-    })
-  }
-  return headers
-}
-
-const MONTH_HEADERS = buildMonthHeaders()
-const TODAY_PCT     = toPct(Math.min((TODAY.getTime() - GANTT_START.getTime()) / 86_400_000, TOTAL_DAYS))
-
-// Display maps
-const STATUS_LABEL: Record<TaskStatus, string> = {
-  IN_PROGRESS: 'In progress',
-  DONE:        'Done',
-  TODO:        'To do',
-  BLOCKED:     'Blocked',
-  IN_REVIEW:   'In review',
-}
-
-// Inline styles for badges to match the target's muted aesthetic perfectly
-const STATUS_STYLE: Record<TaskStatus, React.CSSProperties> = {
-  IN_PROGRESS: { backgroundColor: '#759cac', color: '#000' },
-  DONE:        { backgroundColor: '#6ca67b', color: '#000' },
-  TODO:        { backgroundColor: '#b0b8c4', color: '#000' },
-  BLOCKED:     { backgroundColor: '#d07d70', color: '#000' },
-  IN_REVIEW:   { backgroundColor: '#a07bc4', color: '#000' },
-}
-
-const PRIORITY_STYLE: Record<TaskPriority, React.CSSProperties> = {
-  CRITICAL: { backgroundColor: '#cf7b71', color: '#000' },
-  HIGH:     { backgroundColor: '#e29b65', color: '#000' },
-  MEDIUM:   { backgroundColor: '#e0c86c', color: '#000' },
-  LOW:      { backgroundColor: '#8db580', color: '#000' },
-}
-
-const BAR_COLOR: Record<TaskStatus, string> = {
-  IN_PROGRESS: '#759cac',
-  DONE:        '#6ca67b',
-  TODO:        '#b0b8c4',
-  BLOCKED:     '#d07d70',
-  IN_REVIEW:   '#a07bc4',
-}
+const COLUMN_WIDTH = 120;
+const PAGE_SIZE = 20;
 
 export default function TimelinePage(): JSX.Element {
-  const { user } = useAuth()
-  const [tasks, setTasks] = useState<TimelineTask[]>([])
+    const {user} = useAuth()
+    const [tasks, setTasks] = useState<TimelineTask[]>([])
+    const [loading, setLoading] = useState(true)
+    const [page, setPage] = useState(1)
+    const [hasMore, setHasMore] = useState(true)
+    const [scrollX, setScrollX] = useState(0);
 
-  useEffect(() => {
-    let cancelled = false
-    useAPI.timeline // Changed from timelineAPI
-      .getTasks(user?.currentTeamId)
-      .then((res) => { if (!cancelled) setTasks(res.data) })
-      .catch(() => { /* keep placeholder */ })
-    return () => { cancelled = true }
-  }, [user?.currentTeamId])
+    const observer = useRef<IntersectionObserver | null>(null)
+    const scrollRef = useRef<HTMLDivElement>(null);
 
-  return (
-    <div className={styles.page}>
-      <PageHeader title="Timeline" subtitle="EasyMoneySnipers" />
+    const fetchTasks = useCallback(async (pageNum: number) => {
+        setLoading(true);
+        try {
+            const res = await useAPI.timeline.getTasks(user?.currentTeamId, pageNum, PAGE_SIZE);
+            const newTasks = res.data;
+            setTasks(prev => (pageNum === 1 ? newTasks : [...prev, ...newTasks]));
+            setHasMore(newTasks.length === PAGE_SIZE);
+        } catch (err) {
+            console.error("Failed to load tasks", err);
+        } finally {
+            setLoading(false);
+        }
+    }, [user?.currentTeamId]);
 
-      <div className={styles.content}>
-        <div className={styles.ganttWrap}>
-          <table className={styles.table}>
-            <colgroup>
-              <col className={styles.colTask} />
-              <col className={styles.colResponsible} />
-              <col className={styles.colStatus} />
-              <col className={styles.colPriority} />
-              <col className={styles.colDue} />
-              <col className={styles.colGantt} />
-            </colgroup>
 
-            <thead>
-              {/* Single unified header row to match the target design */}
-              <tr className={styles.colHeadRow}>
-                <th>Task</th>
-                <th>Responsible</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Due Date</th>
-                <th className={styles.ganttHead}>
-                  <div className={styles.monthHeaders}>
-                    {MONTH_HEADERS.map((m) => (
-                      <div
-                        key={m.label}
-                        className={styles.monthHeaderCell}
-                        style={{ left: m.startPct, width: m.widthPct }}
-                      >
-                        {m.label}
-                      </div>
-                    ))}
-                    {/* Today marker correctly aligned to the top */}
-                    <div className={styles.todayLineHeader} style={{ left: TODAY_PCT }}>
-                      <span className={styles.todayLabel}>
-                        Today {String(TODAY.getUTCDate()).padStart(2, '0')}/
-                        {String(TODAY.getUTCMonth() + 1).padStart(2, '0')}
-                      </span>
-                    </div>
-                  </div>
-                </th>
-              </tr>
-            </thead>
+    const lastTaskRef = useCallback((node: HTMLDivElement) => {
+        if (loading) return;
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) setPage(prev => prev + 1);
+        });
+        if (node) observer.current.observe(node);
+    }, [loading, hasMore]);
 
-            <tbody>
-              {tasks.map((task) => {
-                const startDay = dayOffset(task.startDate)
-                const endDay   = dayOffset(task.dueDate ?? task.startDate)
-                const barWidth = Math.max(endDay - startDay, 1)
-                const dueFormatted = task.dueDate 
-                  ? task.dueDate.split('T')[0].split('-').reverse().join('/') 
-                  : '—';
-                return (
-                  <tr key={task.id} className={styles.taskRow}>
-                    <td>
-                      <span className={styles.taskId}>{task.id}</span>
-                      <span className={styles.taskTitle}>{task.title}</span>
-                    </td>
-                    <td className={styles.responsible}>
-                      <div className={styles.userWrap}>
-                         <div 
-                           className={styles.avatar} 
-                           style={{ backgroundImage: `url(https://ui-avatars.com/api/?name=${encodeURIComponent(task.responsible ?? 'U')}&background=random)` }} 
-                         />
-                         <span>{task.responsible ?? '—'}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <span className={styles.statusBadge} style={STATUS_STYLE[task.status]}>
-                        {STATUS_LABEL[task.status]}
-                      </span>
-                    </td>
-                    <td>
-                      <span className={styles.statusBadge} style={PRIORITY_STYLE[task.priority]}>
-                        {task.priority === 'CRITICAL' ? 'Critical' : task.priority}
-                      </span>
-                    </td>
-                    <td className={styles.dueDate}>{dueFormatted}</td>
-                    <td className={styles.ganttCell}>
-                      <div className={styles.ganttTrack}>
-                        
-                        {/* Vertical Month Grids */}
-                        {MONTH_HEADERS.map((m) => (
-                          <div
-                            key={`grid-${m.label}`}
-                            className={styles.monthGrid}
-                            style={{ left: m.startPct, width: m.widthPct }}
-                          />
+
+// Handle scroll events to update visibility
+    const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        setScrollX(e.currentTarget.scrollLeft);
+    };
+
+
+    const {startBound, weeks, todayOffset} = useMemo(() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Look back 90 days (~13 weeks) instead of 28
+        const start = new Date(today);
+        start.setDate(start.getDate() - 90);
+
+        // Generate 52 weeks (approx 1 year) to give plenty of scroll room
+        const weekArray = Array.from({length: 52}).map((_, i) => {
+            const d = new Date(start);
+            d.setDate(d.getDate() + i * 7);
+            return d;
+        });
+
+        // Calculate Today's pixel position relative to the startBound
+        const diffMs = today.getTime() - start.getTime();
+        const todayPos = (diffMs / (1000 * 60 * 60 * 24 * 7)) * COLUMN_WIDTH;
+
+        return {startBound: start, weeks: weekArray, todayOffset: todayPos};
+    }, []);
+
+    const getPos = (dateStr: string) => {
+        const d = new Date(dateStr);
+        const diffDays = (d.getTime() - startBound.getTime()) / (1000 * 60 * 60 * 24);
+        return (diffDays / 7) * COLUMN_WIDTH;
+    };
+    const isTodayVisible = useMemo(() => {
+        const frozenWidth = 750;
+        // We add a small buffer (5-10px) so it doesn't flicker right at the edge
+        const buffer = 5;
+
+        // The viewport's width minus the frozen section is the visible "window" for the Gantt track
+        const visibleWindowWidth = scrollRef.current?.clientWidth
+            ? scrollRef.current.clientWidth - frozenWidth
+            : 1000; // Fallback during initial render
+
+        // The line is visible if:
+        // It is further right than the current scroll amount (accounting for frozen cols)
+        // AND it hasn't scrolled past the right edge of the screen
+        const isPastFrozen = todayOffset > (scrollX + buffer);
+        const isBeforeRightEdge = todayOffset < (scrollX + visibleWindowWidth - buffer);
+
+        return isPastFrozen && isBeforeRightEdge;
+    }, [todayOffset, scrollX]);
+
+    useEffect(() => {
+        fetchTasks(1);
+    }, [fetchTasks]);
+
+
+    useEffect(() => {
+        if (page > 1) fetchTasks(page);
+    }, [page, fetchTasks]);
+
+    useEffect(() => {
+        if (scrollRef.current && todayOffset > 0) {
+            // We scroll the viewport.
+            // We subtract a bit of padding so "Today" is centered or slightly to the left
+            scrollRef.current.scrollLeft = todayOffset;
+        }
+    }, [todayOffset]);
+
+    return (
+        <div className={styles.pageWrapper}>
+            <header className={styles.header}>
+                <div className={styles.titleGroup}>
+                    <h1>Timeline</h1>
+                    <p>{user?.currentTeamId || 'EasyMoneySnipers'}</p>
+                </div>
+            </header>
+
+            <div className={styles.outerContainer}>
+                <div className={styles.scrollViewport} ref={scrollRef} onScroll={onScroll}>
+                    <div className={styles.timelineGrid}
+                         style={{width: `calc(750px + ${weeks.length * COLUMN_WIDTH}px)`}}>
+
+                        <div className={styles.headerRow}>
+                            <div className={`${styles.hCell} ${styles.stickyCol}`} style={{left: 0, width: 220}}>Task
+                            </div>
+                            <div className={`${styles.hCell} ${styles.stickyCol}`}
+                                 style={{left: 220, width: 180}}>Responsible
+                            </div>
+                            <div className={`${styles.hCell} ${styles.stickyCol}`}
+                                 style={{left: 400, width: 130}}>Status
+                            </div>
+                            <div className={`${styles.hCell} ${styles.stickyCol}`}
+                                 style={{left: 530, width: 110}}>Priority
+                            </div>
+                            <div className={`${styles.hCell} ${styles.stickyCol}`} style={{left: 640, width: 110}}>Due
+                                Date
+                            </div>
+
+                            <div className={styles.ganttHeaderPart}>
+                                {/* "Today" floating label */}
+                                {isTodayVisible && (
+                                    <div className={styles.todayLabel} style={{left: todayOffset}}>
+                                        Today
+                                    </div>
+                                )}
+
+                                {weeks.map(w => (
+                                    <div key={w.toISOString()} className={styles.weekLabel}
+                                         style={{width: COLUMN_WIDTH}}>
+                                        {w.toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {tasks.map((t, idx) => (
+                            <div key={t.id} className={styles.dataRow}
+                                 ref={idx === tasks.length - 1 ? lastTaskRef : null}>
+                                <div className={`${styles.cell} ${styles.stickyCol}`} style={{left: 0, width: 220}}>
+                                    <span className={styles.taskId}>{t.id}</span>
+                                    <span className={styles.taskTitle} title={t.title}>{t.title}</span>
+                                </div>
+                                <div className={`${styles.cell} ${styles.stickyCol}`} style={{left: 220, width: 180}}>
+                                    <div className={styles.responsible}>
+                                        <img src={`https://ui-avatars.com/api/?name=${t.responsible}&background=random`}
+                                             className={styles.avatar} alt=""/>
+                                        <span>{t.responsible}</span>
+                                    </div>
+                                </div>
+                                <div className={`${styles.cell} ${styles.stickyCol}`} style={{left: 400, width: 130}}>
+                                    <span
+                                        className={`${styles.badge} ${styles[t.status]}`}>{t.status.replace('_', ' ')}</span>
+                                </div>
+                                <div className={`${styles.cell} ${styles.stickyCol}`} style={{left: 530, width: 110}}>
+                                    <span className={`${styles.badge} ${styles.critical}`}>{t.priority}</span>
+                                </div>
+                                <div className={`${styles.cell} ${styles.stickyCol}`} style={{left: 640, width: 110}}>
+                                    {t.dueDate ? new Date(t.dueDate).toLocaleDateString('en-GB') : "No Due Date"}
+                                </div>
+
+                                <div className={styles.ganttTrack}>
+                                    {weeks.map((_, i) => <div key={i} className={styles.gridLine}
+                                                              style={{left: i * COLUMN_WIDTH}}/>)}
+                                    <div className={styles.todayLine} style={{left: todayOffset}}/>
+                                    <div className={styles.cylinder} style={{
+                                        left: getPos(t.startDate),
+                                        width: Math.max(getPos(t.dueDate) - getPos(t.startDate), 40),
+                                        backgroundColor: t.status === 'DONE' ? '#62A678' : '#6293A6'
+                                    }}>
+                                        <span className={styles.barLabel}>{t.id}</span>
+                                    </div>
+                                </div>
+                            </div>
                         ))}
 
-                        {/* Gantt Bar */}
-                        <div
-                          className={styles.ganttBar}
-                          style={{
-                            left: toPct(startDay),
-                            width: toPct(barWidth),
-                            background: BAR_COLOR[task.status],
-                          }}
-                          title={`${task.id}: ${task.startDate} → ${task.dueDate ?? ''}`}
-                        />
-
-                        {/* Dashed line matching target */}
-                        <div
-                          className={styles.todayLineRow}
-                          style={{ left: TODAY_PCT }}
-                          aria-hidden="true"
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                        {/* SKELETON ROWS */}
+                        {loading && Array.from({length: 5}).map((_, i) => (
+                            <div key={`skeleton-${i}`} className={styles.dataRow}>
+                                <div className={`${styles.cell} ${styles.stickyCol}`} style={{left: 0, width: 220}}>
+                                    <div className={styles.skeleton} style={{width: '80%', height: '14px'}}/>
+                                </div>
+                                <div className={`${styles.cell} ${styles.stickyCol}`} style={{left: 220, width: 180}}>
+                                    <div className={styles.skeletonCircle}/>
+                                    <div className={styles.skeleton}
+                                         style={{width: '60%', height: '14px', marginLeft: '8px'}}/>
+                                </div>
+                                <div className={`${styles.cell} ${styles.stickyCol}`} style={{left: 400, width: 130}}>
+                                    <div className={styles.skeletonBadge}/>
+                                </div>
+                                <div className={`${styles.cell} ${styles.stickyCol}`} style={{left: 530, width: 110}}>
+                                    <div className={styles.skeletonBadge}/>
+                                </div>
+                                <div className={`${styles.cell} ${styles.stickyCol}`} style={{left: 640, width: 110}}>
+                                    <div className={styles.skeleton} style={{width: '50%', height: '14px'}}/>
+                                </div>
+                                <div className={styles.ganttTrack}>
+                                    <div className={styles.skeletonBar} style={{left: 100 + (i * 30), width: 160}}/>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  )
+    )
 }
