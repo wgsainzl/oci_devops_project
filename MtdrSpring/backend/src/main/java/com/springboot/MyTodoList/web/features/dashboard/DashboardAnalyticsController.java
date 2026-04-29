@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/dashboard/kpis")
+@RequestMapping("/api/dashboard/kpis")
 public class DashboardAnalyticsController {
 
     @Autowired

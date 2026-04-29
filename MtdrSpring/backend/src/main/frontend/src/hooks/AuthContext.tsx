@@ -41,35 +41,62 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
   const loadUser = useCallback(async (token: string) => {
     setLoading(true);
     setError(null);
 
-    try {
-      const res = await authAPI.getMe(token);
-      setUser(res.data);
-      setLoading(false); // Success, stop loading and show app
-    } catch (err: any) {
-      // If the token is specifically expired or invalid
-      if (err.response?.status === 401) {
-        console.warn("JWT Expired. Triggering silent OCI refresh...");
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const res = await authAPI.getMe(token);
+        setUser(res.data);
+        setLoading(false); // Success, stop loading and show app
+        return;
+      } catch (err: any) {
+        const status = err?.response?.status;
 
-        // Redirect immediately.
-        // We do NOT set loading(false) so the ProtectedRoute
-        // keeps showing the spinner until the browser leaves.
-        handleExpiredSession();
-      } else {
+        // If the token is specifically expired or invalid
+        if (status === 401) {
+          console.warn("JWT Expired. Triggering silent OCI refresh...");
+
+          // Redirect immediately.
+          // We do NOT set loading(false) so the ProtectedRoute
+          // keeps showing the spinner until the browser leaves.
+          handleExpiredSession();
+          return;
+        }
+
+        // Retry once if backend rate-limited this call.
+        if (status === 429 && attempt === 0) {
+          const retryAfterSeconds = Number(err?.response?.headers?.["retry-after"]);
+          const waitMs = Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
+            ? retryAfterSeconds * 1000
+            : 1500;
+          await sleep(waitMs);
+          continue;
+        }
+
         // It's a different error (Server 500, Network error, etc.)
         console.error("User load failed:", err);
         setUser(null);
-        setError("Session lost. Please log in again.");
+        setError(
+          status === 429
+            ? "Too many requests right now. Please wait a moment and refresh."
+            : "Session lost. Please log in again.",
+        );
         setLoading(false);
+        return;
       }
     }
+
+    setUser(null);
+    setError("Unable to load user session.");
+    setLoading(false);
   }, []);
 
   const handleExpiredSession = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/oci";
+    window.location.href = "http://163.192.136.37/oauth2/authorization/oci";
   };
 
   useEffect(() => {
@@ -101,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem("auth_token");
       setUser(null);
     } finally {
-      window.location.href = "http://localhost:8080/logout";
+      window.location.href = "http://163.192.136.37/logout";
     }
   }, []);
 

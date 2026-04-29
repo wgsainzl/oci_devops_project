@@ -10,6 +10,7 @@ import {
   CartesianGrid,
 } from 'recharts'
 import type { SprintVelocityEntry } from '../../types'
+import styles from './SprintVelocityChart.module.css'
 
 interface Props {
   data: SprintVelocityEntry[]
@@ -24,25 +25,16 @@ interface TooltipPayloadItem {
 interface CustomTooltipProps {
   active?: boolean
   payload?: TooltipPayloadItem[]
-  label?: number
+  label?: string
 }
 
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Element | null => {
   if (!active || !payload?.length) return null
   return (
-    <div
-      style={{
-        background: 'white',
-        border: '1px solid #e0d8cc',
-        borderRadius: 6,
-        padding: '8px 12px',
-        fontSize: '0.8rem',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-      }}
-    >
-      <p style={{ marginBottom: 4, fontWeight: 600 }}>Iteration {label}</p>
+    <div className={styles.tooltip}>
+      <p className={styles.tooltipTitle}>{label}</p>
       {payload.map((p) => (
-        <p key={p.name} style={{ color: p.color, margin: 0 }}>
+        <p key={p.name} className={styles.tooltipItem} style={{ color: p.color }}>
           {p.name}: {p.value}
         </p>
       ))}
@@ -51,14 +43,28 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Elem
 }
 
 export default function SprintVelocityChart({ data }: Props): JSX.Element {
+  // Ordenar cronológicamente (Backlog primero, luego por número de Sprint)
+  const sortedData = [...data].sort((a: any, b: any) => {
+    const nameA = String(a.sprintName || '');
+    const nameB = String(b.sprintName || '');
+
+    if (nameA.toLowerCase() === 'backlog') return -1;
+    if (nameB.toLowerCase() === 'backlog') return 1;
+
+    const numA = parseInt(nameA.match(/\d+/)?.[0] || '0', 10);
+    const numB = parseInt(nameB.match(/\d+/)?.[0] || '0', 10);
+
+    return numA - numB;
+  });
+
   return (
     <ResponsiveContainer width="100%" height={220}>
-      <LineChart data={data} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
+      <LineChart data={sortedData} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#ede8df" />
         <XAxis
-          dataKey="iteration"
+          dataKey="sprintName"
           label={{
-            value: 'Iteration',
+            value: 'Sprint',
             position: 'insideBottom',
             offset: -2,
             fontSize: 10,

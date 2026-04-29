@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -26,6 +27,20 @@ public class WebSecurityConfiguration {
 
     private final OciOidcUserService ociOidcUserService; // Your existing service
     private final JwtUtil jwtUtil; // Your JwtUtil
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers(
+                "/index.html",
+                "/assets/**",
+                "/static/**",
+                "/*.js",
+                "/*.css",
+                "/*.ico",
+                "/*.png",
+                "/*.svg"
+        );
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter, InMemoryClientRegistrationRepository clientRegistrationRepository) throws Exception {
@@ -49,7 +64,7 @@ public class WebSecurityConfiguration {
 
                             // 3. Redirect to Vite with the token in the query string
                             // Your React app should catch this in the URL
-                            response.sendRedirect("http://localhost:3000/oauth2/redirect?token=" + token);
+                            response.sendRedirect("/oauth2/redirect?token=" + token);
                         }))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
@@ -69,7 +84,7 @@ public class WebSecurityConfiguration {
 
         // After Oracle logs the user out, where should they go?
         // This URL must be registered in your OCI Console as a "Post-Logout Redirect URI"
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:3000/login");
+        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://163.192.136.37/login");
 
         return oidcLogoutSuccessHandler;
     }
