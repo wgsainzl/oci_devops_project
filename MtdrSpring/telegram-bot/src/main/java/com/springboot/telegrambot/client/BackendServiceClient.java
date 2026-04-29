@@ -21,7 +21,7 @@ public class BackendServiceClient {
 
     public BackendServiceClient(@Value("${backend.url:http://localhost:8080}") String backendUrl) {
         this.webClient = WebClient.builder()
-                .baseUrl(backendUrl)
+                .baseUrl(backendUrl + "/api")
                 .build();
     }
 
@@ -36,7 +36,7 @@ public class BackendServiceClient {
 
     public Map<String, Object> getUserRoleByTelegramId(String telegramId) {
         return webClient.get()
-                .uri("/api/users/telegram/" + telegramId + "/role")
+                .uri("/users/telegram/" + telegramId + "/role")
                 .retrieve()
                 .bodyToMono(new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {})
                 .block();

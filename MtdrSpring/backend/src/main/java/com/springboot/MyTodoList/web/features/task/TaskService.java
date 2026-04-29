@@ -126,6 +126,7 @@ public class TaskService {
 
     public List<Task> findAllWeeklySummaryTasks(OffsetDateTime weekStart, OffsetDateTime weekEnd) {
         return taskRepository.findAllWeeklySummaryTasks(weekStart, weekEnd);
+    }
    public Task createTaskFromTelegram(Task task, String telegramId) {
         // 1. Set default status
         if (task.getStatus() == null) {

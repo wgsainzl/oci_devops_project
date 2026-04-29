@@ -19,7 +19,9 @@ public class TaskDTO {
     private Double actualHours;
     private TaskStatus status;
     private String priority;
-    private String responsible;
+    
+    // CHANGED: Use a nested class instead of a String to fix the JSON parsing error
+    private UserReference responsible;
     private String responsibleId;
     
     // Getters and Setters
@@ -50,15 +52,41 @@ public class TaskDTO {
     public String getPriority() { return priority; }
     public void setPriority(String priority) { this.priority = priority; }
 
-    public String getResponsible() { return responsible; }
-    public void setResponsible(String responsible) { this.responsible = responsible; }
+    // CHANGED: Updated getters and setters to match the new UserReference object
+    public UserReference getResponsible() { return responsible; }
+    public void setResponsible(UserReference responsible) { this.responsible = responsible; }
 
     public String getResponsibleId() { return responsibleId; }
     public void setResponsibleId(String responsibleId) { this.responsibleId = responsibleId; }
+    
     private SprintReference sprint;
     
     public SprintReference getSprint() { return sprint; }
     public void setSprint(SprintReference sprint) { this.sprint = sprint; }
+
+    // NEW: Nested class to map the "responsible" JSON object
+    public static class UserReference {
+        private Integer userId;
+        private String name;
+        private String email;
+        
+        // 1. Default constructor (Jackson uses this when it receives a full JSON object)
+        public UserReference() {}
+        
+        // 2. Fallback String constructor (Jackson uses this when it receives just a string)
+        public UserReference(String name) {
+            this.name = name;
+        }
+        
+        public Integer getUserId() { return userId; }
+        public void setUserId(Integer userId) { this.userId = userId; }
+        
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+    }
 
     public static class SprintReference {
         @JsonProperty("sprintId")

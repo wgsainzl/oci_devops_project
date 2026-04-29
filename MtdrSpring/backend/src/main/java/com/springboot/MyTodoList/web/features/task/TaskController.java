@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("/api/tasks")
 public class TaskController {
     
     @Autowired
@@ -113,6 +113,7 @@ public class TaskController {
                 .map(TaskDTO::fromEntity)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(taskDTOs);
+    }
     @PostMapping("/telegram")
     public ResponseEntity<TaskDTO> addToDoItemFromTelegram(
             @RequestBody Task newTask, 
