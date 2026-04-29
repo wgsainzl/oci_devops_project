@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const handleExpiredSession = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/oci";
+    window.location.href = "http://163.192.136.37/oauth2/authorization/oci";
   };
 
   useEffect(() => {
@@ -128,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem("auth_token");
       setUser(null);
     } finally {
-      window.location.href = "http://localhost:8080/logout";
+      window.location.href = "http://163.192.136.37/logout";
     }
   }, []);
 
