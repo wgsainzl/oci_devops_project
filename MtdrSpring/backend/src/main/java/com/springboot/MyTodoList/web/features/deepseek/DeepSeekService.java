@@ -1,7 +1,5 @@
 package com.springboot.MyTodoList.web.features.deepseek;
 
-import com.springboot.MyTodoList.web.features.task.Task;
-
 import java.io.IOException;
 import java.util.List;
 import org.apache.hc.client5.http.classic.methods.HttpPost;

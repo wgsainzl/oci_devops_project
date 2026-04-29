@@ -1,6 +1,5 @@
 package com.springboot.MyTodoList.web.features.sprint;
 
-import com.springboot.MyTodoList.web.features.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +11,11 @@ import java.util.List;
 @RequestMapping("/api/sprints")
 public class SprintController {
 
-    private final SprintService sprintService;
+    @Autowired
+    private SprintService sprintService;
 
-    private final com.springboot.MyTodoList.web.features.task.TaskService taskService;
-
-    public SprintController(SprintService sprintService, TaskService taskService) {
-        this.sprintService = sprintService;
-        this.taskService = taskService;
-    }
+    @Autowired
+    private com.springboot.MyTodoList.web.features.task.TaskService taskService;
 
     @GetMapping
     public ResponseEntity<List<Sprint>> getAllSprints() {

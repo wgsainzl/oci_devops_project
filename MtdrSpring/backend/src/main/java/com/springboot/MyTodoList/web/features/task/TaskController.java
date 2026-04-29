@@ -1,50 +1,58 @@
 package com.springboot.MyTodoList.web.features.task;
+
+import com.springboot.MyTodoList.web.features.task.Task;
+import com.springboot.MyTodoList.web.features.task.TaskService;
+import com.springboot.MyTodoList.web.features.task.TaskStatus;
 import com.springboot.MyTodoList.web.features.task.dto.TaskDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
+    
     @Autowired
     private TaskService taskService;
-    //@CrossOrigin
-    @GetMapping
-    public ResponseEntity<List<Task>> getAllToDoItems(){
-        List<Task> tasks = taskService.findAll();
-        return ResponseEntity.ok(tasks);
-    }
-    //@CrossOrigin
-    @GetMapping("/{id}")
-    public ResponseEntity<Task> getToDoItemById(@PathVariable int id){
-  
-        Optional<Task> task = taskService.getTaskById(id);
-        return task.map(ResponseEntity::ok) // if exists, wrapped in response entity
-                      .orElseGet(() -> ResponseEntity.notFound().build()); // if not, return response entity not found
 
+    @GetMapping
+    public ResponseEntity<List<TaskDTO>> getAllToDoItems(){
+        List<Task> tasks = taskService.findAll();
+        // Convert the list of raw entities to a list of DTOs
+        List<TaskDTO> taskDTOs = tasks.stream()
+                .map(TaskDTO::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(taskDTOs);
     }
-    //@CrossOrigin
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskDTO> getToDoItemById(@PathVariable int id){
+        Optional<Task> task = taskService.getTaskById(id);
+        return task.map(t -> ResponseEntity.ok(TaskDTO.fromEntity(t)))
+                   .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @PostMapping
-    public ResponseEntity<Task> addToDoItem(@RequestBody Task newTask) {
+    public ResponseEntity<TaskDTO> addToDoItem(@RequestBody Task newTask) throws Exception{
         Task createdTask = taskService.createTask(newTask);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
+        return ResponseEntity.status(HttpStatus.CREATED).body(TaskDTO.fromEntity(createdTask));
     }
-    //@CrossOrigin
+
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateToDoItem(@RequestBody Task updatedData, @PathVariable int id){
+    public ResponseEntity<TaskDTO> updateToDoItem(@RequestBody Task updatedData, @PathVariable int id){
         Task updatedTask = taskService.updateTask(id, updatedData);
         if (updatedTask != null) {
-            return ResponseEntity.ok(updatedTask);
+            return ResponseEntity.ok(TaskDTO.fromEntity(updatedTask));
         } else {
             return ResponseEntity.notFound().build();
         }
     }
-    //@CrossOrigin
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteTaskItem(@PathVariable("id") int id){
@@ -79,7 +87,4 @@ public class TaskController {
             return ResponseEntity.badRequest().build();
         }
     }
-
-
-
 }

@@ -45,7 +45,6 @@ spring:
             user-info-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/oauth2/v1/userinfo
             user-name-attribute: sub
 
-
 #logging:
 ##  level:
 #    #    TODO

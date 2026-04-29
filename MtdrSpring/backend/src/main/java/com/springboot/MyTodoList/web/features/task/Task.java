@@ -24,8 +24,8 @@ public class Task {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description", columnDefinition = "CLOB")
-    private String description;
+    @Column(name = "description", length = 500)
+    private String description; 
 
     @Column(name = "start_date")
     private OffsetDateTime startDate;
