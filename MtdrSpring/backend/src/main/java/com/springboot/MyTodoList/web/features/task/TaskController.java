@@ -30,7 +30,7 @@ public class TaskController {
     }
     //@CrossOrigin
     @PostMapping
-    public ResponseEntity<Task> addToDoItem(@RequestBody Task newTask) throws Exception{
+    public ResponseEntity<Task> addToDoItem(@RequestBody Task newTask) {
         Task createdTask = taskService.createTask(newTask);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
     }
