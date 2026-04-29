@@ -319,7 +319,7 @@ const buildRecentActivityFromTasks = (
  */
 export const authAPI = {
   getMe: async (token: string) => {
-    const response = await api.get<RawAuthEnvelope>("/api/auth/me", {
+    const response = await api.get<RawAuthEnvelope>("/auth/me", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
