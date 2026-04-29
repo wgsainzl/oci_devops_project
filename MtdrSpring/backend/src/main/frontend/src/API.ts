@@ -103,7 +103,7 @@ const normalizeTask = (raw: unknown): Task => {
   const responsible =
     typeof responsibleSource === "string"
       ? responsibleSource
-      : responsibleSource?.name ?? "Unassigned";
+      : (responsibleSource?.name ?? "Unassigned");
 
   return {
     id: String(source.id ?? source.taskId ?? ""),
@@ -116,7 +116,8 @@ const normalizeTask = (raw: unknown): Task => {
     completedAt: source.completedAt ? String(source.completedAt) : undefined,
     estimatedHours:
       source.estimatedHours == null ? undefined : Number(source.estimatedHours),
-    actualHours: source.actualHours == null ? undefined : Number(source.actualHours),
+    actualHours:
+      source.actualHours == null ? undefined : Number(source.actualHours),
     status: parseTaskStatus(source.status),
     responsible,
     priority: ["LOW", "MEDIUM", "HIGH", "CRITICAL"].includes(
@@ -151,15 +152,19 @@ const extractArrayPayload = <T>(payload: unknown): T[] => {
 const toRelativeTime = (date: Date): string => {
   const diffMs = Date.now() - date.getTime();
   const diffMinutes = Math.max(1, Math.floor(diffMs / 60000));
-  if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes === 1 ? "" : "s"} ago`;
+  if (diffMinutes < 60)
+    return `${diffMinutes} minute${diffMinutes === 1 ? "" : "s"} ago`;
   const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  if (diffHours < 24)
+    return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
   const diffDays = Math.floor(diffHours / 24);
   return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
 };
 
 const toSprintRank = (sprintLabel: string): number => {
-  const numeric = Number(sprintLabel.match(/\d+/)?.[0] ?? Number.MAX_SAFE_INTEGER);
+  const numeric = Number(
+    sprintLabel.match(/\d+/)?.[0] ?? Number.MAX_SAFE_INTEGER,
+  );
   return Number.isFinite(numeric) ? numeric : Number.MAX_SAFE_INTEGER;
 };
 
@@ -173,19 +178,29 @@ const sortSprintLabels = (labels: string[]): string[] =>
 
 type HoursKpiRow = {
   developer_name?: string;
+  developerName?: string;
+  DEVELOPER_NAME?: string; 
   sprint_name?: string;
+  sprintName?: string;
+  SPRINT_NAME?: string;    
   total_hours_worked?: number | string;
+  totalHoursWorked?: number | string;
+  TOTAL_HOURS_WORKED?: number | string; 
 };
 
 type TasksKpiRow = {
   sprint_name?: string;
+  sprintName?: string;
+  SPRINT_NAME?: string;   
   tasks_completed?: number | string;
+  tasksCompleted?: number | string;
+  TASKS_COMPLETED?: number | string;   
 };
 
 const getLatestSprintFromHoursRows = (rows: HoursKpiRow[]): string | null => {
   const labels = rows
-    .map((r) => String(r.sprint_name ?? "").trim())
-    .filter(Boolean);
+    .map((r) => String(r.SPRINT_NAME ?? r.sprint_name ?? r.sprintName ?? "Backlog").trim() || "Backlog");
+  
   if (labels.length === 0) return null;
   const sorted = sortSprintLabels([...new Set(labels)]);
   return sorted[sorted.length - 1] ?? null;
@@ -195,10 +210,13 @@ const normalizeAuthUser = (payload: RawAuthEnvelope) => {
   const base = payload.user ?? payload;
   const roles = base.roles ?? (payload.role ? [payload.role] : []);
   const allowedRoles: UserRole[] = ["ADMIN", "MANAGER", "DEVELOPER"];
-  const normalizedRoles = roles.map((r) => r.replace(/^ROLE_/, "").toUpperCase());
+  const normalizedRoles = roles.map((r) =>
+    r.replace(/^ROLE_/, "").toUpperCase(),
+  );
   const role =
-    (normalizedRoles.find((r) => allowedRoles.includes(r as UserRole)) as UserRole | undefined) ??
-    "DEVELOPER";
+    (normalizedRoles.find((r) => allowedRoles.includes(r as UserRole)) as
+      | UserRole
+      | undefined) ?? "DEVELOPER";
 
   return {
     userId: String(base.userId ?? ""),
@@ -214,9 +232,14 @@ const buildPendingActionsFromTasks = (tasks: Task[]): PendingAction[] => {
 
   const highPriorityActions = tasks
     .filter((task) => {
-      const dueTs = task.dueDate ? new Date(task.dueDate).getTime() : Number.NaN;
-      const isOverdue = Number.isFinite(dueTs) && dueTs < now && task.status !== "DONE";
-      return task.status === "BLOCKED" || task.status === "IN_REVIEW" || isOverdue;
+      const dueTs = task.dueDate
+        ? new Date(task.dueDate).getTime()
+        : Number.NaN;
+      const isOverdue =
+        Number.isFinite(dueTs) && dueTs < now && task.status !== "DONE";
+      return (
+        task.status === "BLOCKED" || task.status === "IN_REVIEW" || isOverdue
+      );
     })
     .slice(0, 15)
     .map((task) => {
@@ -263,7 +286,10 @@ const buildPendingActionsFromTasks = (tasks: Task[]): PendingAction[] => {
     }));
 };
 
-const buildRecentActivityFromTasks = (tasks: Task[], limit: number): ActivityLogItem[] =>
+const buildRecentActivityFromTasks = (
+  tasks: Task[],
+  limit: number,
+): ActivityLogItem[] =>
   tasks
     .sort(
       (a, b) =>
@@ -363,7 +389,9 @@ export const dashboardAPI = {
     teamId?: string | null,
   ): Promise<AxiosResponse<PendingAction[]>> => {
     try {
-      const response = await api.get("/dashboard/pending-actions", { params: { teamId } });
+      const response = await api.get("/dashboard/pending-actions", {
+        params: { teamId },
+      });
       const rows = extractArrayPayload<PendingAction>(response.data);
       if (rows.length > 0) {
         return makeAxiosResponse(response, rows);
@@ -396,14 +424,22 @@ export const dashboardAPI = {
 
       const stats: DashboardStats = {
         completed: tasks.filter((t) => t.status === "DONE").length,
-        updated: tasks.filter((t) => t.status !== "TODO" && t.status !== "DONE").length,
+        updated: tasks.filter((t) => t.status !== "TODO" && t.status !== "DONE")
+          .length,
         created: tasks.filter((t) => {
-          const createdTs = t.createdAt ? new Date(t.createdAt).getTime() : Number.NaN;
+          const createdTs = t.createdAt
+            ? new Date(t.createdAt).getTime()
+            : Number.NaN;
           return Number.isFinite(createdTs) && createdTs >= aWeekAgo;
         }).length,
         dueSoon: tasks.filter((t) => {
           const dueTs = t.dueDate ? new Date(t.dueDate).getTime() : Number.NaN;
-          return Number.isFinite(dueTs) && dueTs >= now && dueTs <= in7Days && t.status !== "DONE";
+          return (
+            Number.isFinite(dueTs) &&
+            dueTs >= now &&
+            dueTs <= in7Days &&
+            t.status !== "DONE"
+          );
         }).length,
       };
 
@@ -426,7 +462,9 @@ export const dashboardAPI = {
 
       const rows = extractArrayPayload<Record<string, unknown>>(response.data);
       const mapped = rows.map((row, index) => {
-        const timestamp = row.timestamp ? new Date(String(row.timestamp)) : new Date();
+        const timestamp = row.timestamp
+          ? new Date(String(row.timestamp))
+          : new Date();
         const fieldName = String(row.fieldName ?? "task");
         const oldValue = row.oldValue ? String(row.oldValue) : "";
         const newValue = row.newValue ? String(row.newValue) : "";
@@ -456,11 +494,17 @@ export const dashboardAPI = {
 
       const tasksRes = await _tasksAPI.getAll(teamId ? { teamId } : undefined);
       const tasks = tasksRes.data.map(normalizeTask);
-      return makeAxiosResponse(tasksRes, buildRecentActivityFromTasks(tasks, limit));
+      return makeAxiosResponse(
+        tasksRes,
+        buildRecentActivityFromTasks(tasks, limit),
+      );
     } catch {
       const tasksRes = await _tasksAPI.getAll(teamId ? { teamId } : undefined);
       const tasks = tasksRes.data.map(normalizeTask);
-      return makeAxiosResponse(tasksRes, buildRecentActivityFromTasks(tasks, limit));
+      return makeAxiosResponse(
+        tasksRes,
+        buildRecentActivityFromTasks(tasks, limit),
+      );
     }
   },
 
@@ -479,12 +523,19 @@ export const dashboardAPI = {
 
       tasks.forEach((task) => {
         const weight = task.actualHours ?? task.estimatedHours ?? 1;
-        totals.set(task.responsible, (totals.get(task.responsible) ?? 0) + weight);
+        totals.set(
+          task.responsible,
+          (totals.get(task.responsible) ?? 0) + weight,
+        );
       });
 
-      const overall = [...totals.values()].reduce((acc, value) => acc + value, 0) || 1;
+      const overall =
+        [...totals.values()].reduce((acc, value) => acc + value, 0) || 1;
       const workload = [...totals.entries()]
-        .map(([name, value]) => ({ name, pct: Math.round((value / overall) * 100) }))
+        .map(([name, value]) => ({
+          name,
+          pct: Math.round((value / overall) * 100),
+        }))
         .sort((a, b) => b.pct - a.pct);
 
       return makeAxiosResponse(tasksRes, workload);
@@ -498,7 +549,9 @@ export const dashboardAPI = {
     teamId?: string | null,
   ): Promise<AxiosResponse<TaskStatusEntry[]>> => {
     try {
-      const response = await api.get("/dashboard/task-status", { params: { teamId } });
+      const response = await api.get("/dashboard/task-status", {
+        params: { teamId },
+      });
       const rows = extractArrayPayload<TaskStatusEntry>(response.data);
       return makeAxiosResponse(response, rows);
     } catch {
@@ -543,7 +596,9 @@ export const dashboardAPI = {
     teamId?: string | null,
   ): Promise<AxiosResponse<SprintVelocityEntry[]>> => {
     try {
-      const response = await api.get("/dashboard/sprint-velocity", { params: { teamId } });
+      const response = await api.get("/dashboard/sprint-velocity", {
+        params: { teamId },
+      });
       const rows = extractArrayPayload<SprintVelocityEntry>(response.data);
       return makeAxiosResponse(response, rows);
     } catch {
@@ -558,7 +613,9 @@ export const dashboardAPI = {
         }
         const aggregate = bySprint.get(sprintName)!;
         aggregate.estimated += task.estimatedHours ?? 0;
-        aggregate.actual += task.actualHours ?? (task.status === "DONE" ? task.estimatedHours ?? 0 : 0);
+        aggregate.actual +=
+          task.actualHours ??
+          (task.status === "DONE" ? (task.estimatedHours ?? 0) : 0);
       });
 
       const velocity = [...bySprint.entries()].map(([name, values], idx) => ({
@@ -582,7 +639,9 @@ export const dashboardAPI = {
     teamId?: string | null,
   ): Promise<AxiosResponse<SprintVelocityEntry[]>> => {
     try {
-      return await api.get("/dashboard/due-date-distribution", { params: { teamId } });
+      return await api.get("/dashboard/due-date-distribution", {
+        params: { teamId },
+      });
     } catch {
       const tasksRes = await _tasksAPI.getAll(teamId ? { teamId } : undefined);
       const tasks = tasksRes.data.map(normalizeTask);
@@ -615,36 +674,84 @@ export const dashboardAPI = {
     teamId?: string | null,
   ): Promise<AxiosResponse<HoursEntry[]>> => {
     try {
-      const response = await api.get<HoursKpiRow[]>("/dashboard/kpis/hours-per-sprint", {
-        params: { teamId },
-      });
+      const response = await api.get<HoursKpiRow[]>(
+        "/dashboard/kpis/hours-per-sprint",
+        {
+          params: { teamId },
+        },
+      );
       const rows = extractArrayPayload<HoursKpiRow>(response.data);
       const latestSprint = getLatestSprintFromHoursRows(rows);
-
-      const byDeveloper = new Map<string, number>();
+      // Build actual-hours map from KPI rows
+      const actualByDev = new Map<string, number>();
       rows.forEach((row) => {
-        const sprint = String(row.sprint_name ?? "").trim();
+        const sprint = String(row.SPRINT_NAME ?? row.sprint_name ?? "").trim();
         if (!latestSprint || sprint !== latestSprint) return;
-        const developer = String(row.developer_name ?? "Unassigned").trim() || "Unassigned";
-        const hours = Number(row.total_hours_worked ?? 0);
-        byDeveloper.set(developer, (byDeveloper.get(developer) ?? 0) + (Number.isFinite(hours) ? hours : 0));
+
+        const developer = String(row.DEVELOPER_NAME ?? row.developer_name ?? "Unassigned").trim() || "Unassigned";
+        const hoursRaw = row.TOTAL_HOURS_WORKED ?? row.total_hours_worked;
+        const hours = Number(hoursRaw ?? 0);
+        if (Number.isFinite(hours)) {
+          actualByDev.set(developer, (actualByDev.get(developer) ?? 0) + hours);
+        }
       });
 
-      const data: HoursEntry[] = [...byDeveloper.entries()].map(([developer, actual]) => ({
-        developer,
-        estimated: Number(actual.toFixed(2)),
-        actual: Number(actual.toFixed(2)),
-      }));
+      // Also fetch tasks to compute estimated hours (and task-level actuals as a fallback)
+      const tasksRes = await _tasksAPI.getAll(teamId ? { teamId } : undefined);
+      const tasks = tasksRes.data.map(normalizeTask);
+
+      const estimatedByDev = new Map<string, number>();
+      const actualTasksByDev = new Map<string, number>();
+      tasks.forEach((task) => {
+        const sprint = String(task.sprint?.sprintName ?? "Backlog");
+        if (latestSprint && sprint !== latestSprint) return;
+        const developer = task.responsible || "Unassigned";
+        estimatedByDev.set(developer, (estimatedByDev.get(developer) ?? 0) + (task.estimatedHours ?? 0));
+        actualTasksByDev.set(developer, (actualTasksByDev.get(developer) ?? 0) + (task.actualHours ?? 0));
+      });
+
+      // Merge maps: prefer KPI actuals, fallback to task actuals; estimated comes from tasks
+      const allDevelopers = new Set<string>([
+        ...Array.from(actualByDev.keys()),
+        ...Array.from(estimatedByDev.keys()),
+        ...Array.from(actualTasksByDev.keys()),
+      ]);
+
+      const data: HoursEntry[] = Array.from(allDevelopers).map((developer) => {
+        const actualFromKpi = actualByDev.get(developer) ?? 0;
+        const actualFromTasks = actualTasksByDev.get(developer) ?? 0;
+        const estimated = estimatedByDev.get(developer) ?? 0;
+        const actual = actualFromKpi || actualFromTasks || 0;
+        return {
+          developer,
+          estimated: Number(estimated.toFixed(2)),
+          actual: Number(actual.toFixed(2)),
+        };
+      });
+
+      // Debug: log inputs and merged output so you can verify real vs expected
+      /* eslint-disable no-console */
+      console.debug("[getHoursPerDeveloper] latestSprint:", latestSprint);
+      console.debug("[getHoursPerDeveloper] KPI rows:", rows);
+      console.debug("[getHoursPerDeveloper] tasks (count):", tasks.length);
+      console.debug("[getHoursPerDeveloper] actualByDev:", Object.fromEntries(actualByDev));
+      console.debug("[getHoursPerDeveloper] estimatedByDev:", Object.fromEntries(estimatedByDev));
+      console.debug("[getHoursPerDeveloper] actualTasksByDev:", Object.fromEntries(actualTasksByDev));
+      console.debug("[getHoursPerDeveloper] merged payload:", data);
+      /* eslint-enable no-console */
 
       return makeAxiosResponse(response, data);
     } catch {
       const tasksRes = await _tasksAPI.getAll(teamId ? { teamId } : undefined);
       const tasks = tasksRes.data.map(normalizeTask);
-      const latestSprint = sortSprintLabels(
-        [...new Set(tasks.map((t) => String(t.sprint?.sprintName ?? "Backlog")))],
-      ).at(-1);
+      const latestSprint = sortSprintLabels([
+        ...new Set(tasks.map((t) => String(t.sprint?.sprintName ?? "Backlog"))),
+      ]).at(-1);
 
-      const byDeveloper = new Map<string, { estimated: number; actual: number }>();
+      const byDeveloper = new Map<
+        string,
+        { estimated: number; actual: number }
+      >();
       tasks.forEach((task) => {
         const sprint = String(task.sprint?.sprintName ?? "Backlog");
         if (latestSprint && sprint !== latestSprint) return;
@@ -657,11 +764,13 @@ export const dashboardAPI = {
         aggregate.actual += task.actualHours ?? task.estimatedHours ?? 0;
       });
 
-      const data: HoursEntry[] = [...byDeveloper.entries()].map(([developer, value]) => ({
-        developer,
-        estimated: Number(value.estimated.toFixed(2)),
-        actual: Number(value.actual.toFixed(2)),
-      }));
+      const data: HoursEntry[] = [...byDeveloper.entries()].map(
+        ([developer, value]) => ({
+          developer,
+          estimated: Number(value.estimated.toFixed(2)),
+          actual: Number(value.actual.toFixed(2)),
+        }),
+      );
 
       return makeAxiosResponse(tasksRes, data);
     }
@@ -671,20 +780,28 @@ export const dashboardAPI = {
     teamId?: string | null,
   ): Promise<AxiosResponse<CostEntry[]>> => {
     try {
-      const response = await api.get<HoursKpiRow[]>("/dashboard/kpis/hours-per-sprint", {
+      const response = await api.get<any[]>("/dashboard/kpis/hours-per-sprint", {
         params: { teamId },
       });
-      const rows = extractArrayPayload<HoursKpiRow>(response.data);
+      
+      const rows = extractArrayPayload<any>(response.data);
+
+      // Look for SPRINT_NAME in uppercase
       const sprintLabels = sortSprintLabels(
-        [...new Set(rows.map((r) => String(r.sprint_name ?? "").trim()).filter(Boolean))],
+        [...new Set(rows.map((r) => String(r.SPRINT_NAME ?? r.sprint_name ?? "Backlog").trim() || "Backlog"))]
       );
 
       const byDeveloper = new Map<string, CostEntry>();
+
       rows.forEach((row) => {
-        const developer = String(row.developer_name ?? "Unassigned").trim() || "Unassigned";
-        const sprint = String(row.sprint_name ?? "Backlog").trim() || "Backlog";
-        const hours = Number(row.total_hours_worked ?? 0);
+        // Look for the ALL CAPS keys first!
+        const developer = String(row.DEVELOPER_NAME ?? row.developer_name ?? "Unassigned").trim() || "Unassigned";
+        const sprint = String(row.SPRINT_NAME ?? row.sprint_name ?? "Backlog").trim() || "Backlog";
+        const hoursRaw = row.TOTAL_HOURS_WORKED ?? row.total_hours_worked;
+        
+        const hours = Number(hoursRaw ?? 0);
         const cost = Number((Math.max(0, Number.isFinite(hours) ? hours : 0) * COST_PER_HOUR).toFixed(2));
+
         if (!byDeveloper.has(developer)) {
           byDeveloper.set(developer, { developer });
         }
@@ -698,7 +815,6 @@ export const dashboardAPI = {
         });
         return filled;
       });
-
       return makeAxiosResponse(response, data);
     } catch {
       const tasksRes = await _tasksAPI.getAll(teamId ? { teamId } : undefined);
@@ -736,13 +852,20 @@ export const dashboardAPI = {
   ): Promise<AxiosResponse<SprintSummary[]>> => {
     try {
       const [hoursResponse, tasksResponse] = await Promise.all([
-        api.get<HoursKpiRow[]>("/dashboard/kpis/hours-per-sprint", { params: { teamId } }),
-        api.get<TasksKpiRow[]>("/dashboard/kpis/tasks-per-sprint", { params: { teamId } }),
+        api.get<HoursKpiRow[]>("/dashboard/kpis/hours-per-sprint", {
+          params: { teamId },
+        }),
+        api.get<TasksKpiRow[]>("/dashboard/kpis/tasks-per-sprint", {
+          params: { teamId },
+        }),
       ]);
 
       const hoursRows = extractArrayPayload<HoursKpiRow>(hoursResponse.data);
       const tasksRows = extractArrayPayload<TasksKpiRow>(tasksResponse.data);
-      const bySprint = new Map<string, { totalHours: number; tasksCompleted: number }>();
+      const bySprint = new Map<
+        string,
+        { totalHours: number; tasksCompleted: number }
+      >();
 
       hoursRows.forEach((row) => {
         const sprint = String(row.sprint_name ?? "Backlog").trim() || "Backlog";
@@ -759,24 +882,31 @@ export const dashboardAPI = {
         if (!bySprint.has(sprint)) {
           bySprint.set(sprint, { totalHours: 0, tasksCompleted: 0 });
         }
-        bySprint.get(sprint)!.tasksCompleted += Number.isFinite(completed) ? completed : 0;
+        bySprint.get(sprint)!.tasksCompleted += Number.isFinite(completed)
+          ? completed
+          : 0;
       });
 
-      const data: SprintSummary[] = sortSprintLabels([...bySprint.keys()]).map((sprint) => {
-        const value = bySprint.get(sprint)!;
-        return {
-          label: sprint,
-          totalHours: Number(value.totalHours.toFixed(2)),
-          totalCost: Number((value.totalHours * COST_PER_HOUR).toFixed(2)),
-          tasksCompleted: value.tasksCompleted,
-        };
-      });
+      const data: SprintSummary[] = sortSprintLabels([...bySprint.keys()]).map(
+        (sprint) => {
+          const value = bySprint.get(sprint)!;
+          return {
+            label: sprint,
+            totalHours: Number(value.totalHours.toFixed(2)),
+            totalCost: Number((value.totalHours * COST_PER_HOUR).toFixed(2)),
+            tasksCompleted: value.tasksCompleted,
+          };
+        },
+      );
 
       return makeAxiosResponse(hoursResponse, data);
     } catch {
       const tasksRes = await _tasksAPI.getAll(teamId ? { teamId } : undefined);
       const tasks = tasksRes.data.map(normalizeTask);
-      const bySprint = new Map<string, { totalHours: number; tasksCompleted: number }>();
+      const bySprint = new Map<
+        string,
+        { totalHours: number; tasksCompleted: number }
+      >();
 
       tasks.forEach((task) => {
         const sprint = String(task.sprint?.sprintName ?? "Backlog");
@@ -790,15 +920,17 @@ export const dashboardAPI = {
         }
       });
 
-      const data: SprintSummary[] = sortSprintLabels([...bySprint.keys()]).map((sprint) => {
-        const value = bySprint.get(sprint)!;
-        return {
-          label: sprint,
-          totalHours: Number(value.totalHours.toFixed(2)),
-          totalCost: Number((value.totalHours * COST_PER_HOUR).toFixed(2)),
-          tasksCompleted: value.tasksCompleted,
-        };
-      });
+      const data: SprintSummary[] = sortSprintLabels([...bySprint.keys()]).map(
+        (sprint) => {
+          const value = bySprint.get(sprint)!;
+          return {
+            label: sprint,
+            totalHours: Number(value.totalHours.toFixed(2)),
+            totalCost: Number((value.totalHours * COST_PER_HOUR).toFixed(2)),
+            tasksCompleted: value.tasksCompleted,
+          };
+        },
+      );
 
       return makeAxiosResponse(tasksRes, data);
     }

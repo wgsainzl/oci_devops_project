@@ -18,10 +18,12 @@ interface Props {
 export default function SprintCostSummary({
   sprints,
 }: Props): JSX.Element {
+  const filteredSprints = sprints.filter(s => s.label !== "Backlog")
+  
   return (
     <div className={styles.grid}>
-      {sprints.map((s, i) => (
-        <div key={s.label} className={`${styles.card} ${i === 0 ? styles.primary : styles.secondary}`}>
+      {filteredSprints.map((s, i) => (
+        <div key={s.label} className={`${styles.card} ${i === filteredSprints.length - 1 ? styles.primary : styles.secondary}`}>
           <p className={styles.sprintLabel}>{s.label}</p>
 
           <div className={styles.stat}>
