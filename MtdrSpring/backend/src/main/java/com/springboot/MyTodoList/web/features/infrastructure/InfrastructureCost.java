@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.features.infrastructure;
+package com.springboot.MyTodoList.web.features.infrastructure;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;

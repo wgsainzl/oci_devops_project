@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.features.tasklog;
+package com.springboot.MyTodoList.web.features.tasklog;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dashboard") // Mapped to match your React dashboardAPI!
+@RequestMapping("/api/dashboard") // Mapped to match your React dashboardAPI!
 public class TaskLogController {
 
     @Autowired

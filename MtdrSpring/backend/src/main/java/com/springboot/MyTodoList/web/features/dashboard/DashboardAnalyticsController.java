@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.features.dashboard;
+package com.springboot.MyTodoList.web.features.dashboard;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/dashboard/kpis")
+@RequestMapping("/api/dashboard/kpis")
 public class DashboardAnalyticsController {
 
     @Autowired
