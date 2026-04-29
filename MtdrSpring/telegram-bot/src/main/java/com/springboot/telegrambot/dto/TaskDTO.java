@@ -2,10 +2,15 @@ package com.springboot.telegrambot.dto;
 
 import java.time.OffsetDateTime;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+// This tells the parser to safely ignore fields like createdAt, responsible, and sprint
+@JsonIgnoreProperties(ignoreUnknown = true) 
 public class TaskDTO {
+    
     @JsonProperty("id")
-    private Integer taskId;
+    private Integer taskId; // Jackson will try to auto-coerce the String "83" to Integer 83
+    
     private String title;
     private String description;
     private OffsetDateTime startDate;
@@ -50,4 +55,16 @@ public class TaskDTO {
 
     public String getResponsibleId() { return responsibleId; }
     public void setResponsibleId(String responsibleId) { this.responsibleId = responsibleId; }
+    private SprintReference sprint;
+    
+    public SprintReference getSprint() { return sprint; }
+    public void setSprint(SprintReference sprint) { this.sprint = sprint; }
+
+    public static class SprintReference {
+        @JsonProperty("sprintId")
+        private Integer sprintId;
+        
+        public Integer getSprintId() { return sprintId; }
+        public void setSprintId(Integer sprintId) { this.sprintId = sprintId; }
+    }
 }

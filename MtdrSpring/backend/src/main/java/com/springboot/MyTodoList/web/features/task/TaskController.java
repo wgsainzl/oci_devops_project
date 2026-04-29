@@ -22,6 +22,9 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    @Autowired
+    private com.springboot.MyTodoList.web.features.user.UserRepository userRepository;
+
     @GetMapping
     public ResponseEntity<List<TaskDTO>> getAllToDoItems(){
         List<Task> tasks = taskService.findAll();
@@ -110,5 +113,12 @@ public class TaskController {
                 .map(TaskDTO::fromEntity)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(taskDTOs);
+    @PostMapping("/telegram")
+    public ResponseEntity<TaskDTO> addToDoItemFromTelegram(
+            @RequestBody Task newTask, 
+            @RequestParam String telegramId) throws Exception {
+        
+        Task createdTask = taskService.createTaskFromTelegram(newTask, telegramId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(TaskDTO.fromEntity(createdTask));
     }
 }
