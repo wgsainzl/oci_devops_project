@@ -78,9 +78,13 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
         if (messageText.equals(BotLabels.HIDE_MAIN_SCREEN.getLabel()) || messageText.equals(BotCommands.HIDE_COMMAND.getCommand())) {
             BotHelper.sendMessageToTelegram(chatId, BotMessages.BYE.getMessage(), telegramClient);
         } else {
+            //actions.fnCancel();
+            actions.processTaskWizard();
+            actions.fnUpdateTask();
             actions.fnDone();
             actions.fnBlock();
             actions.fnDelete();
+            actions.fnListSprints();
             actions.fnListAll();
             actions.fnAddItem();
             actions.fnGenerateReport();
