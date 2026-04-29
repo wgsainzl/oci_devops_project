@@ -45,6 +45,7 @@ frontend/build
 env.production
 *.env.production
 *.application.properties
+*.env
 
 # Misc
 .DS_Store

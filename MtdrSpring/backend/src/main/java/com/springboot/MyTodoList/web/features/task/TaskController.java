@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
@@ -20,6 +21,9 @@ public class TaskController {
     
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private com.springboot.MyTodoList.web.features.user.UserRepository userRepository;
 
     @GetMapping
     public ResponseEntity<List<TaskDTO>> getAllToDoItems(){
@@ -86,5 +90,36 @@ public class TaskController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping("/summary/{userId}")
+    public ResponseEntity<List<TaskDTO>> getWeeklySummaryTasks(
+            @PathVariable Integer userId,
+            @RequestParam OffsetDateTime weekStart,
+            @RequestParam OffsetDateTime weekEnd) {
+        List<Task> tasks = taskService.getWeeklySummaryTasks(userId, weekStart, weekEnd);
+        List<TaskDTO> taskDTOs = tasks.stream()
+                .map(TaskDTO::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(taskDTOs);
+    }
+
+    @GetMapping("/summary/allTasks")
+    public ResponseEntity<List<TaskDTO>> findAllWeeklySummaryTasks(
+            @RequestParam OffsetDateTime weekStart,
+            @RequestParam OffsetDateTime weekEnd) {
+        List<Task> tasks = taskService.findAllWeeklySummaryTasks(weekStart, weekEnd);
+        List<TaskDTO> taskDTOs = tasks.stream()
+                .map(TaskDTO::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(taskDTOs);
+    }
+    @PostMapping("/telegram")
+    public ResponseEntity<TaskDTO> addToDoItemFromTelegram(
+            @RequestBody Task newTask, 
+            @RequestParam String telegramId) throws Exception {
+        
+        Task createdTask = taskService.createTaskFromTelegram(newTask, telegramId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(TaskDTO.fromEntity(createdTask));
     }
 }

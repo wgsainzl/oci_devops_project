@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.web.util;
+package com.springboot.telegrambot.util;
 
 public enum BotLabels {
 	
@@ -6,9 +6,10 @@ public enum BotLabels {
 	HIDE_MAIN_SCREEN("Hide Main Screen"),
 	LIST_ALL_ITEMS("List All Items"), 
 	ADD_NEW_ITEM("Add New Item"),
+	GENERATE_REPORT("Generate Report"),
 	DONE("DONE"),
-	BLOCK("BLOCK"),          // New: For explicitly blocking tasks
-	START("START"),          // New: For moving to IN_PROGRESS
+	BLOCK("BLOCK"),          
+	START("START"),          
 	DELETE("DELETE"),
 	MY_TODO_LIST("MY TASK LIST"),
 	DASH("-");

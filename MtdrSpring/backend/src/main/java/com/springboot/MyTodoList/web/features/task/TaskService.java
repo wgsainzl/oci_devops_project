@@ -21,7 +21,10 @@ public class TaskService {
     private TaskLogRepository taskLogRepository;
     @Autowired
     private UserRepository userRepository;
-    
+
+    @Autowired
+    private com.springboot.MyTodoList.web.features.sprint.SprintRepository sprintRepository;
+
     public List<Task> findAll(){
         return taskRepository.findAll();
     }
@@ -117,5 +120,34 @@ public class TaskService {
         return taskRepository.findBySprint_SprintId(sprintId);
     }
     
+    public List<Task> getWeeklySummaryTasks(Integer userId, OffsetDateTime weekStart, OffsetDateTime weekEnd) {
+        return taskRepository.findWeeklySummaryTasks(userId, weekStart, weekEnd);
+    }
+
+    public List<Task> findAllWeeklySummaryTasks(OffsetDateTime weekStart, OffsetDateTime weekEnd) {
+        return taskRepository.findAllWeeklySummaryTasks(weekStart, weekEnd);
+    }
+   public Task createTaskFromTelegram(Task task, String telegramId) {
+        // 1. Set default status
+        if (task.getStatus() == null) {
+            task.setStatus(TaskStatus.TODO);
+        }
+
+        // 2. Attach the User securely
+        Optional<User> userOpt = userRepository.findByTelegramUserID(telegramId);
+        if (userOpt.isPresent()) {
+            task.setResponsible(userOpt.get());
+        }
+
+        // 3. SECURE SPRINT ATTACHMENT
+        // If the bot sent a phantom sprint with an ID, fetch the REAL sprint from the DB
+        if (task.getSprint() != null && task.getSprint().getSprintId() != null) {
+            sprintRepository.findById(task.getSprint().getSprintId())
+                    .ifPresent(realSprint -> task.setSprint(realSprint));
+        }
+
+        // 4. Save safely
+        return taskRepository.save(task);
+    }
 
 }

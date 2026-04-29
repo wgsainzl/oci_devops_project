@@ -2,9 +2,6 @@ name: Continuous Integration
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - deployment-ready
   pull_request:
     branches:
       - main
@@ -43,10 +40,22 @@ jobs:
           chmod +x mvnw
           ./mvnw clean package
 
-      - name: Build Docker image
+      - name: Build and Test telegram-bot
+        working-directory: MtdrSpring/telegram-bot
+        run: mvn -B clean verify
+
+      - name: Build backend Docker image
         uses: docker/build-push-action@v5
         with:
           context: MtdrSpring/backend
           file: MtdrSpring/backend/Dockerfile
           push: false
           tags: todolistapp-springboot:${{ env.IMAGE_TAG }}
+
+      - name: Build telegram-bot Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: MtdrSpring/telegram-bot
+          file: MtdrSpring/telegram-bot/Dockerfile
+          push: false
+          tags: telegram-bot:${{ env.IMAGE_TAG }}

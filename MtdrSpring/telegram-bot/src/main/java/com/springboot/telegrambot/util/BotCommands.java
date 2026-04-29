@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.web.util;
+package com.springboot.telegrambot.util;
 
 public enum BotCommands {
 
@@ -6,7 +6,9 @@ public enum BotCommands {
 	HIDE_COMMAND("/hide"), 
 	TODO_LIST("/tasks"),
 	ADD_ITEM("/addtask"),
-	LLM_REPORT("/report");
+	LLM_REPORT("/report"),
+	SPRINTS_LIST("/sprints"),
+	UPDATE_TASK("/updatetask");
 
 	private String command;
 

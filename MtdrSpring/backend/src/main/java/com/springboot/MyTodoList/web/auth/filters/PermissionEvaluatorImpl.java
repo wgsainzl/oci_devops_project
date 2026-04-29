@@ -30,16 +30,8 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 
 
     public boolean hasPermission(Authentication auth, String permissionName) {
-
-        if (auth == null || !auth.isAuthenticated()) return false;
-
-        Object principal = auth.getPrincipal();
-        if (!(principal instanceof CustomUserDetails userDetails)) return false;
-
-        Set<String> authorities = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
-
+        Set<String> authorities = extractAuthorities(auth);
+        if (authorities.isEmpty()) return false;
 
         if(authorities.contains("ADMIN_OVERRIDE")) return true;
 
@@ -62,8 +54,17 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 
 
     public boolean hasAnyPermission(Authentication auth, String... permissions) {
+        Set<String> authorities = extractAuthorities(auth);
+        if (authorities.isEmpty()) return false;
+        if (authorities.contains("ADMIN_OVERRIDE")) return true;
+
         for (String permission : permissions) {
-            if (hasPermission(auth, permission)) {
+            if (authorities.contains(permission)) {
+                return true;
+            }
+
+            String[] parts = permission.split("_", 2);
+            if (parts.length == 2 && authorities.contains(parts[0] + "_MANAGE")) {
                 return true;
             }
         }
@@ -71,11 +72,33 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
     }
 
     public boolean hasAllPermissions(Authentication auth, String... permissions) {
+        Set<String> authorities = extractAuthorities(auth);
+        if (authorities.isEmpty()) return false;
+        if (authorities.contains("ADMIN_OVERRIDE")) return true;
+
         for (String permission : permissions) {
-            if (!hasPermission(auth, permission)) {
-                return false;
+            if (authorities.contains(permission)) {
+                continue;
             }
+
+            String[] parts = permission.split("_", 2);
+            if (parts.length == 2 && authorities.contains(parts[0] + "_MANAGE")) {
+                continue;
+            }
+
+                return false;
         }
         return true;
+    }
+
+    private Set<String> extractAuthorities(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) return Set.of();
+
+        Object principal = auth.getPrincipal();
+        if (!(principal instanceof CustomUserDetails userDetails)) return Set.of();
+
+        return userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
     }
 }

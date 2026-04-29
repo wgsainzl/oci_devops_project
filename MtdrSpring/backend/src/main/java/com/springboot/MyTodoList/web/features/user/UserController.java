@@ -36,6 +36,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("/telegram/{telegramId}/role")
+    public ResponseEntity<java.util.Map<String, Object>> getUserRoleByTelegramId(@PathVariable String telegramId) {
+        java.util.Map<String, Object> roleInfo = userService.getUserByTelegramId(telegramId);
+        if (roleInfo != null) {
+            return ResponseEntity.ok(roleInfo);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     //@CrossOrigin
     @DeleteMapping(value = "deleteUser/{id}")
     public ResponseEntity<Boolean> deleteUser(@PathVariable Long id) {

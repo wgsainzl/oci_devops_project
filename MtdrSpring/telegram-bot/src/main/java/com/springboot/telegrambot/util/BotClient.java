@@ -1,11 +1,11 @@
-package com.springboot.MyTodoList.web.util;
+package com.springboot.telegrambot.util;
 
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.springboot.MyTodoList.web.config.BotProps;
+import com.springboot.telegrambot.config.BotProps;
 
 
 @Configuration

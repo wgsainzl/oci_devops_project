@@ -1,4 +1,4 @@
-package com.springboot.MyTodoList.web.config;
+package com.springboot.telegrambot.config;
 
 //import org.springframework.stereotype.Component;
 import org.springframework.boot.context.properties.ConfigurationProperties;

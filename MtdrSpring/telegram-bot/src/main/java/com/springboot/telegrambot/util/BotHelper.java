@@ -1,0 +1,89 @@
+package com.springboot.telegrambot.util;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
+
+public class BotHelper {
+
+    private static final Logger logger = LoggerFactory.getLogger(BotHelper.class);
+
+    public static void sendMessageToTelegram(Long chatId, String text, TelegramClient bot) {
+        try {
+            // prepare message
+            SendMessage messageToTelegram = 
+                    SendMessage
+                    .builder()
+                    .chatId(chatId)
+                    .text(text)
+                    .replyMarkup(new ReplyKeyboardRemove(true))
+                    .build();
+
+            // send message
+            bot.execute(messageToTelegram);
+
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(), e);
+        }
+    }
+
+    public static void sendMessageToTelegram(Long chatId, String text, TelegramClient bot, ReplyKeyboardMarkup rk ) {
+        try {
+            // prepare message
+            SendMessage messageToTelegram = 
+                    SendMessage
+                    .builder()
+                    .chatId(chatId)
+                    .text(text)
+                    .replyMarkup(rk)
+                    .build();
+
+            // send message
+            bot.execute(messageToTelegram);
+
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(), e);
+        }
+    }
+
+    public static void sendHtmlMessageToTelegram(Long chatId, String text, TelegramClient bot) {
+        try {
+            SendMessage messageToTelegram = 
+                    SendMessage
+                    .builder()
+                    .chatId(chatId)
+                    .text(text)
+                    .parseMode(ParseMode.HTML)
+                    .replyMarkup(new ReplyKeyboardRemove(true))
+                    .build();
+
+            bot.execute(messageToTelegram);
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(), e);
+        }
+    }
+
+    // --- NEW: HTML + Custom Keyboard ---
+    public static void sendHtmlMessageWithKeyboard(Long chatId, String text, TelegramClient bot, ReplyKeyboard rk) {
+        try {
+            SendMessage messageToTelegram = 
+                    SendMessage
+                    .builder()
+                    .chatId(chatId)
+                    .text(text)
+                    .parseMode(ParseMode.HTML)
+                    .replyMarkup(rk)
+                    .build();
+
+            bot.execute(messageToTelegram);
+
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(), e);
+        }
+    }
+}
