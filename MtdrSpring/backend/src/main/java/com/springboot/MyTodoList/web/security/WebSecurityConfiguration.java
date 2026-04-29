@@ -49,7 +49,7 @@ public class WebSecurityConfiguration {
 
                             // 3. Redirect to Vite with the token in the query string
                             // Your React app should catch this in the URL
-                            response.sendRedirect("http://163.192.136.37/oauth2/redirect?token=" + token);
+                            response.sendRedirect("/oauth2/redirect?token=" + token);
                         }))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
