@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dashboard") // Mapped to match your React dashboardAPI!
+@RequestMapping("/api/dashboard") // Mapped to match your React dashboardAPI!
 public class TaskLogController {
 
     @Autowired
