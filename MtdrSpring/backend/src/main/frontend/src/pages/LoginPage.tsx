@@ -8,7 +8,7 @@ export default function LoginPage(): JSX.Element {
 
     const handleOracleLogin = (): void => {
         // Directly trigger the Spring Boot OAuth2 flow
-        window.location.href = 'http://localhost:8080/oauth2/authorization/oci'
+        window.location.href = 'http://163.192.136.37/oauth2/authorization/oci'
     }
 
     return (
