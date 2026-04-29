@@ -104,6 +104,15 @@ public class TaskController {
         return ResponseEntity.ok(taskDTOs);
     }
 
+    @GetMapping("/summary/allTasks")
+    public ResponseEntity<List<TaskDTO>> findAllWeeklySummaryTasks(
+            @RequestParam OffsetDateTime weekStart,
+            @RequestParam OffsetDateTime weekEnd) {
+        List<Task> tasks = taskService.findAllWeeklySummaryTasks(weekStart, weekEnd);
+        List<TaskDTO> taskDTOs = tasks.stream()
+                .map(TaskDTO::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(taskDTOs);
     @PostMapping("/telegram")
     public ResponseEntity<TaskDTO> addToDoItemFromTelegram(
             @RequestBody Task newTask, 

@@ -37,8 +37,11 @@ spec:
           env:
             - name: BACKEND_URL
               value: "http://todolistapp-springboot-service"
-            - name: DEEPSEEK_URL
-              value: "https://api.deepseek.com/v1/chat/completions"
+            - name: GEMINI_URL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: gemini-url
             - name: TELEGRAM_BOT_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -49,11 +52,11 @@ spec:
                 secretKeyRef:
                   name: app-secrets
                   key: telegram-bot-name
-            - name: DEEPSEEK_API_KEY
+            - name: GEMINI_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: app-secrets
-                  key: deepseek-api-key
+                  key: gemini-api-key
       restartPolicy: Always
       imagePullSecrets:
         - name: ocir-secret

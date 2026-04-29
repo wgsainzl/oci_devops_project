@@ -1,5 +1,5 @@
 package com.springboot.telegrambot.util;
-
+import java.time.OffsetDateTime;
 import com.springboot.telegrambot.gemini.GeminiService;
 import com.springboot.telegrambot.dto.TaskDTO;
 import com.springboot.telegrambot.dto.TaskStatus;
@@ -290,12 +290,21 @@ public class BotActions {
             }
 
             Integer userId = ((Number) userInfo.get("userId")).intValue();
+            String role = (String) userInfo.get("role");
 
             OffsetDateTime weekEnd = OffsetDateTime.now();
-            OffsetDateTime weekStart = weekEnd.minusDays(7);
-            List<TaskDTO> userTasks = backendServiceClient.getWeeklySummaryTasks(userId, weekStart, weekEnd);
-
-            String reportText = geminiService.generateSprintReport(userId, userTasks);
+            OffsetDateTime weekStart = weekEnd.minusMonths(1);
+            
+            OffsetDateTime monthStart = OffsetDateTime.now().minusMonths(1);
+            String reportText;
+            if ("MANAGER".equalsIgnoreCase(role) || "ADMIN".equalsIgnoreCase(role)) {
+                List<List<String>> logs = backendServiceClient.getAllTaskLogsSummary();
+                logger.info("Logs fetched: {}", logs == null ? "null" : logs.size()); // ADD THIS
+                reportText = geminiService.generateLogsReport(userId, logs);
+            } else {
+                List<TaskDTO> userTasks = backendServiceClient.getWeeklySummaryTasks(userId, weekStart, weekEnd);
+                reportText = geminiService.generateSprintReport(userId, userTasks);
+            }
 
             ReplyKeyboardMarkup keyboardMarkup = ReplyKeyboardMarkup.builder().resizeKeyboard(true).build();
             List<KeyboardRow> keyboard = new ArrayList<>();
@@ -315,9 +324,9 @@ public class BotActions {
             }
 
         } catch (Exception e) {
-            BotHelper.sendMessageToTelegram(chatId, "Sorry, I ran into an error while generating your report.", telegramClient);
-            logger.error("Report generation failed", e);
-        }
+        logger.error("Report generation failed", e); // ADD THIS
+        BotHelper.sendMessageToTelegram(chatId, "Error: " + e.getMessage(), telegramClient);
+    }
 
         exit = true;    
     }

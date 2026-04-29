@@ -35,4 +35,12 @@ public interface TaskRepository extends JpaRepository<Task,Integer> {
     List<Task> findWeeklySummaryTasks(@Param("targetUserId") Integer targetUserId,
                                       @Param("weekStart") OffsetDateTime weekStart,
                                       @Param("weekEnd") OffsetDateTime weekEnd);
+
+    @Query(value = "SELECT * FROM Tasks " +
+            "WHERE (status = 'DONE' AND completed_at BETWEEN :weekStart AND :weekEnd) " +
+            "   OR status IN ('IN_PROGRESS', 'IN_REVIEW', 'BLOCKED') " +
+            "ORDER BY responsible_id, status DESC",
+            nativeQuery = true)
+    List<Task> findAllWeeklySummaryTasks(@Param("weekStart") OffsetDateTime weekStart,
+                                         @Param("weekEnd") OffsetDateTime weekEnd);
 }

@@ -3,8 +3,8 @@ server:
 
 telegram:
   bot:
-    name: ${TELEGRAM_BOT_NAME}
-    token: ${TELEGRAM_BOT_TOKEN}
+    name: ${TELEGRAM_BOT_NAME:MyTodoListBot}
+    token: ${TELEGRAM_BOT_TOKEN:${TELEGRAM_KEY:}}
 
 gemini:
   api:

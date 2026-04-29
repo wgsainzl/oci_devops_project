@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -53,6 +55,19 @@ public class BackendServiceClient {
                 .block();
     }
 
+    public List<TaskDTO> findAllWeeklySummaryTasks(OffsetDateTime weekStart, OffsetDateTime weekEnd) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/tasks/summary/allTasks")
+                        .queryParam("weekStart", weekStart)
+                        .queryParam("weekEnd", weekEnd)
+                        .build())
+                .retrieve()
+                .bodyToFlux(TaskDTO.class)
+                .collectList()
+                .block();
+    }
+
     public List<Object[]> getWeeklyTaskLogsSummary(Integer userId) {
         return webClient.get()
                 .uri("/dashboard/summary/" + userId)
@@ -60,6 +75,42 @@ public class BackendServiceClient {
                 .bodyToFlux(Object[].class)
                 .collectList()
                 .block();
+    }
+
+    public List<List<String>> getAllTaskLogsSummary() {
+        // First fetch raw string to see exactly what the backend returns
+        String raw = webClient.get()
+                .uri("/dashboard/summary/all")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        logger.info("RAW response from /dashboard/summary/all: {}", raw);
+
+        if (raw == null || raw.equals("[]")) {
+            logger.warn("Backend returned empty or null response");
+            return java.util.Collections.emptyList();
+        }
+
+        // Now deserialize properly
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            List<List<String>> result = mapper.readValue(raw,
+                mapper.getTypeFactory().constructCollectionType(List.class,
+                    mapper.getTypeFactory().constructCollectionType(List.class, String.class)));
+            logger.info("Deserialized {} rows", result.size());
+            if (!result.isEmpty()) {
+                logger.info("First row: {}", result.get(0));
+            }
+            return result;
+        } catch (Exception e) {
+            logger.error("Failed to deserialize logs response", e);
+            return java.util.Collections.emptyList();
+        }
+    }
+
+    public List<List<String>> getAllTaskLogsSummary(OffsetDateTime since) {
+        return getAllTaskLogsSummary();
     }
 
     public TaskDTO createTask(TaskDTO task) {
@@ -72,7 +123,6 @@ public class BackendServiceClient {
     }
 
     public void updateTaskStatus(Integer id, String status) {
-        // Construct the request body as expected by the backend
         var body = Map.of("status", status);
         webClient.patch()
                 .uri("/tasks/" + id + "/status")
