@@ -58,11 +58,11 @@ spec:
                 secretKeyRef:
                   name: app-secrets
                   key: jwt-secret-key
-            - name: DEEPSEEK_API_KEY
+            - name: GEMINI_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: app-secrets
-                  key: deepseek-api-key
+                  key: gemini-api-key
             - name: TELEGRAM_KEY
               valueFrom:
                 secretKeyRef:
