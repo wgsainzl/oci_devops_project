@@ -2,6 +2,7 @@ package com.springboot.MyTodoList.web.features.deepseek;
 
 import com.springboot.MyTodoList.web.features.task.Task;
 
+import java.io.IOException;
 import java.util.List;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -9,6 +10,8 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.springframework.stereotype.Service;
+
+import com.springboot.MyTodoList.web.features.task.Task;
 
 @Service
 public class DeepSeekService{

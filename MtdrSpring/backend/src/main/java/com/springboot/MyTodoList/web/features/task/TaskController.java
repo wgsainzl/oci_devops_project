@@ -44,6 +44,7 @@ public class TaskController {
         }
     }
     //@CrossOrigin
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteTaskItem(@PathVariable("id") int id){
        boolean isDeleted = taskService.deleteTaskItem(id);
@@ -52,29 +53,24 @@ public class TaskController {
        } else{
         return ResponseEntity.notFound().build();
        }
-
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<Task> updateTaskStatus(@PathVariable int id, @RequestBody Map<String, String> requestBody) {
-        
+    public ResponseEntity<TaskDTO> updateTaskStatus(@PathVariable int id, @RequestBody Map<String, String> requestBody) {
         String statusString = requestBody.get("status");
-        
-        // 1. Read the userId from the frontend payload
         String userIdString = requestBody.get("userId");
         Long currentUserId = null;
+        
         if (userIdString != null) {
             currentUserId = Long.parseLong(userIdString);
         }
 
         try {
             TaskStatus newStatus = TaskStatus.valueOf(statusString.toUpperCase());
-            
-            // 2. Pass the currentUserId into the service!
             Task updatedTask = taskService.updateTaskStatus(id, newStatus, currentUserId);
             
             if (updatedTask != null) {
-                return ResponseEntity.ok(updatedTask);
+                return ResponseEntity.ok(TaskDTO.fromEntity(updatedTask));
             } else {
                 return ResponseEntity.notFound().build();
             }

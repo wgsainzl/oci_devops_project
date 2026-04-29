@@ -1,5 +1,5 @@
 // function ProtectedRoute
-import { AuthProvider } from "./hooks/AuthContext.tsx";
+import { AuthProvider, useAuth } from "./hooks/AuthContext.tsx";
 import { Navigate, Route, Routes } from "react-router-dom";
 import AppShell from "./components/layout/AppShell.tsx";
 import HomePage from "./pages/HomePage.tsx";
@@ -22,6 +22,14 @@ import LoginPage from "./pages/LoginPage.tsx";
 }*/
 
 // app routes
+function ProtectedRoute({ children }: { children: JSX.Element }): JSX.Element {
+  const { user, loading } = useAuth();
+
+  if (loading) return <div style={{ padding: 24 }}>Loading session...</div>;
+
+  return user ? children : <Navigate to="/login" replace />;
+}
+
 function AppRoutes(): JSX.Element {
   return (
     <Routes>
@@ -34,9 +42,9 @@ function AppRoutes(): JSX.Element {
       <Route
         path="/"
         element={
-          /*<ProtectedRoute>*/
-          <AppShell />
-          /*</ProtectedRoute>*/
+          <ProtectedRoute>
+            <AppShell />
+          </ProtectedRoute>
         }
       >
         <Route index element={<Navigate to="/home" replace />} />
