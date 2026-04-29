@@ -19,8 +19,8 @@
         <java.version>17</java.version>
         <version.lib.ojdbc>21.1.0.0</version.lib.ojdbc>
         <frontend-src-dir>${project.basedir}/src/main/frontend</frontend-src-dir>
-        <node.version>v23.9.0</node.version>
-        <npm.version>10.8.2</npm.version>
+        <node.version>v20.11.0</node.version>
+        <npm.version>10.2.4</npm.version>
         <lombok.version>1.18.36</lombok.version>
         <jjwt.version>0.12.6</jjwt.version>
         <telegrambots.version>9.1.0</telegrambots.version>
