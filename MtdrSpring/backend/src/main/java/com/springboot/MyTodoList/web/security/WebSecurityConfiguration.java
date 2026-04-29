@@ -69,7 +69,7 @@ public class WebSecurityConfiguration {
 
         // After Oracle logs the user out, where should they go?
         // This URL must be registered in your OCI Console as a "Post-Logout Redirect URI"
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:3000/login");
+        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://163.192.136.37/login");
 
         return oidcLogoutSuccessHandler;
     }
