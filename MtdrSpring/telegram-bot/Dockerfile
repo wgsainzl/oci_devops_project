@@ -14,6 +14,4 @@ COPY --from=build /app/target/telegram-bot-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8081
 
-# Runtime env vars expected by application.yaml:
-# TELEGRAM_BOT_NAME, TELEGRAM_BOT_TOKEN, DEEPSEEK_API_KEY, DEEPSEEK_URL, BACKEND_URL
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

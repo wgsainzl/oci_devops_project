@@ -64,10 +64,10 @@ spring:
 #  file:
 #    name: logs.log
 
-deepseek:
+gemini:
   api:
-    key: sk-test
-    url: https://api.deepseek.com/v1/chat/completions
+    key: ${GEMINI_API_KEY}
+    url: ${GEMINI_URL}
 
 telegram:
   bot:
