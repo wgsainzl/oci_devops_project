@@ -36,7 +36,7 @@ spring:
             scope: openid, profile, email, offline_access
             client-authentication-method: client_secret_basic
             authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:8080/login/oauth2/code/oci"
+            redirect-uri: "http://163.192.136.37/login/oauth2/code/oci"
         provider:
           oci:
             authorization-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/oauth2/v1/authorize

@@ -88,18 +88,30 @@
 /* ── Sidebar ── */
 .sidebar {
   background: var(--color-bg-sidebar);
-  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  padding: var(--space-4) var(--space-3);
+  padding: var(--space-4) var(--space-2);
   overflow-y: auto;
   flex-shrink: 0;
-  transition: width var(--transition-base), transform var(--transition-base);
+  transition: width 240ms ease, padding 240ms ease;
+  
+
+}
+
+/* When items are visible (opening), width expands immediately */
+.sidebar[data-items-visible="true"] {
+  transition: width 240ms ease, padding 240ms ease;
+}
+
+/* When items are hidden (closing), delay width collapse until items fade out */
+.sidebar[data-items-visible="false"] {
+  transition: width 240ms ease 300ms, padding 240ms ease 300ms;
 }
 
 .sidebarOpen {
   width: var(--sidebar-width);
+  border-right: 1px solid #e0e0e0;
 }
 
 .sidebarClosed {
@@ -111,27 +123,53 @@
 .navItem {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  min-height: 40px;
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-primary);
-  font-size: 0.9rem;
-  font-weight: 500;
+  border-radius: 0;
+  border-left: 4px solid transparent;
+  color: #1b1f24;
+  font-size: 1rem;
+  font-weight: 400;
   text-decoration: none;
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
   white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 200ms ease, transform 200ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.sidebar[data-items-visible="true"] .navItem {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sidebar[data-items-visible="false"] .navItem {
+  opacity: 0;
+  transform: translateX(-8px);
+  transition-delay: 0ms;
+}
+
+.sidebar[data-items-visible="true"] .navItem:nth-child(1) {
+  transition-delay: 30ms;
+}
+
+.sidebar[data-items-visible="true"] .navItem:nth-child(2) {
+  transition-delay: 50ms;
+}
+
+.sidebar[data-items-visible="true"] .navItem:nth-child(2) {
+  transition-delay: 120ms;
 }
 
 .navItem:hover {
-  background: var(--color-bg-hover);
-  color: var(--color-text-primary);
+  background: #e9e9e9;
+  color: #1b1f24;
 }
 
 .navItemActive {
-  background: var(--color-bg-hover);
-  border-left: 3px solid var(--color-oracle-red);
-  padding-left: calc(var(--space-3) - 3px);
-  color: var(--color-oracle-red);
+  background: #dfdfdf;
+  border-left-color: #45aeca;
+  color: #1b1f24;
 }
 
 /* ── Main content ── */

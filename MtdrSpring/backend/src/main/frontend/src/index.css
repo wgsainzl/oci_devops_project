@@ -1,7 +1,7 @@
 /* ============================================================
    index.css — Oracle Task Manager Global Styles
    Design system: Oracle dark header, warm beige content
-   Fonts: DM Serif Display (display), DM Sans (body)
+  Fonts: Oracle Sans (body and display)
    ============================================================ */
 
 :root {
@@ -10,8 +10,8 @@
   --color-oracle-red-hover: #a83929;
 
   /* Surface */
-  --color-bg-page: #f5f0e8;        /* main page background */
-  --color-bg-content: #ffffff;
+  --color-bg-page: #ffffff;        /* main page background */
+  --color-bg-content: #FBF9F8 ;
   --color-bg-header: #1a1a1a;      /* near-black Oracle header */
   --color-bg-sidebar: #ffffff;
   --color-bg-hover: #f0ebe0;
@@ -65,8 +65,8 @@
   --space-12: 48px;
 
   /* Typography */
-  --font-body: 'DM Sans', system-ui, sans-serif;
-  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Oracle Sans', system-ui, sans-serif;
+  --font-display: 'Oracle Sans', system-ui, sans-serif;
 
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
@@ -74,10 +74,10 @@
   --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
 
   /* Border radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-pill: 100px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-pill: 0px;
 
   /* Transitions */
   --transition-fast: 120ms ease;
@@ -92,13 +92,14 @@
 }
 
 html {
-  font-size: 14px;
+  font-size: 16px;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  font-family: var(--font-body);
+  font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;
   color: var(--color-text-primary);
@@ -137,15 +138,14 @@ img, svg {
 
 button {
   cursor: pointer;
-  font-family: var(--font-body);
+  font: inherit;
   border: none;
   background: none;
   padding: 0;
 }
 
 input, select, textarea {
-  font-family: var(--font-body);
-  font-size: 1rem;
+  font: inherit;
 }
 
 /* --- Scrollbar styling (WebKit) --- */

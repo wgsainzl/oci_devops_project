@@ -8,8 +8,17 @@ import type {
   Team,
   User,
   WorkloadMember,
+  TimelineTask
 } from '../types'
+import type { CostEntry } from '../components/charts/CostPerDeveloperChart'
+import type { HoursEntry } from '../components/charts/HoursChart'
+import type { SprintSummary } from '../components/charts/SprintCostSummary'
 import * as fixtures from './fixtures'
+import {
+  SPRINT_COST_PER_DEVELOPER,
+  SPRINT_HOURS,
+  SPRINT_SUMMARIES,
+} from './sprintData'
 
 const MOCK_DELAY = 300 // in ms to simulate network
 let mockTeamsStore: Team[] = [...fixtures.mockTeams]
@@ -184,6 +193,61 @@ export const mockDashboardAPI = {
     await delay(MOCK_DELAY)
     return {
       data: fixtures.mockTeams,
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: { headers: {} as any },
+    } as AxiosResponse
+  },
+
+  getCostPerDeveloper: async (
+    _teamId?: string | null,
+  ): Promise<AxiosResponse<CostEntry[]>> => {
+    await delay(MOCK_DELAY)
+    return {
+      data: SPRINT_COST_PER_DEVELOPER,
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: { headers: {} as any },
+    } as AxiosResponse
+  },
+
+  getHoursPerDeveloper: async (
+    _teamId?: string | null,
+  ): Promise<AxiosResponse<HoursEntry[]>> => {
+    await delay(MOCK_DELAY)
+    return {
+      data: SPRINT_HOURS,
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: { headers: {} as any },
+    } as AxiosResponse
+  },
+
+  getSprintSummaries: async (
+    _teamId?: string | null,
+  ): Promise<AxiosResponse<SprintSummary[]>> => {
+    await delay(MOCK_DELAY)
+    return {
+      data: SPRINT_SUMMARIES,
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: { headers: {} as any },
+    } as AxiosResponse
+  },
+}
+
+export const mockTimelineAPI = {
+  getTasks: async (
+    _teamId?: string | null,
+    _params?: Record<string, string>,
+  ): Promise<AxiosResponse<TimelineTask[]>> => {
+    await delay(MOCK_DELAY)
+    return {
+      data: fixtures.mockTimelineTasks,
       status: 200,
       statusText: 'OK',
       headers: {},

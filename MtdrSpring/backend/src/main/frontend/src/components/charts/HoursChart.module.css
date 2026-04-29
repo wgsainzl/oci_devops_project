@@ -1,0 +1,23 @@
+.tooltip {
+  background: white;
+  border: 1px solid #e0d8cc;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 140px;
+}
+
+.tooltipTitle {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.tooltipItem {
+  margin: 2px 0;
+}
+
+.tooltipDelta {
+  margin: 4px 0 0;
+  font-weight: 600;
+}

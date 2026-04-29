@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/dashboard")
+@RequestMapping("/api/dashboard") // Mapped to match your React dashboardAPI!
 public class TaskLogController {
 
     @Autowired
