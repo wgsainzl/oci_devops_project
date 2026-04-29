@@ -14,5 +14,4 @@ COPY --from=build /app/target/telegram-bot-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8081
 
-# Runtime env vars expected by application.yaml:
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
