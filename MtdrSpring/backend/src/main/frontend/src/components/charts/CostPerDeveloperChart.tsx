@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   CartesianGrid,
+  LabelList,
 } from 'recharts'
 import styles from './CostPerDeveloperChart.module.css'
 
@@ -25,6 +26,14 @@ interface Props {
 
 // ── Palette — matches your dashboard CSS vars ─────────────────────────────
 const SPRINT_COLORS = ['#5aacbe', '#c74634', '#5ba87a', '#c4a86a', '#a07bc4']
+
+// format labels with currency and hide zeros
+const formatCostLabel = (value: number | string): string => {
+  const num = Number(value)
+  if (num === 0) return ''
+  if (num >= 1000) return `${(num / 1000).toFixed(1).replace('.0', '')}k`
+  return `${num}`
+}
 
 // ── Tooltip ───────────────────────────────────────────────────────────────
 interface TooltipPayloadItem {
@@ -60,10 +69,10 @@ export default function CostPerDeveloperChart({
   const sprintKeys = sprints ?? Object.keys(data[0] ?? {}).filter((key) => key !== 'developer')
 
   return (
-    <ResponsiveContainer width="100%" height={240}>
+    <ResponsiveContainer width="100%" height={300}>
       <BarChart
         data={data}
-        margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
+        margin={{ top: 35, right: 10, left: 10, bottom: 0 }}
         barCategoryGap="25%"
         barGap={3}
       >
@@ -96,7 +105,17 @@ export default function CostPerDeveloperChart({
             fill={SPRINT_COLORS[i % SPRINT_COLORS.length]}
             radius={[3, 3, 0, 0]}
             maxBarSize={32}
-          />
+          >
+            <LabelList 
+              dataKey={sprint} 
+              position="top" 
+              fill="#5f6772" 
+              fontSize={8}
+              fontWeight={600}
+              formatter={formatCostLabel}
+              offset={4}
+            />
+          </Bar>
         ))}
       </BarChart>
     </ResponsiveContainer>

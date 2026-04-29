@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   CartesianGrid,
+  LabelList,
   Cell // <-- 1. Import Cell to color individual bars
 } from 'recharts'
 import type { TaskStatusEntry } from '../../types'
@@ -43,6 +44,8 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps): JSX.Elem
     </div>
   )
 }
+
+const nonZeroLabel = (value: number | string): number | string => (Number(value) > 0 ? value : '')
 
 export default function TaskStatusChart({ data, showDeveloperNames = true }: Props): JSX.Element {
   
@@ -88,7 +91,7 @@ export default function TaskStatusChart({ data, showDeveloperNames = true }: Pro
     <ResponsiveContainer width="100%" height={240}>
       <BarChart 
         data={data} 
-        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+        margin={{ top: 18, right: 10, left: -20, bottom: 18 }}
         barCategoryGap="20%"
         barGap={2}
       >
@@ -96,6 +99,7 @@ export default function TaskStatusChart({ data, showDeveloperNames = true }: Pro
         <XAxis
           dataKey="developer"
           tick={{ fontSize: 11, fill: '#6b6b6b' }}
+          tickMargin={12}
           interval={0}
           axisLine={false}
           tickLine={false}
@@ -112,11 +116,21 @@ export default function TaskStatusChart({ data, showDeveloperNames = true }: Pro
           wrapperStyle={{ fontSize: '0.78rem', paddingTop: 8 }}
         />
         
-        <Bar dataKey="todo" name="To do" fill="#b0b8c4" radius={[3, 3, 0, 0]} maxBarSize={24} />
-        <Bar dataKey="inProgress" name="In progress" fill="#5aacbe" radius={[3, 3, 0, 0]} maxBarSize={24} />
-        <Bar dataKey="inReview" name="In review" fill="#c4a86a" radius={[3, 3, 0, 0]} maxBarSize={24} />
-        <Bar dataKey="blocked" name="Blocked" fill="#e07b5a" radius={[3, 3, 0, 0]} maxBarSize={24} />
-        <Bar dataKey="done" name="Done" fill="#5ba87a" radius={[3, 3, 0, 0]} maxBarSize={24} />
+        <Bar dataKey="todo" name="To do" fill="#b0b8c4" radius={[3, 3, 0, 0]} maxBarSize={24}>
+          <LabelList dataKey="todo" position="top" fill="#5f6772" fontSize={11} formatter={nonZeroLabel} />
+        </Bar>
+        <Bar dataKey="inProgress" name="In progress" fill="#5aacbe" radius={[3, 3, 0, 0]} maxBarSize={24}>
+          <LabelList dataKey="inProgress" position="top" fill="#5f6772" fontSize={11} formatter={nonZeroLabel} />
+        </Bar>
+        <Bar dataKey="inReview" name="In review" fill="#c4a86a" radius={[3, 3, 0, 0]} maxBarSize={24}>
+          <LabelList dataKey="inReview" position="top" fill="#5f6772" fontSize={11} formatter={nonZeroLabel} />
+        </Bar>
+        <Bar dataKey="blocked" name="Blocked" fill="#e07b5a" radius={[3, 3, 0, 0]} maxBarSize={24}>
+          <LabelList dataKey="blocked" position="top" fill="#5f6772" fontSize={11} formatter={nonZeroLabel} />
+        </Bar>
+        <Bar dataKey="done" name="Done" fill="#5ba87a" radius={[3, 3, 0, 0]} maxBarSize={24}>
+          <LabelList dataKey="done" position="top" fill="#5f6772" fontSize={11} formatter={nonZeroLabel} />
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   )

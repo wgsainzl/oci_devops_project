@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   CartesianGrid,
+  LabelList,
 } from 'recharts'
 import styles from './HoursChart.module.css'
 
@@ -32,6 +33,9 @@ function formatDataForStacking(data: HoursEntry[]) {
     actualOverflow: Math.max(0, entry.actual - entry.estimated)
   }))
 }
+
+// hide labels for zero values
+const nonZeroLabel = (value: number | string): number | string => (Number(value) > 0 ? value : '')
 
 // tooltip
 interface TooltipPayloadItem {
@@ -115,12 +119,18 @@ export default function HoursChart({ data }: Props): JSX.Element {
         />
         
         {/* estimated Bar */}
-        <Bar dataKey="estimated" name="Estimated" fill="#5aacbe" radius={[3, 3, 0, 0]} maxBarSize={32} />
+        <Bar dataKey="estimated" name="Estimated" fill="#5aacbe" radius={[3, 3, 0, 0]} maxBarSize={32}>
+          <LabelList dataKey="estimated" position="top" fill="#5f6772" fontSize={11} formatter={nonZeroLabel} />
+        </Bar>
         
         {/* stacked bars */}
         {/* use stackId="a" to group them together */}
-        <Bar dataKey="actualOnTrack" stackId="a" name="Actual (On Track)" fill="#5ba87a" radius={[0, 0, 0, 0]} maxBarSize={32} />
-        <Bar dataKey="actualOverflow" stackId="a" name="Actual (Over)" fill="#c74634" radius={[3, 3, 0, 0]} maxBarSize={32} />
+        <Bar dataKey="actualOnTrack" stackId="a" name="Actual (On Track)" fill="#5ba87a" radius={[0, 0, 0, 0]} maxBarSize={32}>
+          <LabelList dataKey="actualOnTrack" position="top" fill="#5f6772" fontSize={11} formatter={nonZeroLabel} />
+        </Bar>
+        <Bar dataKey="actualOverflow" stackId="a" name="Actual (Over)" fill="#c74634" radius={[3, 3, 0, 0]} maxBarSize={32}>
+          <LabelList dataKey="actualOverflow" position="top" fill="#5f6772" fontSize={11} formatter={nonZeroLabel} />
+        </Bar>
         
       </BarChart>
     </ResponsiveContainer>
