@@ -14,6 +14,8 @@ public class TaskDTO {
     private Double actualHours;
     private TaskStatus status;
     private String priority;
+    private String responsible;
+    private String responsibleId;
     
     // Getters and Setters
     public Integer getTaskId() { return taskId; }
@@ -42,4 +44,10 @@ public class TaskDTO {
 
     public String getPriority() { return priority; }
     public void setPriority(String priority) { this.priority = priority; }
+
+    public String getResponsible() { return responsible; }
+    public void setResponsible(String responsible) { this.responsible = responsible; }
+
+    public String getResponsibleId() { return responsibleId; }
+    public void setResponsibleId(String responsibleId) { this.responsibleId = responsibleId; }
 }

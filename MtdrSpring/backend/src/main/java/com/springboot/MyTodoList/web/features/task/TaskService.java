@@ -121,4 +121,8 @@ public class TaskService {
         return taskRepository.findWeeklySummaryTasks(userId, weekStart, weekEnd);
     }
 
+    public List<Task> findAllWeeklySummaryTasks(OffsetDateTime weekStart, OffsetDateTime weekEnd) {
+        return taskRepository.findAllWeeklySummaryTasks(weekStart, weekEnd);
+    }
+
 }

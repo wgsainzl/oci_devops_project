@@ -1,5 +1,5 @@
 package com.springboot.telegrambot.util;
-
+import java.time.OffsetDateTime;
 import com.springboot.telegrambot.client.BackendServiceClient;
 import com.springboot.telegrambot.gemini.GeminiService;
 import com.springboot.telegrambot.dto.TaskDTO;
@@ -37,6 +37,9 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
             @Value("${telegram.bot.token}") String telegramBotToken,
             BackendServiceClient backendServiceClient,
             GeminiService geminiService) {
+        if (telegramBotToken == null || telegramBotToken.isBlank() || telegramBotToken.contains("${")) {
+            logger.error("WARNING: Telegram Bot Token is missing or not resolved. Current value: '" + telegramBotToken + "'");
+        }
         this.telegramBotToken = telegramBotToken;
         this.backendServiceClient = backendServiceClient;
         this.geminiService = geminiService;
@@ -107,15 +110,16 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
             String role = (String) userInfo.get("role");
 
             OffsetDateTime weekEnd = OffsetDateTime.now();
-            OffsetDateTime weekStart = weekEnd.minusDays(7);
+            OffsetDateTime weekStart = weekEnd.minusMonths(1);
+            OffsetDateTime monthStart = OffsetDateTime.now().minusMonths(1); // ✅ definido aquí
 
-            sendText(chatId, "Generating your AI weekly summary...");
+            sendText(chatId, "Generating your AI monthly summary...");
             Long jobId = backendServiceClient.createSummaryJobPending(telegramUserId, weekStart, weekEnd);
             backendServiceClient.markSummaryJobProcessing(jobId);
 
             String aiSummary;
             if ("MANAGER".equalsIgnoreCase(role) || "ADMIN".equalsIgnoreCase(role)) {
-                List<Object[]> logs = backendServiceClient.getWeeklyTaskLogsSummary(userId);
+                List<List<String>> logs = backendServiceClient.getAllTaskLogsSummary();
                 aiSummary = geminiService.generateLogsReport(userId, logs);
             } else {
                 List<TaskDTO> tasks = backendServiceClient.getWeeklySummaryTasks(userId, weekStart, weekEnd);
