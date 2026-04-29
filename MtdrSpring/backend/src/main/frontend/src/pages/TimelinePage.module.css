@@ -1,213 +1,312 @@
-.page {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
+.pageWrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #fff;
+    background-image: url('/bg-oci.png');
+    background-repeat: repeat;
+    background-position: center top;
+    background-size: auto;
 }
 
-.content {
-  padding: var(--space-6, 24px);
-  flex: 1;
+.banner {
+    background-image: url('/banner_timeline.png');
+
+}
+.header {
+    background: #F3EFE3;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    padding: 16px 40px;
+    position: relative;
+    min-height: 120px;
 }
 
-.ganttWrap {
-  background: #f4f4f4;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  overflow-x: auto;
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(243, 239, 227, 0.7);
+    pointer-events: none;
+    z-index: 1;
 }
 
-/* ── Table structure ── */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 1000px;
+.titleGroup {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
 }
 
-.table th, .table td {
-  border-right: 1px solid #d4d4d4;
+.titleGroup h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
 }
 
-.table th:last-child, .table td:last-child {
-  border-right: none;
+.titleGroup p {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: #666;
 }
 
-.colTask        { width: 220px; }
-.colResponsible { width: 180px; }
-.colStatus      { width: 120px; }
-.colPriority    { width: 110px; }
-.colDue         { width: 110px; }
-.colGantt       { min-width: 450px; }
-
-
-/* ── Single Header Row ── */
-.colHeadRow th {
-  background: #dcdcdc;
-  color: #333;
-  font-size: 0.85rem;
-  font-weight: 500;
-  text-align: left;
-  padding: 12px 16px;
-  border-bottom: 1px solid #ccc;
-  white-space: nowrap;
+.outerContainer {
+    flex: 1;
+    overflow: hidden;
+    margin: 20px;
+    border: 1px solid #A6A6A6;
+    /* border-radius: 8px; */
 }
 
-.ganttHead {
-  position: relative;
-  padding: 0 !important;
+.scrollViewport {
+    height: 100%;
+    overflow: auto;
 }
 
-.monthHeaders {
-  position: relative;
-  height: 100%;
-  min-height: 44px;
+.timelineGrid {
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    min-width: 100%;
 }
 
-.monthHeaderCell {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid #d4d4d4;
-  box-sizing: border-box;
+/* STICKY COLUMN LOGIC */
+.stickyCol {
+    position: sticky;
+    z-index: 20;
+    background: inherit;
+    border-right: 1px solid #A6A6A6;
 }
 
-.monthHeaderCell:last-child {
-  border-right: none;
+.headerRow {
+    display: flex;
+    height: 44px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: #D9D9D9;
 }
 
-/* Today indicator in header */
-.todayLineHeader {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  z-index: 10;
+.hCell {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-weight: 600;
+    font-size: 13px;
+    border-bottom: 1px solid #A6A6A6;
 }
 
-.todayLabel {
-  position: absolute;
-  bottom: 4px;
-  left: 0;
-  transform: translateX(-50%);
-  font-size: 0.65rem;
-  color: #8b5cf6;
-  white-space: nowrap;
-  font-weight: 600;
+.dataRow {
+    display: flex;
+    min-height: 56px;
+    height: auto;
+    background: #fff;
 }
 
-
-/* task rows */
-.taskRow {
-  background: #f4f4f4;
-  border-bottom: 1px solid #d4d4d4;
+.dataRow:nth-child(even) {
+    background: #FBF9F8;
 }
 
-.taskRow:nth-child(even) {
-  background: #eaeaea;
-}
-
-.taskRow td {
-  padding: 16px 16px;
-  vertical-align: middle;
+.cell {
+    display: flex;
+    align-items: center; /* Keeps content centered vertically */
+    padding: 10px 12px; /* Add a little vertical padding for breathing room */
+    font-size: 13px;
+    border-bottom: 1px solid #EBEBEB;
+    height: auto; /* Ensure cell grows with row */
 }
 
 .taskId {
-  display: block;
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: #000;
+    font-weight: 800; /* Makes the ID bold */
+    margin-right: 16px; /* Creates clear separation from the title */
+    color: #000; /* Makes it stand out against the title */
+    flex-shrink: 0; /* Prevents the ID from squishing */
 }
 
 .taskTitle {
-  display: block;
-  font-size: 0.85rem;
-  color: #333;
-  margin-top: 2px;
+    color: #444;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block; /* Necessary for width/wrapping logic */
+    width: 100%; /* Stay within the 220px limit */
 }
 
-/* avatars styling */
-.userWrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* When hovering, let the text wrap and the row expand */
+.cell:hover .taskTitle {
+    white-space: normal; /* Allows text to wrap to next line */
+    overflow: visible;
+    word-break: break-word; /* Prevents long words from breaking the container */
 }
 
-.avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+.ganttHeaderPart {
+    display: flex;
+    background: #D9D9D9;
+    position: relative; /* This is crucial */
+    min-height: 44px; /* Match your headerRow height */
+    flex: 1; /* Allow it to fill the remaining space after sticky cols */
 }
 
-.responsible {
-  font-size: 0.85rem;
-  color: #000;
+.todayLabel {
+    position: absolute;
+    top: 2px;
+    /* Use z-index higher than the header cells (30) */
+    z-index: 50;
+    transform: translateX(-50%);
+    background: #581DED;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap; /* Prevent "Today" from wrapping */
+    pointer-events: none;
+    animation: fadeIn 0.2s ease-in;
 }
 
-.dueDate {
-  font-size: 0.85rem;
-  color: #000;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
-
-/* status / priority badges */
-.statusBadge {
-  display: inline-block;
-  padding: 4px 14px;
-  border-radius: 16px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  white-space: nowrap; /* prevents from stacking */
-  text-align: center;
+/* Optional: Add a little triangle pointing down */
+.todayLabel::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #581DED;
 }
 
-
-/* gantt area */
-.ganttCell {
-  padding: 0 !important;
-  position: relative;
+.weekLabel {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    border-right: 1px solid #A6A6A6;
+    border-bottom: 1px solid #A6A6A6;
 }
 
 .ganttTrack {
-  position: relative;
-  height: 64px; /* Matches taller row layout in design */
-  width: 100%;
+    position: relative;
+    flex: 1;
+    border-bottom: 1px solid #EBEBEB;
 }
 
-.monthGrid {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  border-right: 1px solid #d4d4d4;
-  box-sizing: border-box;
-  z-index: 1;
+.gridLine {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: #F0F0F0;
 }
 
-.monthGrid:last-child {
-  border-right: none;
+.todayLine {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #581DED;
+    z-index: 5;
 }
 
-.ganttBar {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 20px;
-  border-radius: 12px;
-  opacity: 1;
-  z-index: 2;
-  cursor: pointer;
+.cylinder {
+    position: absolute;
+    top: 13px;
+    height: 30px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    z-index: 10;
 }
 
-.todayLineRow {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  border-left: 1px dashed #8b5cf6;
-  pointer-events: none;
-  z-index: 3;
+.barLabel {
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.DONE {
+    background: #62A678;
+}
+
+.IN_PROGRESS {
+    background: #6293A6;
+}
+
+.critical {
+    background: #D37568;
+}
+
+.avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.responsible {
+    display: flex;
+    align-items: center;
+}
+
+/* SKELETON ANIMATIONS */
+.skeleton, .skeletonCircle, .skeletonBadge, .skeletonBar {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeletonCircle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.skeletonBadge {
+    width: 70px;
+    height: 22px;
+    border-radius: 12px;
+}
+
+.skeletonBar {
+    position: absolute;
+    top: 13px;
+    height: 30px;
+    border-radius: 15px;
+    opacity: 0.5;
 }

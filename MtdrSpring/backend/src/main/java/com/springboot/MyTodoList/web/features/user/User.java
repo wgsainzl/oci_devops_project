@@ -1,6 +1,7 @@
 package com.springboot.MyTodoList.web.features.user;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.springboot.MyTodoList.web.features.role.Role;
 import jakarta.persistence.*;
@@ -14,6 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "USERS")
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // ADD THIS LINE
 public class User {
     @Setter
     @Getter

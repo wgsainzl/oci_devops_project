@@ -1,12 +1,13 @@
-import { type JSX } from 'react'
-import type { WorkloadMember } from '../../types'
-import styles from './TeamWorkload.module.css'
+import { type JSX } from "react";
+import type { WorkloadMember } from "../../types";
+import styles from "./TeamWorkload.module.css";
 
 interface Props {
-  members: WorkloadMember[]
+  members: WorkloadMember[];
 }
 
-const BAR_COLORS: string[] = ['#5aacbe', '#8ab4c8', '#a0c8b8']
+const PROFILE_COLOR: string[] = ["#5aacbe", "#8ab4c8", "#a0c8b8"];
+const BACKGROUND_COLOR: string[] = ["#FBF9F8", "#EBEBEB"];
 
 export default function TeamWorkload({ members }: Props): JSX.Element {
   return (
@@ -17,11 +18,15 @@ export default function TeamWorkload({ members }: Props): JSX.Element {
       </div>
 
       {members.map((m, i) => (
-        <div key={m.name} className={styles.row}>
+        <div
+          key={m.name}
+          className={styles.row}
+          style={{ background: BACKGROUND_COLOR[i % BACKGROUND_COLOR.length] }}
+        >
           <div className={styles.memberInfo}>
             <div
               className={styles.avatar}
-              style={{ background: BAR_COLORS[i % BAR_COLORS.length] }}
+              style={{ background: PROFILE_COLOR[i % PROFILE_COLOR.length] }}
             >
               {m.name.charAt(0).toUpperCase()}
             </div>
@@ -31,20 +36,27 @@ export default function TeamWorkload({ members }: Props): JSX.Element {
           <div className={styles.barTrack}>
             <div
               className={styles.bar}
-              style={{
-                width: `${m.pct}%`,
-                background: BAR_COLORS[i % BAR_COLORS.length],
-              }}
-              role="progressbar"
-              aria-valuenow={m.pct}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`${m.name}: ${m.pct}%`}
-            />
-            <span className={styles.pct}>{m.pct}%</span>
+              style={{ width: `${m.pct}%`, background: "#222222" }}
+            >
+              {m.pct >= 10 && <span className={styles.pct}>{m.pct}%</span>}
+            </div>
+
+            {m.pct < 10 && (
+              <span
+                className={styles.pct}
+                style={{
+                  color: "#000",
+                  position: "absolute",
+                  left: `${m.pct}%`,
+                  paddingLeft: "8px",
+                }}
+              >
+                {m.pct}%
+              </span>
+            )}
           </div>
         </div>
       ))}
     </div>
-  )
+  );
 }

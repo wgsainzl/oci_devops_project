@@ -36,9 +36,12 @@ public class AuthService {
     private UserAuthResponseDTO.UserInfo mapToUserInfo(CustomUserDetails userDetails) {
         var user = userDetails.user(); // Access the entity from the record
 
-        List<String> roleNames = user.getRoles().stream()
-                .map(Role::getName)
-                .collect(Collectors.toList());
+        List<String> roleNames = new java.util.ArrayList<>();
+        if (user.getRoles() != null) {
+            roleNames = user.getRoles().stream()
+                    .map(Role::getName)
+                    .collect(Collectors.toList());
+        }
 
         return UserAuthResponseDTO.UserInfo.builder()
                 .userId(user.getUserId().toString())
