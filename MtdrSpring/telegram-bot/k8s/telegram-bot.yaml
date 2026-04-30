@@ -19,7 +19,7 @@ metadata:
   name: telegram-bot-deployment
   namespace: mtdrworkshop
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: telegram-bot

@@ -51,7 +51,7 @@ spec:
               value: "oracle.jdbc.OracleDriver"
             - name: OCI_REGION
               value: "${OCI_REGION}"
-            - name: dbpassword
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: dbuser
