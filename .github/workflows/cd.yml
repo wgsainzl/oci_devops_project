@@ -137,6 +137,7 @@ jobs:
         run: |
           kubectl create secret generic dbuser \
             --from-literal=dbpassword="${{ secrets.DB_PASSWORD }}" \
+            --from-literal=dbuser="${{ secrets.DB_USER }}" \
             --namespace mtdrworkshop \
             --dry-run=client -o yaml | kubectl apply -f -
             
