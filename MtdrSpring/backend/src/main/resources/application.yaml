@@ -1,31 +1,4 @@
-#Application properties (BASE)
 spring:
-  jpa:
-    database-platform: org.hibernate.dialect.OracleDialect
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-
-  datasource:
-    url: jdbc:oracle:thin:@taskmanagerdb_tp?TNS_ADMIN=/mtdrworkshop/creds
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
-
-    driver-class-name: oracle.jdbc.OracleDriver
-    type: oracle.ucp.jdbc.PoolDataSource
-    # This is not used when deployed in Kubernetes. Just for local testing
-    # url: jdbc:oracle:thin:@adbps_medium?TNS_ADMIN=/Users/psong/Downloads/Wallet_ADBPS
-    # username: admin
-    # password: WELcome__12345
-    oracleucp:
-      connection-factory-class-name: oracle.jdbc.pool.OracleDataSource
-      sql-for-validate-connection: "select * from dual"
-      connection-pool-name: connectionPoolName1
-      initial-pool-size: 15
-      min-pool-size: 10
-      max-pool-size: 30
-
-  #      Security Config
   security:
     oauth2:
       client:
@@ -44,25 +17,6 @@ spring:
             jwk-set-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/admin/v1/SigningCert/jwk
             user-info-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/oauth2/v1/userinfo
             user-name-attribute: sub
-
-#logging:
-##  level:
-#    #    TODO
-##        org.springframework.security: TRACE
-##        org.springframework.security.oauth2: TRACE
-##    root: INFO
-##  oracle:
-##    ucp: WARN
-##  org:
-##    hibernate:
-##      SQL: DEBUG
-##      type:
-##        descriptor:
-##          sql:
-##            BasicBinder: TRACE
-##        TRACE: INFO
-#  file:
-#    name: logs.log
 
 gemini:
   api:
