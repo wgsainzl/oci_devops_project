@@ -37,7 +37,10 @@ spec:
           imagePullPolicy: Always
           env:
             - name: DB_USER
-              valueFrom: "${DB_USER}"
+              valueFrom:
+                secretKeyRef:
+                  name: dbuser
+                  key: dbuser
             - name: TODO_PDB_NAME
               value: "${TODO_PDB_NAME}"
             - name: SPRING_DATASOURCE_URL
