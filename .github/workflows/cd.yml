@@ -36,6 +36,9 @@ jobs:
 
       - name: Build Spring Boot JAR (includes frontend)
         working-directory: MtdrSpring/backend
+        env:
+          VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
+          APP_REDIRECT_BASE_URL: ${{ secrets.VITE_BACKEND_URL }}
         run: |
           chmod +x mvnw
           ./mvnw clean package -DskipTests
@@ -140,10 +143,11 @@ jobs:
             --from-literal=dbuser="${{ secrets.DB_USER }}" \
             --namespace mtdrworkshop \
             --dry-run=client -o yaml | kubectl apply -f -
-            
+
       - name: Create app secrets
         run: |
           kubectl create secret generic app-secrets \
+          --from-literal=app-redirect-base-url="${{ secrets.VITE_BACKEND_URL }}" \
             --from-literal=gemini-api-key="${{ secrets.GEMINI_API_KEY }}" \
             --from-literal=gemini-url="${{ secrets.GEMINI_URL }}" \
             --from-literal=telegram-key="${{ secrets.TELEGRAM_KEY }}" \
