@@ -3,8 +3,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-      
+
   datasource:
     url: jdbc:oracle:thin:@taskmanagerdb_tp?TNS_ADMIN=${TNS_ADMIN:./wallet}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          oci:
+            redirect-uri: "http://163.192.136.37/login/oauth2/code/oci"
