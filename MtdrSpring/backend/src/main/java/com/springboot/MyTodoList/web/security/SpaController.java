@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class SpaController {
 
     @GetMapping(value = {
-            "/",
             "/login",
             "/register",
             "/oauth2/redirect",

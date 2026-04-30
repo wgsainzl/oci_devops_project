@@ -36,8 +36,8 @@ spec:
           image: ${DOCKER_REGISTRY}/todolistapp-springboot:${IMAGE_TAG}
           imagePullPolicy: Always
           env:
-            - name: db_user
-              value: "TODOUSER"
+            - name: DB_USER
+              valueFrom: "${DB_USER}"
             - name: TODO_PDB_NAME
               value: "${TODO_PDB_NAME}"
             - name: SPRING_DATASOURCE_URL
