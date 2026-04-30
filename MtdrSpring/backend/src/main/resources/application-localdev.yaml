@@ -14,4 +14,4 @@ spring:
       client:
         registration:
           oci:
-            redirect-uri: "http://163.192.136.37/login/oauth2/code/oci"
+            redirect-uri: "http://localhost:8080/login/oauth2/code/oci"
