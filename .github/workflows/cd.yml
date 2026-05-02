@@ -158,6 +158,14 @@ jobs:
             --from-literal=tenancy-name="${{ secrets.TENANCY_NAME }}" \
             --namespace mtdrworkshop \
             --dry-run=client -o yaml | kubectl apply -f -
+      
+      - name: Create RabbitMQ secret
+        run: |
+          kubectl create secret generic rabbitmq-secret \
+            --from-literal=rabbitmq-user="${{ secrets.RABBITMQ_USER }}" \
+            --from-literal=rabbitmq-password="${{ secrets.RABBITMQ_PASSWORD }}" \
+            --namespace mtdrworkshop \
+            --dry-run=client -o yaml | kubectl apply -f -
 
   # ---------------------------------------------------------------------------
   # JOB 3: Deploy to OKE
@@ -224,6 +232,7 @@ jobs:
         run: |
           kubectl apply -f /tmp/todolistapp-springboot-rendered.yaml
           kubectl apply -f /tmp/telegram-bot-rendered.yaml
+          kubectl apply -f MtdrSpring/k8s/rabbitmq.yaml
 
       - name: Wait for rollout
         run: |
@@ -233,6 +242,8 @@ jobs:
           kubectl rollout status deployment/telegram-bot-deployment \
             --namespace mtdrworkshop \
             --timeout=300s
+
+      
 
   # ---------------------------------------------------------------------------
   # JOB 4: Log deployment to ATP

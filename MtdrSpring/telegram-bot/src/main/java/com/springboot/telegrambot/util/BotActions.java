@@ -29,10 +29,21 @@ public class BotActions {
     BackendServiceClient backendServiceClient;
     GeminiService geminiService;
 
-    public BotActions(TelegramClient tc, BackendServiceClient ts, GeminiService ds) {
+    // RabbitMQ publishers
+    com.springboot.telegrambot.messaging.TaskCommandPublisher taskCommandPublisher;
+    com.springboot.telegrambot.messaging.TaskRpcClient taskRpcClient;
+
+    public BotActions(
+            TelegramClient tc,
+            BackendServiceClient ts,
+            GeminiService ds,
+            com.springboot.telegrambot.messaging.TaskCommandPublisher taskCommandPublisher,
+            com.springboot.telegrambot.messaging.TaskRpcClient taskRpcClient) {
         telegramClient = tc;
         backendServiceClient = ts;
         geminiService = ds;
+        this.taskCommandPublisher = taskCommandPublisher;
+        this.taskRpcClient = taskRpcClient;
         exit = false;
     }
 
@@ -121,7 +132,7 @@ public class BotActions {
         Integer id = extractTaskIdForAction("DONE");
         if (id != null) {
             try {
-                backendServiceClient.updateTaskStatus(id, "DONE");
+                taskCommandPublisher.updateTaskStatus(id, "DONE");
                 BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DONE.getMessage(), telegramClient);
             } catch (Exception e) {
                 logger.error(e.getLocalizedMessage(), e);
@@ -135,7 +146,7 @@ public class BotActions {
         Integer id = extractTaskIdForAction("BLOCK");
         if (id != null) {
             try {
-                backendServiceClient.updateTaskStatus(id, "BLOCKED");
+                taskCommandPublisher.updateTaskStatus(id, "BLOCKED");
                 BotHelper.sendMessageToTelegram(chatId, "Task flagged as BLOCKED. Your manager has been notified.", telegramClient);
             } catch (Exception e) {
                 logger.error(e.getLocalizedMessage(), e);
@@ -149,7 +160,7 @@ public class BotActions {
         Integer id = extractTaskIdForAction("DELETE");
         if (id != null) {
             try {
-                backendServiceClient.deleteTask(id);
+                taskCommandPublisher.deleteTask(id);
                 BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DELETED.getMessage(), telegramClient);
             } catch (Exception e) {
                 logger.error(e.getLocalizedMessage(), e);
@@ -162,7 +173,7 @@ public class BotActions {
         if (!requestText.trim().equalsIgnoreCase(BotCommands.SPRINTS_LIST.getCommand()) || exit) return;
 
         try {
-            List<com.springboot.telegrambot.dto.SprintDTO> sprints = backendServiceClient.getAllSprints();
+            List<com.springboot.telegrambot.dto.SprintDTO> sprints = taskRpcClient.getAllSprints();
             StringBuilder sb = new StringBuilder("<b>Available Sprints:</b>\n\n");
             
             if (sprints == null || sprints.isEmpty()) {
@@ -210,7 +221,7 @@ public class BotActions {
 
         try {
             if (targetSprintId == null) {
-                List<com.springboot.telegrambot.dto.SprintDTO> allSprints = backendServiceClient.getAllSprints();
+                List<com.springboot.telegrambot.dto.SprintDTO> allSprints = taskRpcClient.getAllSprints();
                 if (allSprints != null && !allSprints.isEmpty()) {
                     targetSprintId = allSprints.stream()
                             .mapToInt(com.springboot.telegrambot.dto.SprintDTO::getId)
@@ -225,7 +236,7 @@ public class BotActions {
                 return;
             }
 
-            List<TaskDTO> activeItems = backendServiceClient.getTasksForSprint(targetSprintId);
+            List<TaskDTO> activeItems = taskRpcClient.getTasksForSprint(targetSprintId);
 
             if (targetStatus != null) {
                 TaskStatus finalStatus = targetStatus;
@@ -343,7 +354,7 @@ public class BotActions {
         newTask.setTitle("New Chat Task");
         newTask.setDescription(requestText);
         newTask.setStatus(TaskStatus.TODO);
-        backendServiceClient.createTask(newTask);
+        taskCommandPublisher.createTask(newTask, String.valueOf(chatId));
 
         BotHelper.sendMessageToTelegram(chatId, BotMessages.NEW_ITEM_ADDED.getMessage(), telegramClient, null);
     }
@@ -391,7 +402,7 @@ public class BotActions {
                     session.draftTask.setPriority(text.toUpperCase());
                     session.state = TaskCreationState.AWAITING_SPRINT;
                     
-                    List<com.springboot.telegrambot.dto.SprintDTO> sprints = backendServiceClient.getAllSprints();
+                    List<com.springboot.telegrambot.dto.SprintDTO> sprints = taskRpcClient.getAllSprints();
                     List<String> sprintButtons = new ArrayList<>();
                     sprintButtons.add("0"); // Skip option
                     
@@ -429,7 +440,7 @@ public class BotActions {
                     session.draftTask.setStatus(TaskStatus.TODO);
                     
                     try {
-                        backendServiceClient.createTaskFromTelegram(session.draftTask, String.valueOf(chatId));
+                        taskCommandPublisher.createTask(session.draftTask, String.valueOf(chatId));
                         activeDrafts.remove(chatId);
                         BotHelper.sendHtmlMessageToTelegram(chatId, "🎉 <b>Task Successfully Created!</b>\nType /tasks to view your active board.", telegramClient);
                     } catch (org.springframework.web.reactive.function.client.WebClientResponseException ex) {
@@ -471,7 +482,7 @@ public class BotActions {
                 return;
             }
 
-            backendServiceClient.updateTaskStatus(taskId, newStatus);
+            taskCommandPublisher.updateTaskStatus(taskId, newStatus);
             BotHelper.sendHtmlMessageToTelegram(chatId, 
                 "🎉 <b>Task " + taskId + " updated to " + newStatus + "!</b>\nType /tasks to view your active board.", 
                 telegramClient);

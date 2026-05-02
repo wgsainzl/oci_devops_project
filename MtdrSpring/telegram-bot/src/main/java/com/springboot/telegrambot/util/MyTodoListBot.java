@@ -32,17 +32,20 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
     private final String telegramBotToken;
     private final BackendServiceClient backendServiceClient;
     private final GeminiService geminiService;
+    private final com.springboot.telegrambot.messaging.TaskCommandPublisher taskCommandPublisher;
+    private final com.springboot.telegrambot.messaging.TaskRpcClient taskRpcClient;
 
     public MyTodoListBot(
             @Value("${telegram.bot.token}") String telegramBotToken,
             BackendServiceClient backendServiceClient,
-            GeminiService geminiService) {
-        if (telegramBotToken == null || telegramBotToken.isBlank() || telegramBotToken.contains("${")) {
-            logger.error("WARNING: Telegram Bot Token is missing or not resolved. Current value: '" + telegramBotToken + "'");
-        }
+            GeminiService geminiService,
+            com.springboot.telegrambot.messaging.TaskCommandPublisher taskCommandPublisher,
+            com.springboot.telegrambot.messaging.TaskRpcClient taskRpcClient) {
         this.telegramBotToken = telegramBotToken;
         this.backendServiceClient = backendServiceClient;
         this.geminiService = geminiService;
+        this.taskCommandPublisher = taskCommandPublisher;
+        this.taskRpcClient = taskRpcClient;
         this.telegramClient = new OkHttpTelegramClient(telegramBotToken);
     }
 
@@ -73,7 +76,13 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
             return;
         }
 
-        BotActions actions = new BotActions(telegramClient, backendServiceClient, geminiService);
+        BotActions actions = new BotActions(
+            telegramClient,
+            backendServiceClient,
+            geminiService,
+            taskCommandPublisher,
+            taskRpcClient
+        );
         actions.setRequestText(messageText);
         actions.setChatId(chatId);
 
