@@ -443,8 +443,8 @@ public class BotActions {
                         taskCommandPublisher.createTask(session.draftTask, String.valueOf(chatId));
                         activeDrafts.remove(chatId);
                         BotHelper.sendHtmlMessageToTelegram(chatId, "⏳ <b>Task submitted!</b>\nIt will appear on your board shortly. Type /tasks to check.", telegramClient);
-                    } catch (org.springframework.web.reactive.function.client.WebClientResponseException ex) {
-                        BotHelper.sendHtmlMessageToTelegram(chatId, "⚠️ <b>Database Error:</b> The database rejected Sprint ID " + sprintId + ". Try selecting another, or type 0 to skip.", telegramClient);
+                    } catch (org.springframework.amqp.AmqpException ex) {
+                        BotHelper.sendHtmlMessageToTelegram(chatId, "⚠️ <b>Task submission failed:</b> I couldn't submit your task right now. Please try again in a moment.", telegramClient);
                     }
                     break;
             }
