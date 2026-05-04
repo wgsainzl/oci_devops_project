@@ -20,7 +20,6 @@ import java.util.UUID;
 public class TaskRpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskRpcClient.class);
-    private static final long TIMEOUT_MS = 5000;
 
     @Autowired private RabbitTemplate rabbitTemplate;
     @Autowired private ObjectMapper objectMapper;

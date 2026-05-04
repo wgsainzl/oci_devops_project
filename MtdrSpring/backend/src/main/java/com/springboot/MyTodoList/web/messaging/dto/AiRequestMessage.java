@@ -2,6 +2,7 @@ package com.springboot.MyTodoList.web.messaging.dto;
 
 import java.io.Serializable;
 
+// Reserved for future Oracle AI Vector Search integration. Not active yet.
 public class AiRequestMessage implements Serializable {
 
     private Long chatId;

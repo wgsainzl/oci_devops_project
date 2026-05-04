@@ -31,9 +31,13 @@ public class TaskCommandConsumer {
                 logger.info("Task created from Telegram user {}", message.getTelegramId());
             }
             case UPDATE_STATUS -> {
-                TaskStatus status = TaskStatus.valueOf(message.getNewStatus());
-                taskService.updateTaskStatus(message.getTaskId(), status, null);
-                logger.info("Task {} updated to status {}", message.getTaskId(), status);
+                try {
+                    TaskStatus status = TaskStatus.valueOf(message.getNewStatus());
+                    taskService.updateTaskStatus(message.getTaskId(), status, null);
+                    logger.info("Task {} updated to status {}", message.getTaskId(), status);
+                } catch (IllegalArgumentException e) {
+                    logger.error("Invalid status provided for task {}: {}", message.getTaskId(), message.getNewStatus(), e);
+                }
             }
             case DELETE -> {
                 taskService.deleteTaskItem(message.getTaskId());

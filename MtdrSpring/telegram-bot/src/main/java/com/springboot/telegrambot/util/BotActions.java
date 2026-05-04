@@ -356,7 +356,7 @@ public class BotActions {
         newTask.setStatus(TaskStatus.TODO);
         taskCommandPublisher.createTask(newTask, String.valueOf(chatId));
 
-        BotHelper.sendMessageToTelegram(chatId, BotMessages.NEW_ITEM_ADDED.getMessage(), telegramClient, null);
+        BotHelper.sendMessageToTelegram(chatId, "⏳ Task submitted for processing. Type /tasks to check shortly.", telegramClient, null);
     }
 
     public enum TaskCreationState {
@@ -442,7 +442,7 @@ public class BotActions {
                     try {
                         taskCommandPublisher.createTask(session.draftTask, String.valueOf(chatId));
                         activeDrafts.remove(chatId);
-                        BotHelper.sendHtmlMessageToTelegram(chatId, "🎉 <b>Task Successfully Created!</b>\nType /tasks to view your active board.", telegramClient);
+                        BotHelper.sendHtmlMessageToTelegram(chatId, "⏳ <b>Task submitted!</b>\nIt will appear on your board shortly. Type /tasks to check.", telegramClient);
                     } catch (org.springframework.web.reactive.function.client.WebClientResponseException ex) {
                         BotHelper.sendHtmlMessageToTelegram(chatId, "⚠️ <b>Database Error:</b> The database rejected Sprint ID " + sprintId + ". Try selecting another, or type 0 to skip.", telegramClient);
                     }
