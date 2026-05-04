@@ -6,17 +6,15 @@ import com.springboot.MyTodoList.web.features.task.TaskService;
 import com.springboot.MyTodoList.web.features.task.dto.TaskDTO;
 import com.springboot.MyTodoList.web.features.user.UserRepository;
 import com.springboot.MyTodoList.web.messaging.dto.TaskRpcRequest;
+import com.springboot.MyTodoList.web.messaging.dto.SprintDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import com.springboot.MyTodoList.web.messaging.dto.SprintDTO;
 
 @Component
 public class TaskRpcConsumer {
@@ -25,31 +23,31 @@ public class TaskRpcConsumer {
 
     @Autowired private TaskService taskService;
     @Autowired private UserRepository userRepository;
-    @Autowired private RabbitTemplate rabbitTemplate;
     @Autowired private com.springboot.MyTodoList.web.features.sprint.SprintRepository sprintRepository;
 
     @RabbitListener(queues = RabbitMQConfig.TASK_RPC_REQUEST)
-    public void handleRpcRequest(TaskRpcRequest request) {
+    public Object handleRpcRequest(TaskRpcRequest request) {
+        if (request == null || request.getQueryType() == null) {
+            logger.warn("Received malformed RPC request with null queryType; discarding");
+            return null;
+        }
+
         logger.info("Received RPC request: {}", request.getQueryType());
 
-        Object response = null;
-
         switch (request.getQueryType()) {
-            case GET_ALL_TASKS -> {
-                List<TaskDTO> tasks = taskService.findAll().stream()
+            case GET_ALL_TASKS: {
+                return taskService.findAll().stream()
                         .map(this::toDTO)
                         .collect(Collectors.toList());
-                response = tasks;
             }
-            case GET_TASKS_FOR_SPRINT -> {
-                List<TaskDTO> tasks = taskService.getTasksBySprintId(request.getSprintId())
+            case GET_TASKS_FOR_SPRINT: {
+                return taskService.getTasksBySprintId(request.getSprintId())
                         .stream()
                         .map(this::toDTO)
                         .collect(Collectors.toList());
-                response = tasks;
             }
-            case GET_USER_ROLE -> {
-                response = userRepository.findByTelegramUserID(request.getTelegramId())
+            case GET_USER_ROLE: {
+                return userRepository.findByTelegramUserID(request.getTelegramId())
                         .map(u -> {
                             String roleName = u.getRoles().stream()
                                     .findFirst()
@@ -62,8 +60,8 @@ public class TaskRpcConsumer {
                         })
                         .orElse(null);
             }
-            case GET_ALL_SPRINTS -> {
-                response = sprintRepository.findAll().stream()
+            case GET_ALL_SPRINTS: {
+                return sprintRepository.findAll().stream()
                         .map(s -> {
                             SprintDTO dto = new SprintDTO();
                             dto.setSprintId(s.getSprintId());
@@ -74,16 +72,10 @@ public class TaskRpcConsumer {
                         })
                         .collect(Collectors.toList());
             }
-            default -> logger.warn("Unknown RPC query type: {}", request.getQueryType());
-        }
-
-        if (request.getReplyTo() != null && request.getCorrelationId() != null) {
-            rabbitTemplate.convertAndSend(
-                    RabbitMQConfig.EXCHANGE,
-                    request.getReplyTo(),
-                    response != null ? response : Map.of()
-            );
-            logger.info("Sent RPC reply to {}", request.getReplyTo());
+            default: {
+                logger.warn("Unknown RPC query type: {}", request.getQueryType());
+                return null;
+            }
         }
     }
 

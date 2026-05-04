@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class TaskRpcClient {
@@ -27,8 +26,6 @@ public class TaskRpcClient {
     public List<TaskDTO> getAllTasks() {
         TaskRpcRequest request = new TaskRpcRequest();
         request.setQueryType(TaskRpcRequest.QueryType.GET_ALL_TASKS);
-        request.setCorrelationId(UUID.randomUUID().toString());
-        request.setReplyTo(RabbitMQConfig.RK_TASK_RPC_REPLY);
 
         Object response = rabbitTemplate.convertSendAndReceive(
                 RabbitMQConfig.EXCHANGE,
@@ -43,8 +40,6 @@ public class TaskRpcClient {
         TaskRpcRequest request = new TaskRpcRequest();
         request.setQueryType(TaskRpcRequest.QueryType.GET_TASKS_FOR_SPRINT);
         request.setSprintId(sprintId);
-        request.setCorrelationId(UUID.randomUUID().toString());
-        request.setReplyTo(RabbitMQConfig.RK_TASK_RPC_REPLY);
 
         Object response = rabbitTemplate.convertSendAndReceive(
                 RabbitMQConfig.EXCHANGE,
@@ -59,8 +54,6 @@ public class TaskRpcClient {
         TaskRpcRequest request = new TaskRpcRequest();
         request.setQueryType(TaskRpcRequest.QueryType.GET_USER_ROLE);
         request.setTelegramId(telegramId);
-        request.setCorrelationId(UUID.randomUUID().toString());
-        request.setReplyTo(RabbitMQConfig.RK_TASK_RPC_REPLY);
 
         Object response = rabbitTemplate.convertSendAndReceive(
                 RabbitMQConfig.EXCHANGE,
@@ -93,8 +86,6 @@ public class TaskRpcClient {
     public List<com.springboot.telegrambot.dto.SprintDTO> getAllSprints() {
         TaskRpcRequest request = new TaskRpcRequest();
         request.setQueryType(TaskRpcRequest.QueryType.GET_ALL_SPRINTS);
-        request.setCorrelationId(UUID.randomUUID().toString());
-        request.setReplyTo(RabbitMQConfig.RK_TASK_RPC_REPLY);
 
         Object response = rabbitTemplate.convertSendAndReceive(
                 RabbitMQConfig.EXCHANGE,
