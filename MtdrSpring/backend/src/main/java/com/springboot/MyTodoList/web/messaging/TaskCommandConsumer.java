@@ -22,6 +22,11 @@ public class TaskCommandConsumer {
 
     @RabbitListener(queues = RabbitMQConfig.TASK_COMMANDS_QUEUE)
     public void handleTaskCommand(TaskCommandMessage message) {
+        if (message == null || message.getCommandType() == null) {
+            logger.warn("Received malformed task command message; discarding");
+            return;
+        }
+
         logger.info("Received task command: {}", message.getCommandType());
 
         switch (message.getCommandType()) {

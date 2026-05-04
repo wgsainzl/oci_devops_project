@@ -16,11 +16,12 @@ spec:
   type: ClusterIP
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: rabbitmq
   namespace: mtdrworkshop
 spec:
+  serviceName: rabbitmq
   replicas: 1
   selector:
     matchLabels:
@@ -75,6 +76,11 @@ spec:
           volumeMounts:
             - name: rabbitmq-data
               mountPath: /var/lib/rabbitmq
-      volumes:
-        - name: rabbitmq-data
-          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: rabbitmq-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
