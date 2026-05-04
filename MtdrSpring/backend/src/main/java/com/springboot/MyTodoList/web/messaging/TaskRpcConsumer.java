@@ -88,27 +88,27 @@ public class TaskRpcConsumer {
     }
 
     private TaskDTO toDTO(Task task) {
-    Map<String, Object> sprintMap = null;
-    if (task.getSprint() != null) {
-        sprintMap = new java.util.HashMap<>();
-        sprintMap.put("sprintId", task.getSprint().getSprintId());
-        sprintMap.put("sprintName", task.getSprint().getSprintName());
-    }
+        Map<String, Object> sprintMap = null;
+        if (task.getSprint() != null) {
+            sprintMap = new java.util.HashMap<>();
+            sprintMap.put("sprintId", task.getSprint().getSprintId());
+            sprintMap.put("sprintName", task.getSprint().getSprintName());
+        }
 
-    return new TaskDTO(
-            String.valueOf(task.getTaskId()),
-            task.getTitle(),
-            task.getDescription(),
-            task.getStatus() != null ? task.getStatus().name() : null,
-            task.getPriority() != null ? task.getPriority().name() : null,
-            task.getCreatedAt() != null ? task.getCreatedAt().toString() : null,
-            task.getDueDate() != null ? task.getDueDate().toString() : null,
-            task.getStartDate() != null ? task.getStartDate().toString() : null,
-            task.getResponsible() != null ? task.getResponsible().getName() : null,
-            task.getResponsible() != null ? String.valueOf(task.getResponsible().getUserId()) : null,
-            task.getEstimatedHours(),
-            task.getActualHours(),
-            sprintMap
+        return new TaskDTO(
+                String.valueOf(task.getTaskId()),
+                task.getTitle(),
+                task.getDescription(),
+                task.getStatus() != null ? task.getStatus().name() : null,
+                task.getPriority() != null ? task.getPriority().name() : null,
+                task.getCreatedAt() != null ? task.getCreatedAt().toString() : null,
+                task.getDueDate() != null ? task.getDueDate().toString() : null,
+                task.getStartDate() != null ? task.getStartDate().toString() : null,
+                task.getResponsible() != null ? task.getResponsible().getName() : null,
+                task.getResponsible() != null ? String.valueOf(task.getResponsible().getUserId()) : null,
+                task.getEstimatedHours(),
+                task.getActualHours(),
+                sprintMap
         );
     }
 }
