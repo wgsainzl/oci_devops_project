@@ -230,9 +230,12 @@ jobs:
 
       - name: Apply manifests
         run: |
+          kubectl apply -f MtdrSpring/k8s/rabbitmq.yaml
+          kubectl rollout status deployment/rabbitmq \
+            --namespace mtdrworkshop \
+            --timeout=300s
           kubectl apply -f /tmp/todolistapp-springboot-rendered.yaml
           kubectl apply -f /tmp/telegram-bot-rendered.yaml
-          kubectl apply -f MtdrSpring/k8s/rabbitmq.yaml
 
       - name: Wait for rollout
         run: |
