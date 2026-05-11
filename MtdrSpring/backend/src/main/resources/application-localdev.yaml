@@ -1,6 +1,7 @@
 #Local application properties (LOCALDEV profile MUST be active to use this)
 app:
   base-url: http://localhost:8080
+  frontend-url: http://localhost:3000
 
 spring:
   jpa:

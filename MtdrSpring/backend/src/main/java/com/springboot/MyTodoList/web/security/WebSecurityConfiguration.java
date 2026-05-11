@@ -32,6 +32,9 @@ public class WebSecurityConfiguration {
     @Value("${app.base-url}")
     private String redirectBaseUrl;
 
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(
@@ -71,7 +74,7 @@ public class WebSecurityConfiguration {
 
                             // 3. Redirect to Vite with the token in the query string
                             // Your React app should catch this in the URL
-                            response.sendRedirect("/oauth2/redirect?token=" + token);
+                            response.sendRedirect(frontendUrl + "/oauth2/redirect?token=" + token);
                         }))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
