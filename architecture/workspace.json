@@ -1,0 +1,1044 @@
+{
+  "workspace": {
+    "id": 1,
+    "name": "MyTodoList",
+    "description": "Architecture model for the MyTodoList DevOps project.",
+    "model": {
+      "people": [
+        {
+          "id": "1",
+          "name": "Admin",
+          "description": "System administrator with full access to manage teams and settings.",
+          "tags": "Element,Person"
+        },
+        {
+          "id": "2",
+          "name": "Manager",
+          "description": "Plans work and manages teams in the dashboard.",
+          "tags": "Element,Person"
+        },
+        {
+          "id": "3",
+          "name": "Developer",
+          "description": "Works on assigned tasks and tracks progress.",
+          "tags": "Element,Person"
+        },
+        {
+          "id": "4",
+          "name": "Telegram User",
+          "description": "Interacts with the system via the Telegram bot.",
+          "tags": "Element,Person"
+        }
+      ],
+      "softwareSystems": [
+        {
+          "id": "5",
+          "name": "MyTodoList",
+          "description": "Task management and DevOps dashboard for teams.",
+          "tags": "Element,Software System",
+          "containers": [
+            {
+              "id": "10",
+              "name": "Web UI",
+              "description": "Single-page application for tasks and dashboards.",
+              "technology": "React + Vite",
+              "tags": "Element,Container"
+            },
+            {
+              "id": "11",
+              "name": "Backend API",
+              "description": "Spring Boot REST API for tasks, users, and dashboards.",
+              "technology": "Spring Boot",
+              "tags": "Element,Container",
+              "components": [
+                {
+                  "id": "20",
+                  "name": "Auth Controller",
+                  "description": "Handles login and token refresh endpoints.",
+                  "technology": "Spring MVC",
+                  "tags": "Element,Component"
+                },
+                {
+                  "id": "21",
+                  "name": "Task Controller",
+                  "description": "Handles CRUD endpoints for tasks.",
+                  "technology": "Spring MVC",
+                  "tags": "Element,Component"
+                },
+                {
+                  "id": "22",
+                  "name": "User Controller",
+                  "description": "Manages users and roles.",
+                  "technology": "Spring MVC",
+                  "tags": "Element,Component"
+                },
+                {
+                  "id": "23",
+                  "name": "Dashboard Controller",
+                  "description": "Serves dashboard metrics.",
+                  "technology": "Spring MVC",
+                  "tags": "Element,Component"
+                },
+                {
+                  "id": "24",
+                  "name": "Auth Service",
+                  "description": "Validates credentials and issues tokens.",
+                  "technology": "Spring Security",
+                  "tags": "Element,Component"
+                },
+                {
+                  "id": "25",
+                  "name": "Task Service",
+                  "description": "Applies task workflows and validation.",
+                  "technology": "Service Layer",
+                  "tags": "Element,Component"
+                },
+                {
+                  "id": "26",
+                  "name": "User Service",
+                  "description": "Manages users and role assignments.",
+                  "technology": "Service Layer",
+                  "tags": "Element,Component"
+                },
+                {
+                  "id": "27",
+                  "name": "Dashboard Service",
+                  "description": "Builds aggregated dashboard metrics.",
+                  "technology": "Service Layer",
+                  "tags": "Element,Component"
+                },
+                {
+                  "id": "28",
+                  "name": "JPA Repositories",
+                  "description": "Persists data in Oracle DB.",
+                  "technology": "Spring Data JPA",
+                  "tags": "Element,Component"
+                },
+                {
+                  "id": "29",
+                  "name": "RabbitMQ Integration",
+                  "description": "Publishes and consumes async task events.",
+                  "technology": "Spring AMQP",
+                  "tags": "Element,Component"
+                },
+                {
+                  "id": "30",
+                  "name": "Gemini Client",
+                  "description": "Calls Gemini for AI summaries.",
+                  "technology": "HTTP Client",
+                  "tags": "Element,Component"
+                }
+              ]
+            },
+            {
+              "id": "12",
+              "name": "Telegram Bot Service",
+              "description": "Handles Telegram bot commands and notifications.",
+              "technology": "Spring Boot",
+              "tags": "Element,Container"
+            },
+            {
+              "id": "13",
+              "name": "Task Database",
+              "description": "Stores tasks, users, roles, and activity.",
+              "technology": "Oracle Database",
+              "tags": "Element,Container,Database"
+            },
+            {
+              "id": "14",
+              "name": "RabbitMQ Broker",
+              "description": "Message broker for asynchronous processing.",
+              "technology": "RabbitMQ",
+              "tags": "Element,Container"
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "name": "Telegram Platform",
+          "description": "External messaging platform for bot interactions.",
+          "tags": "Element,Software System,External"
+        },
+        {
+          "id": "7",
+          "name": "Gemini API",
+          "description": "External AI service used for summaries.",
+          "tags": "Element,Software System,External"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "1",
+          "sourceId": "1",
+          "destinationId": "5",
+          "description": "Manages tasks and teams",
+          "tags": "Relationship"
+        },
+        {
+          "id": "2",
+          "sourceId": "2",
+          "destinationId": "5",
+          "description": "Plans work and reviews progress",
+          "tags": "Relationship"
+        },
+        {
+          "id": "3",
+          "sourceId": "3",
+          "destinationId": "5",
+          "description": "Tracks assigned tasks",
+          "tags": "Relationship"
+        },
+        {
+          "id": "4",
+          "sourceId": "4",
+          "destinationId": "5",
+          "description": "Uses the system via Telegram",
+          "tags": "Relationship"
+        },
+        {
+          "id": "5",
+          "sourceId": "5",
+          "destinationId": "6",
+          "description": "Uses Telegram Bot API",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "6",
+          "sourceId": "5",
+          "destinationId": "7",
+          "description": "Requests AI summaries",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "7",
+          "sourceId": "1",
+          "destinationId": "10",
+          "description": "Manages tasks and teams",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "8",
+          "sourceId": "2",
+          "destinationId": "10",
+          "description": "Plans work and reviews progress",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "9",
+          "sourceId": "3",
+          "destinationId": "10",
+          "description": "Tracks assigned tasks",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "10",
+          "sourceId": "4",
+          "destinationId": "6",
+          "description": "Sends bot commands",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "11",
+          "sourceId": "10",
+          "destinationId": "11",
+          "description": "Reads/writes tasks and dashboards",
+          "technology": "JSON/HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "12",
+          "sourceId": "12",
+          "destinationId": "11",
+          "description": "Reads/writes tasks",
+          "technology": "JSON/HTTP",
+          "tags": "Relationship"
+        },
+        {
+          "id": "13",
+          "sourceId": "11",
+          "destinationId": "10",
+          "description": "Returns responses",
+          "technology": "JSON/HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "14",
+          "sourceId": "11",
+          "destinationId": "12",
+          "description": "Returns responses",
+          "technology": "JSON/HTTP",
+          "tags": "Relationship"
+        },
+        {
+          "id": "15",
+          "sourceId": "11",
+          "destinationId": "13",
+          "description": "Reads/writes data",
+          "technology": "JDBC",
+          "tags": "Relationship"
+        },
+        {
+          "id": "16",
+          "sourceId": "11",
+          "destinationId": "14",
+          "description": "Publishes/consumes task events",
+          "technology": "AMQP",
+          "tags": "Relationship"
+        },
+        {
+          "id": "17",
+          "sourceId": "12",
+          "destinationId": "6",
+          "description": "Uses Bot API",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "18",
+          "sourceId": "6",
+          "destinationId": "12",
+          "description": "Delivers bot updates",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "19",
+          "sourceId": "12",
+          "destinationId": "7",
+          "description": "Requests summaries",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "20",
+          "sourceId": "11",
+          "destinationId": "7",
+          "description": "Generates summaries",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "21",
+          "sourceId": "6",
+          "destinationId": "4",
+          "description": "Sends responses",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "22",
+          "sourceId": "10",
+          "destinationId": "20",
+          "description": "Authenticates users",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "23",
+          "sourceId": "10",
+          "destinationId": "21",
+          "description": "Manages tasks",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "24",
+          "sourceId": "10",
+          "destinationId": "23",
+          "description": "Loads dashboard data",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "25",
+          "sourceId": "10",
+          "destinationId": "22",
+          "description": "Manages users",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "26",
+          "sourceId": "20",
+          "destinationId": "24",
+          "description": "Delegates auth logic",
+          "tags": "Relationship"
+        },
+        {
+          "id": "27",
+          "sourceId": "21",
+          "destinationId": "25",
+          "description": "Delegates task workflows",
+          "tags": "Relationship"
+        },
+        {
+          "id": "28",
+          "sourceId": "22",
+          "destinationId": "26",
+          "description": "Delegates user workflows",
+          "tags": "Relationship"
+        },
+        {
+          "id": "29",
+          "sourceId": "23",
+          "destinationId": "27",
+          "description": "Delegates dashboard workflows",
+          "tags": "Relationship"
+        },
+        {
+          "id": "30",
+          "sourceId": "24",
+          "destinationId": "28",
+          "description": "Reads/writes user data",
+          "tags": "Relationship"
+        },
+        {
+          "id": "31",
+          "sourceId": "25",
+          "destinationId": "28",
+          "description": "Reads/writes task data",
+          "tags": "Relationship"
+        },
+        {
+          "id": "32",
+          "sourceId": "26",
+          "destinationId": "28",
+          "description": "Reads/writes user data",
+          "tags": "Relationship"
+        },
+        {
+          "id": "33",
+          "sourceId": "27",
+          "destinationId": "28",
+          "description": "Reads aggregates",
+          "tags": "Relationship"
+        },
+        {
+          "id": "34",
+          "sourceId": "25",
+          "destinationId": "29",
+          "description": "Publishes task events",
+          "tags": "Relationship"
+        },
+        {
+          "id": "35",
+          "sourceId": "27",
+          "destinationId": "30",
+          "description": "Generates summaries",
+          "tags": "Relationship"
+        },
+        {
+          "id": "36",
+          "sourceId": "30",
+          "destinationId": "7",
+          "description": "Calls Gemini API",
+          "technology": "HTTPS",
+          "tags": "Relationship"
+        },
+        {
+          "id": "37",
+          "sourceId": "28",
+          "destinationId": "13",
+          "description": "Reads/writes",
+          "technology": "JDBC",
+          "tags": "Relationship"
+        },
+        {
+          "id": "38",
+          "sourceId": "29",
+          "destinationId": "14",
+          "description": "Uses AMQP",
+          "technology": "AMQP",
+          "tags": "Relationship"
+        }
+      ],
+      "deploymentNodes": [
+        {
+          "id": "100",
+          "name": "OCI OKE Cluster",
+          "description": "Kubernetes cluster",
+          "technology": "Oracle Cloud Infrastructure",
+          "environment": "Production",
+          "tags": "Deployment Node",
+          "deploymentNodes": [
+            {
+              "id": "101",
+              "name": "Kubernetes Namespace: mtdrworkshop",
+              "description": "Namespace hosting the workloads.",
+              "technology": "Kubernetes",
+              "environment": "Production",
+              "tags": "Deployment Node",
+              "deploymentNodes": [
+                {
+                  "id": "102",
+                  "name": "todolistapp-springboot deployment",
+                  "description": "Spring Boot workload",
+                  "technology": "Kubernetes Deployment",
+                  "environment": "Production",
+                  "tags": "Deployment Node",
+                  "containerInstances": [
+                    {
+                      "id": "200",
+                      "containerId": "11",
+                      "environment": "Production",
+                      "tags": "Container Instance"
+                    },
+                    {
+                      "id": "201",
+                      "containerId": "10",
+                      "environment": "Production",
+                      "tags": "Container Instance"
+                    }
+                  ]
+                },
+                {
+                  "id": "103",
+                  "name": "telegram-bot deployment",
+                  "description": "Telegram bot workload",
+                  "technology": "Kubernetes Deployment",
+                  "environment": "Production",
+                  "tags": "Deployment Node",
+                  "containerInstances": [
+                    {
+                      "id": "202",
+                      "containerId": "12",
+                      "environment": "Production",
+                      "tags": "Container Instance"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "104",
+          "name": "Oracle Autonomous Database",
+          "description": "Managed Oracle DB",
+          "technology": "Oracle Cloud",
+          "environment": "Production",
+          "tags": "Deployment Node",
+          "containerInstances": [
+            {
+              "id": "203",
+              "containerId": "13",
+              "environment": "Production",
+              "tags": "Container Instance"
+            }
+          ]
+        },
+        {
+          "id": "105",
+          "name": "RabbitMQ Broker",
+          "description": "Message broker",
+          "technology": "RabbitMQ",
+          "environment": "Production",
+          "tags": "Deployment Node",
+          "containerInstances": [
+            {
+              "id": "204",
+              "containerId": "14",
+              "environment": "Production",
+              "tags": "Container Instance"
+            }
+          ]
+        }
+      ]
+    },
+    "views": {
+      "systemLandscapeViews": [
+        {
+          "key": "landscape",
+          "description": "System landscape for MyTodoList.",
+          "elements": [
+            {
+              "id": "1"
+            },
+            {
+              "id": "2"
+            },
+            {
+              "id": "3"
+            },
+            {
+              "id": "4"
+            },
+            {
+              "id": "5"
+            },
+            {
+              "id": "6"
+            },
+            {
+              "id": "7"
+            }
+          ],
+          "relationships": [
+            {
+              "id": "1"
+            },
+            {
+              "id": "2"
+            },
+            {
+              "id": "3"
+            },
+            {
+              "id": "4"
+            },
+            {
+              "id": "5"
+            },
+            {
+              "id": "6"
+            },
+            {
+              "id": "10"
+            },
+            {
+              "id": "21"
+            }
+          ],
+          "automaticLayout": {
+            "rankDirection": "LeftRight"
+          }
+        }
+      ],
+      "systemContextViews": [
+        {
+          "key": "context",
+          "description": "System context for MyTodoList.",
+          "softwareSystemId": "5",
+          "elements": [
+            {
+              "id": "1"
+            },
+            {
+              "id": "2"
+            },
+            {
+              "id": "3"
+            },
+            {
+              "id": "4"
+            },
+            {
+              "id": "5"
+            },
+            {
+              "id": "6"
+            },
+            {
+              "id": "7"
+            }
+          ],
+          "relationships": [
+            {
+              "id": "1"
+            },
+            {
+              "id": "2"
+            },
+            {
+              "id": "3"
+            },
+            {
+              "id": "4"
+            },
+            {
+              "id": "5"
+            },
+            {
+              "id": "6"
+            },
+            {
+              "id": "10"
+            },
+            {
+              "id": "21"
+            }
+          ],
+          "automaticLayout": {
+            "rankDirection": "LeftRight"
+          }
+        }
+      ],
+      "containerViews": [
+        {
+          "key": "containers",
+          "description": "Container view for MyTodoList.",
+          "softwareSystemId": "5",
+          "elements": [
+            {
+              "id": "1"
+            },
+            {
+              "id": "2"
+            },
+            {
+              "id": "3"
+            },
+            {
+              "id": "4"
+            },
+            {
+              "id": "6"
+            },
+            {
+              "id": "7"
+            },
+            {
+              "id": "10"
+            },
+            {
+              "id": "11"
+            },
+            {
+              "id": "12"
+            },
+            {
+              "id": "13"
+            },
+            {
+              "id": "14"
+            }
+          ],
+          "relationships": [
+            {
+              "id": "7"
+            },
+            {
+              "id": "8"
+            },
+            {
+              "id": "9"
+            },
+            {
+              "id": "10"
+            },
+            {
+              "id": "11"
+            },
+            {
+              "id": "12"
+            },
+            {
+              "id": "13"
+            },
+            {
+              "id": "14"
+            },
+            {
+              "id": "15"
+            },
+            {
+              "id": "16"
+            },
+            {
+              "id": "17"
+            },
+            {
+              "id": "18"
+            },
+            {
+              "id": "19"
+            },
+            {
+              "id": "20"
+            },
+            {
+              "id": "21"
+            }
+          ],
+          "automaticLayout": {
+            "rankDirection": "LeftRight"
+          }
+        }
+      ],
+      "componentViews": [
+        {
+          "key": "apiComponents",
+          "description": "Component view for the Backend API.",
+          "containerId": "11",
+          "elements": [
+            {
+              "id": "7"
+            },
+            {
+              "id": "10"
+            },
+            {
+              "id": "13"
+            },
+            {
+              "id": "14"
+            },
+            {
+              "id": "20"
+            },
+            {
+              "id": "21"
+            },
+            {
+              "id": "22"
+            },
+            {
+              "id": "23"
+            },
+            {
+              "id": "24"
+            },
+            {
+              "id": "25"
+            },
+            {
+              "id": "26"
+            },
+            {
+              "id": "27"
+            },
+            {
+              "id": "28"
+            },
+            {
+              "id": "29"
+            },
+            {
+              "id": "30"
+            }
+          ],
+          "relationships": [
+            {
+              "id": "22"
+            },
+            {
+              "id": "23"
+            },
+            {
+              "id": "24"
+            },
+            {
+              "id": "25"
+            },
+            {
+              "id": "26"
+            },
+            {
+              "id": "27"
+            },
+            {
+              "id": "28"
+            },
+            {
+              "id": "29"
+            },
+            {
+              "id": "30"
+            },
+            {
+              "id": "31"
+            },
+            {
+              "id": "32"
+            },
+            {
+              "id": "33"
+            },
+            {
+              "id": "34"
+            },
+            {
+              "id": "35"
+            },
+            {
+              "id": "36"
+            },
+            {
+              "id": "37"
+            },
+            {
+              "id": "38"
+            }
+          ],
+          "automaticLayout": {
+            "rankDirection": "LeftRight"
+          }
+        }
+      ],
+      "deploymentViews": [
+        {
+          "key": "production",
+          "description": "Production deployment for MyTodoList.",
+          "softwareSystemId": "5",
+          "environment": "Production",
+          "elements": [
+            {
+              "id": "100"
+            },
+            {
+              "id": "101"
+            },
+            {
+              "id": "102"
+            },
+            {
+              "id": "103"
+            },
+            {
+              "id": "104"
+            },
+            {
+              "id": "105"
+            },
+            {
+              "id": "200"
+            },
+            {
+              "id": "201"
+            },
+            {
+              "id": "202"
+            },
+            {
+              "id": "203"
+            },
+            {
+              "id": "204"
+            }
+          ],
+          "automaticLayout": {
+            "rankDirection": "LeftRight"
+          }
+        }
+      ],
+      "dynamicViews": [
+        {
+          "key": "createTaskWeb",
+          "description": "Create task via web UI.",
+          "softwareSystemId": "5",
+          "relationships": [
+            {
+              "id": "1",
+              "relationshipId": "8",
+              "order": "1",
+              "description": "Creates task"
+            },
+            {
+              "id": "2",
+              "relationshipId": "11",
+              "order": "2",
+              "description": "POST /tasks"
+            },
+            {
+              "id": "3",
+              "relationshipId": "15",
+              "order": "3",
+              "description": "Insert task"
+            },
+            {
+              "id": "4",
+              "relationshipId": "13",
+              "order": "4",
+              "description": "Task created response"
+            }
+          ],
+          "automaticLayout": {
+            "rankDirection": "LeftRight"
+          }
+        },
+        {
+          "key": "createTaskTelegram",
+          "description": "Create task via Telegram bot.",
+          "softwareSystemId": "5",
+          "relationships": [
+            {
+              "id": "5",
+              "relationshipId": "10",
+              "order": "1",
+              "description": "Sends /newtask"
+            },
+            {
+              "id": "6",
+              "relationshipId": "18",
+              "order": "2",
+              "description": "Delivers message"
+            },
+            {
+              "id": "7",
+              "relationshipId": "12",
+              "order": "3",
+              "description": "POST /tasks"
+            },
+            {
+              "id": "8",
+              "relationshipId": "15",
+              "order": "4",
+              "description": "Insert task"
+            },
+            {
+              "id": "9",
+              "relationshipId": "14",
+              "order": "5",
+              "description": "Task created response"
+            },
+            {
+              "id": "10",
+              "relationshipId": "17",
+              "order": "6",
+              "description": "Reply"
+            },
+            {
+              "id": "11",
+              "relationshipId": "21",
+              "order": "7",
+              "description": "Confirmation"
+            }
+          ],
+          "automaticLayout": {
+            "rankDirection": "LeftRight"
+          }
+        }
+      ],
+      "styles": {
+        "elements": [
+          {
+            "tag": "Person",
+            "shape": "Person",
+            "background": "#08427b",
+            "color": "#ffffff"
+          },
+          {
+            "tag": "Software System",
+            "shape": "RoundedBox",
+            "background": "#1168bd",
+            "color": "#ffffff"
+          },
+          {
+            "tag": "Container",
+            "shape": "RoundedBox",
+            "background": "#438dd5",
+            "color": "#ffffff"
+          },
+          {
+            "tag": "Database",
+            "shape": "Cylinder"
+          },
+          {
+            "tag": "External",
+            "background": "#999999",
+            "color": "#ffffff"
+          }
+        ]
+      }
+    },
+    "configuration": {
+      "scope": "softwareSystem"
+    }
+  }
+}
