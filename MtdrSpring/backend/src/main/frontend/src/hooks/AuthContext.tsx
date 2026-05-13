@@ -16,6 +16,7 @@ import {
 import { authAPI } from "../API.ts";
 // import { mockAuthAPI } from "../mocks";
 import type { User, UserRole } from "../types.ts";
+import {API_URLS} from "../constants.ts";
 
 // Use mock API if VITE_USE_MOCKS=true
 // const API = import.meta.env.VITE_USE_MOCKS ? mockAuthAPI : authAPI
@@ -96,7 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const handleExpiredSession = () => {
-    window.location.href = "http://163.192.136.37/oauth2/authorization/oci";
+    window.location.href = API_URLS.AUTH_OCI
   };
 
   useEffect(() => {
@@ -128,7 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem("auth_token");
       setUser(null);
     } finally {
-      window.location.href = "http://163.192.136.37/logout";
+      window.location.href = API_URLS.LOGOUT
     }
   }, []);
 

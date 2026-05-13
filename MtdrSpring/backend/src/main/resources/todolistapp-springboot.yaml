@@ -36,6 +36,11 @@ spec:
           image: ${DOCKER_REGISTRY}/todolistapp-springboot:${IMAGE_TAG}
           imagePullPolicy: Always
           env:
+            - name: APP_REDIRECT_BASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: app-redirect-base-url
             - name: DB_USER
               valueFrom:
                 secretKeyRef:

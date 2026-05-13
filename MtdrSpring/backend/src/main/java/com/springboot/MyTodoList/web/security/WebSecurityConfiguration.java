@@ -5,6 +5,7 @@ import com.springboot.MyTodoList.web.auth.jwt.JwtUtil;
 import com.springboot.MyTodoList.web.auth.oci.OciOidcUserService;
 import com.springboot.MyTodoList.web.features.user.userDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -28,6 +29,12 @@ public class WebSecurityConfiguration {
     private final OciOidcUserService ociOidcUserService; // Your existing service
     private final JwtUtil jwtUtil; // Your JwtUtil
 
+    @Value("${app.base-url}")
+    private String redirectBaseUrl;
+
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(
@@ -50,9 +57,9 @@ public class WebSecurityConfiguration {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login**", "/error**", "/oauth2/**").permitAll()
-                        .requestMatchers("api/dashboard/summary/all").permitAll()
+                        .requestMatchers("/api/dashboard/summary/all").permitAll()
                         // Telegram bot calls these without a browser session or JWT
-                        .requestMatchers("/api/summary-jobs", "/api/summary-jobs/**", "/api/tasks", "/api/tasks/**", "/api/users/telegram/**", "/api/sprints", "/api/sprints/**")                        .permitAll()
+                        .requestMatchers("/api/summary-jobs", "/api/summary-jobs/**", "/api/tasks", "/api/tasks/**", "/api/users/telegram/**", "/api/sprints", "/api/sprints/**").permitAll()
                         .anyRequest().authenticated())
 
                 .oauth2Login(oauth -> oauth.
@@ -67,7 +74,7 @@ public class WebSecurityConfiguration {
 
                             // 3. Redirect to Vite with the token in the query string
                             // Your React app should catch this in the URL
-                            response.sendRedirect("/oauth2/redirect?token=" + token);
+                            response.sendRedirect(frontendUrl + "/oauth2/redirect?token=" + token);
                         }))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
@@ -87,7 +94,7 @@ public class WebSecurityConfiguration {
 
         // After Oracle logs the user out, where should they go?
         // This URL must be registered in your OCI Console as a "Post-Logout Redirect URI"
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://163.192.136.37/login");
+        oidcLogoutSuccessHandler.setPostLogoutRedirectUri(redirectBaseUrl + "/login");
 
         return oidcLogoutSuccessHandler;
     }
