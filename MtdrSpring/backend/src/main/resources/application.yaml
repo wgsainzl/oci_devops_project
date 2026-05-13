@@ -2,7 +2,41 @@ app:
   base-url: ${APP_REDIRECT_BASE_URL:http://localhost:8080}
   frontend-url: ${APP_FRONTEND_URL:${app.base-url}}
 
+logging:
+  file:
+    name: logs.log
+  level:
+    root: info
+    oracle.ucp: warn
+    org.hibernate:
+      SQL: DEBUG
+      type: TRACE
+      # Nested descriptor to handle the long property name
+      type.descriptor.sql.BasicBinder: TRACE
+
 spring:
+  # Hibernate Settings
+  jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  # DataSource Connection & UCP Settings
+  datasource:
+    url: jdbc:oracle:thin:@${TODO_PDB_NAME}_tp?TNS_ADMIN=/mtdrworkshop/creds
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: oracle.jdbc.OracleDriver
+    type: oracle.ucp.jdbc.PoolDataSource
+    oracleucp:
+      connection-factory-class-name: oracle.jdbc.pool.OracleDataSource
+      sql-for-validate-connection: select * from dual
+      connection-pool-name: connectionPoolName1
+      initial-pool-size: 15
+      min-pool-size: 10
+      max-pool-size: 30
+
   security:
     oauth2:
       client:
@@ -22,6 +56,7 @@ spring:
             user-info-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/oauth2/v1/userinfo
             user-name-attribute: sub
 
+# Custom & Third-Party Integrations
 gemini:
   api:
     key: ${GEMINI_API_KEY}
