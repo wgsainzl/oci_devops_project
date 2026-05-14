@@ -2,192 +2,530 @@
   "configuration" : { },
   "description" : "Architecture of the TodoList application with Telegram Bot integration",
   "documentation" : { },
-  "id" : 0,
+  "id" : 1,
+  "lastModifiedDate" : "2026-05-14T23:22:16Z",
   "model" : {
     "deploymentNodes" : [ {
-      "containerInstances" : [ {
-        "containerId" : "3",
+      "description" : "Public Internet",
+      "environment" : "Production",
+      "id" : "16",
+      "infrastructureNodes" : [ {
+        "description" : "External users accessing the system via browser",
         "environment" : "Production",
-        "id" : "9",
-        "instanceId" : 1,
+        "id" : "17",
+        "name" : "Users",
         "properties" : {
-          "structurizr.dsl.identifier" : "3c816f05-82d5-4e96-ad01-bfeaac0a1cdf"
+          "structurizr.dsl.identifier" : "userNode"
         },
-        "tags" : "Container Instance"
+        "relationships" : [ {
+          "description" : "Sends HTTPS requests",
+          "destinationId" : "21",
+          "id" : "31",
+          "sourceId" : "17",
+          "tags" : "Relationship",
+          "technology" : "HTTPS"
+        } ],
+        "tags" : "Element,Infrastructure Node"
       }, {
-        "containerId" : "4",
+        "description" : "Telegram platform sending updates to the bot",
         "environment" : "Production",
-        "id" : "10",
-        "instanceId" : 1,
+        "id" : "18",
+        "name" : "Telegram Webhook",
         "properties" : {
-          "structurizr.dsl.identifier" : "05361d29-5d6c-46c5-88f3-a1e95300ceb2"
+          "structurizr.dsl.identifier" : "telegramWebhookNode"
         },
-        "tags" : "Container Instance"
+        "relationships" : [ {
+          "description" : "Sends webhook updates to",
+          "destinationId" : "26",
+          "id" : "33",
+          "sourceId" : "18",
+          "tags" : "Relationship",
+          "technology" : "HTTPS"
+        } ],
+        "tags" : "Element,Infrastructure Node"
+      } ],
+      "instances" : "1",
+      "name" : "Internet",
+      "properties" : {
+        "structurizr.dsl.identifier" : "30c14ba2-267e-4136-85e0-ad98fb090eaf"
+      },
+      "tags" : "Element,Deployment Node"
+    }, {
+      "children" : [ {
+        "description" : "Managed OCI Services",
+        "environment" : "Production",
+        "id" : "20",
+        "infrastructureNodes" : [ {
+          "description" : "Receives public HTTPS traffic and routes it to the Web Application pod",
+          "environment" : "Production",
+          "id" : "21",
+          "name" : "OCI Load Balancer",
+          "properties" : {
+            "structurizr.dsl.identifier" : "loadBalancerNode"
+          },
+          "relationships" : [ {
+            "description" : "Routes traffic to",
+            "destinationId" : "24",
+            "id" : "32",
+            "sourceId" : "21",
+            "tags" : "Relationship",
+            "technology" : "HTTP"
+          } ],
+          "tags" : "Element,Infrastructure Node"
+        } ],
+        "instances" : "1",
+        "name" : "OCI Core Services",
+        "properties" : {
+          "structurizr.dsl.identifier" : "37b1ebfe-1d7f-4316-9ca3-00a7ee941cdd"
+        },
+        "tags" : "Element,Deployment Node"
       }, {
-        "containerId" : "5",
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "8",
+            "environment" : "Production",
+            "id" : "24",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "webAppInst"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Kubernetes Pod",
+          "environment" : "Production",
+          "id" : "23",
+          "instances" : "1",
+          "name" : "Web Application Pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "84e121aa-44e1-4d05-93b8-0939310f1eb0"
+          },
+          "tags" : "Element,Deployment Node"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "13",
+            "environment" : "Production",
+            "id" : "26",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "telegramBotInst"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Kubernetes Pod",
+          "environment" : "Production",
+          "id" : "25",
+          "instances" : "1",
+          "name" : "Telegram Bot Pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "94d430da-e1e0-4b9f-b1ff-21c0cbb27d55"
+          },
+          "tags" : "Element,Deployment Node"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "14",
+            "environment" : "Production",
+            "id" : "28",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "rabbitMqInst"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Kubernetes Pod",
+          "environment" : "Production",
+          "id" : "27",
+          "instances" : "1",
+          "name" : "RabbitMQ Pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "4636c32f-cac8-413f-8b8c-228a92202c05"
+          },
+          "tags" : "Element,Deployment Node"
+        } ],
+        "description" : "Managed Kubernetes Cluster",
         "environment" : "Production",
-        "id" : "11",
-        "instanceId" : 1,
+        "id" : "22",
+        "instances" : "1",
+        "name" : "OCI Kubernetes Engine (OKE)",
         "properties" : {
-          "structurizr.dsl.identifier" : "9b00eb6e-da02-4889-a4bb-49d0fb56e17a"
+          "structurizr.dsl.identifier" : "a8b3915a-209f-46f2-a083-4b73bb551347"
         },
-        "tags" : "Container Instance"
+        "tags" : "Element,Deployment Node"
       }, {
-        "containerId" : "6",
+        "containerInstances" : [ {
+          "containerId" : "15",
+          "environment" : "Production",
+          "id" : "30",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "dbInst"
+          },
+          "tags" : "Container Instance"
+        } ],
+        "description" : "Autonomous Transaction Processing — Managed DB Service",
         "environment" : "Production",
-        "id" : "12",
-        "instanceId" : 1,
+        "id" : "29",
+        "instances" : "1",
+        "name" : "Oracle ATP",
         "properties" : {
-          "structurizr.dsl.identifier" : "4c1f8836-f7d2-476d-874e-065586a3d288"
+          "structurizr.dsl.identifier" : "82613fd4-022a-4929-9930-0131c3fb4be6"
         },
-        "tags" : "Container Instance"
+        "tags" : "Element,Deployment Node"
       } ],
       "description" : "Oracle Cloud Infrastructure",
       "environment" : "Production",
-      "id" : "8",
+      "id" : "19",
       "instances" : "1",
-      "name" : "OCI",
+      "name" : "OCI Cloud",
       "properties" : {
-        "structurizr.dsl.identifier" : "6d2e73cc-5a1c-4d00-84ea-fd46c236fd31"
+        "structurizr.dsl.identifier" : "c3ef75fb-812d-4476-9cb2-0ceb2a21d82a"
       },
       "tags" : "Element,Deployment Node"
     } ],
     "people" : [ {
-      "description" : "A user of the TodoList application.",
+      "description" : "System administrator",
       "id" : "1",
-      "name" : "User",
+      "name" : "Admin",
       "properties" : {
-        "structurizr.dsl.identifier" : "user"
+        "structurizr.dsl.identifier" : "admin"
       },
       "relationships" : [ {
-        "description" : "Manages todos using",
-        "destinationId" : "3",
-        "id" : "13",
+        "description" : "Manages system users & roles via",
+        "destinationId" : "8",
+        "id" : "34",
         "sourceId" : "1",
-        "tags" : "Relationship"
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
       }, {
-        "description" : "Manages todos using",
-        "destinationId" : "2",
-        "id" : "14",
-        "linkedRelationshipId" : "13",
-        "sourceId" : "1"
-      }, {
-        "description" : "Manages todos via Telegram",
-        "destinationId" : "4",
-        "id" : "15",
-        "sourceId" : "1",
-        "tags" : "Relationship"
-      }, {
-        "description" : "Sends commands/messages via",
+        "description" : "Manages system users & roles via",
         "destinationId" : "7",
-        "id" : "16",
+        "id" : "35",
+        "linkedRelationshipId" : "34",
+        "sourceId" : "1",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Issues administrator commands via Telegram",
+        "destinationId" : "13",
+        "id" : "42",
+        "sourceId" : "1",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Sends commands via",
+        "destinationId" : "5",
+        "id" : "47",
         "sourceId" : "1",
         "tags" : "Relationship"
       } ],
       "tags" : "Element,Person"
+    }, {
+      "description" : "Team manager",
+      "id" : "2",
+      "name" : "Manager",
+      "properties" : {
+        "structurizr.dsl.identifier" : "manager"
+      },
+      "relationships" : [ {
+        "description" : "Views cross-team dashboards via",
+        "destinationId" : "8",
+        "id" : "36",
+        "sourceId" : "2",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Views cross-team dashboards via",
+        "destinationId" : "7",
+        "id" : "37",
+        "linkedRelationshipId" : "36",
+        "sourceId" : "2",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Checks team summaries via Telegram",
+        "destinationId" : "13",
+        "id" : "43",
+        "sourceId" : "2",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Sends commands via",
+        "destinationId" : "5",
+        "id" : "48",
+        "sourceId" : "2",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Team member/developer",
+      "id" : "3",
+      "name" : "Developer",
+      "properties" : {
+        "structurizr.dsl.identifier" : "developer"
+      },
+      "relationships" : [ {
+        "description" : "Manages personal tasks via",
+        "destinationId" : "8",
+        "id" : "38",
+        "sourceId" : "3",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Manages personal tasks via",
+        "destinationId" : "7",
+        "id" : "39",
+        "linkedRelationshipId" : "38",
+        "sourceId" : "3",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Manages tasks via Telegram",
+        "destinationId" : "13",
+        "id" : "44",
+        "sourceId" : "3",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Sends commands via",
+        "destinationId" : "5",
+        "id" : "49",
+        "sourceId" : "3",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Automated reporting script",
+      "id" : "4",
+      "name" : "Auto Summary Job",
+      "properties" : {
+        "structurizr.dsl.identifier" : "autoJob"
+      },
+      "relationships" : [ {
+        "description" : "Triggers AI summaries",
+        "destinationId" : "8",
+        "id" : "40",
+        "sourceId" : "4",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Triggers AI summaries",
+        "destinationId" : "7",
+        "id" : "41",
+        "linkedRelationshipId" : "40",
+        "sourceId" : "4",
+        "technology" : "HTTPS"
+      } ],
+      "tags" : "Element,Person,Robot"
     } ],
     "softwareSystems" : [ {
+      "description" : "External messaging platform.",
+      "documentation" : { },
+      "id" : "5",
+      "name" : "Telegram System",
+      "properties" : {
+        "structurizr.dsl.identifier" : "telegram"
+      },
+      "relationships" : [ {
+        "description" : "Sends Webhook / Long Polling updates to",
+        "destinationId" : "13",
+        "id" : "45",
+        "sourceId" : "5",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Sends Webhook / Long Polling updates to",
+        "destinationId" : "7",
+        "id" : "46",
+        "linkedRelationshipId" : "45",
+        "sourceId" : "5"
+      } ],
+      "tags" : "Element,Software System,External System"
+    }, {
+      "description" : "External AI provider (DeepSeek/Gemini).",
+      "documentation" : { },
+      "id" : "6",
+      "name" : "AI API",
+      "properties" : {
+        "structurizr.dsl.identifier" : "aiApi"
+      },
+      "tags" : "Element,Software System,External System"
+    }, {
       "containers" : [ {
-        "description" : "Provides the web interface for managing todos.",
+        "components" : [ {
+          "description" : "Handles CRUD operations for tasks.",
+          "documentation" : { },
+          "id" : "9",
+          "name" : "Task Management Service",
+          "properties" : {
+            "structurizr.dsl.identifier" : "taskManagement"
+          },
+          "relationships" : [ {
+            "description" : "Reads/writes tasks",
+            "destinationId" : "15",
+            "id" : "58",
+            "sourceId" : "9",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring Bean"
+        }, {
+          "description" : "Centralized authorization and role management.",
+          "documentation" : { },
+          "id" : "10",
+          "name" : "Identity & Access Service",
+          "properties" : {
+            "structurizr.dsl.identifier" : "identityAccess"
+          },
+          "relationships" : [ {
+            "description" : "Reads users/roles",
+            "destinationId" : "15",
+            "id" : "59",
+            "sourceId" : "10",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring Security Module"
+        }, {
+          "description" : "Handles read-heavy queries and metrics aggregation.",
+          "documentation" : { },
+          "id" : "11",
+          "name" : "Dashboard Service",
+          "properties" : {
+            "structurizr.dsl.identifier" : "dashboard"
+          },
+          "relationships" : [ {
+            "description" : "Reads team metrics",
+            "destinationId" : "15",
+            "id" : "60",
+            "sourceId" : "11",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring Bean"
+        }, {
+          "description" : "Integrates with AI APIs and provides automated task insights.",
+          "documentation" : { },
+          "id" : "12",
+          "name" : "AI Summary Service",
+          "properties" : {
+            "structurizr.dsl.identifier" : "aiSummary"
+          },
+          "relationships" : [ {
+            "description" : "Generates insights via API",
+            "destinationId" : "6",
+            "id" : "61",
+            "sourceId" : "12",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring Bean"
+        } ],
+        "description" : "Serves the web UI and provides the core API.",
         "documentation" : { },
-        "id" : "3",
-        "name" : "Web Frontend",
+        "id" : "8",
+        "name" : "Web Application",
         "properties" : {
-          "structurizr.dsl.identifier" : "frontend"
+          "structurizr.dsl.identifier" : "webApplication"
         },
         "relationships" : [ {
-          "description" : "Makes API calls to",
-          "destinationId" : "5",
-          "id" : "19",
-          "sourceId" : "3",
+          "description" : "Reads from and writes to",
+          "destinationId" : "15",
+          "id" : "50",
+          "sourceId" : "8",
+          "tags" : "Relationship",
+          "technology" : "JDBC"
+        }, {
+          "description" : "Consumes operations from",
+          "destinationId" : "14",
+          "id" : "54",
+          "sourceId" : "8",
+          "tags" : "Relationship",
+          "technology" : "AMQP"
+        }, {
+          "description" : "Requests summaries via",
+          "destinationId" : "6",
+          "id" : "55",
+          "sourceId" : "8",
           "tags" : "Relationship",
           "technology" : "JSON/HTTPS"
         } ],
-        "tags" : "Element,Container,Web Browser",
-        "technology" : "React/JavaScript"
+        "tags" : "Element,Container",
+        "technology" : "Spring Boot (Java) + React"
       }, {
         "description" : "Provides a conversational interface to the TodoList system via Telegram.",
         "documentation" : { },
-        "id" : "4",
+        "id" : "13",
         "name" : "Telegram Bot",
         "properties" : {
           "structurizr.dsl.identifier" : "telegramBot"
         },
         "relationships" : [ {
           "description" : "Makes API calls to",
-          "destinationId" : "5",
-          "id" : "20",
-          "sourceId" : "4",
+          "destinationId" : "8",
+          "id" : "51",
+          "sourceId" : "13",
+          "tags" : "Relationship",
+          "technology" : "JSON/HTTP"
+        }, {
+          "description" : "Publishes events to",
+          "destinationId" : "14",
+          "id" : "52",
+          "sourceId" : "13",
+          "tags" : "Relationship",
+          "technology" : "AMQP"
+        }, {
+          "description" : "Analyses commands via",
+          "destinationId" : "6",
+          "id" : "57",
+          "sourceId" : "13",
           "tags" : "Relationship",
           "technology" : "JSON/HTTPS"
         } ],
         "tags" : "Element,Container",
         "technology" : "Java / Python"
       }, {
-        "description" : "Provides to-do list functionality via a JSON/HTTP API.",
+        "description" : "Handles asynchronous event distribution.",
         "documentation" : { },
-        "id" : "5",
-        "name" : "Backend API",
+        "id" : "14",
+        "name" : "Message Broker",
         "properties" : {
-          "structurizr.dsl.identifier" : "apiApplication"
+          "structurizr.dsl.identifier" : "rabbitMq"
         },
         "relationships" : [ {
-          "description" : "Reads from and writes to",
-          "destinationId" : "6",
-          "id" : "21",
-          "sourceId" : "5",
+          "description" : "Sends events to",
+          "destinationId" : "13",
+          "id" : "53",
+          "sourceId" : "14",
           "tags" : "Relationship",
-          "technology" : "JDBC"
+          "technology" : "AMQP"
         } ],
         "tags" : "Element,Container",
-        "technology" : "Spring Boot (Java)"
+        "technology" : "RabbitMQ"
       }, {
-        "description" : "Stores to-do items, users, and state.",
+        "description" : "Stores to-do items, users, and audit states.",
         "documentation" : { },
-        "id" : "6",
+        "id" : "15",
         "name" : "Database",
         "properties" : {
           "structurizr.dsl.identifier" : "database"
         },
         "tags" : "Element,Container,Database",
-        "technology" : "Oracle Database"
+        "technology" : "Oracle Database (ATP)"
       } ],
       "description" : "Allows users to manage their to-do lists.",
       "documentation" : { },
-      "id" : "2",
+      "id" : "7",
       "name" : "TodoList System",
       "properties" : {
         "structurizr.dsl.identifier" : "todoSystem"
       },
-      "tags" : "Element,Software System"
-    }, {
-      "description" : "External messaging platform.",
-      "documentation" : { },
-      "id" : "7",
-      "name" : "Telegram System",
-      "properties" : {
-        "structurizr.dsl.identifier" : "telegram"
-      },
       "relationships" : [ {
-        "description" : "Webhook/Polling updates",
-        "destinationId" : "4",
-        "id" : "17",
+        "description" : "Requests summaries via",
+        "destinationId" : "6",
+        "id" : "56",
+        "linkedRelationshipId" : "55",
         "sourceId" : "7",
-        "tags" : "Relationship"
-      }, {
-        "description" : "Webhook/Polling updates",
-        "destinationId" : "2",
-        "id" : "18",
-        "linkedRelationshipId" : "17",
-        "sourceId" : "7"
+        "technology" : "JSON/HTTPS"
       } ],
-      "tags" : "Element,Software System,External System"
+      "tags" : "Element,Software System"
     } ]
   },
   "name" : "TodoList Architecture",
   "properties" : {
-    "structurizr.inspection.error" : "15",
-    "structurizr.dsl" : "d29ya3NwYWNlICJUb2RvTGlzdCBBcmNoaXRlY3R1cmUiICJBcmNoaXRlY3R1cmUgb2YgdGhlIFRvZG9MaXN0IGFwcGxpY2F0aW9uIHdpdGggVGVsZWdyYW0gQm90IGludGVncmF0aW9uIiB7CgogICAgbW9kZWwgewogICAgICAgIHVzZXIgPSBwZXJzb24gIlVzZXIiICJBIHVzZXIgb2YgdGhlIFRvZG9MaXN0IGFwcGxpY2F0aW9uLiIKICAgICAgICAKICAgICAgICB0b2RvU3lzdGVtID0gc29mdHdhcmVTeXN0ZW0gIlRvZG9MaXN0IFN5c3RlbSIgIkFsbG93cyB1c2VycyB0byBtYW5hZ2UgdGhlaXIgdG8tZG8gbGlzdHMuIiB7CiAgICAgICAgICAgIGZyb250ZW5kID0gY29udGFpbmVyICJXZWIgRnJvbnRlbmQiICJQcm92aWRlcyB0aGUgd2ViIGludGVyZmFjZSBmb3IgbWFuYWdpbmcgdG9kb3MuIiAiUmVhY3QvSmF2YVNjcmlwdCIgIldlYiBCcm93c2VyIgogICAgICAgICAgICB0ZWxlZ3JhbUJvdCA9IGNvbnRhaW5lciAiVGVsZWdyYW0gQm90IiAiUHJvdmlkZXMgYSBjb252ZXJzYXRpb25hbCBpbnRlcmZhY2UgdG8gdGhlIFRvZG9MaXN0IHN5c3RlbSB2aWEgVGVsZWdyYW0uIiAiSmF2YSAvIFB5dGhvbiIKICAgICAgICAgICAgYXBpQXBwbGljYXRpb24gPSBjb250YWluZXIgIkJhY2tlbmQgQVBJIiAiUHJvdmlkZXMgdG8tZG8gbGlzdCBmdW5jdGlvbmFsaXR5IHZpYSBhIEpTT04vSFRUUCBBUEkuIiAiU3ByaW5nIEJvb3QgKEphdmEpIgogICAgICAgICAgICBkYXRhYmFzZSA9IGNvbnRhaW5lciAiRGF0YWJhc2UiICJTdG9yZXMgdG8tZG8gaXRlbXMsIHVzZXJzLCBhbmQgc3RhdGUuIiAiT3JhY2xlIERhdGFiYXNlIiAiRGF0YWJhc2UiCiAgICAgICAgfQogICAgICAgIAogICAgICAgIHRlbGVncmFtID0gc29mdHdhcmVTeXN0ZW0gIlRlbGVncmFtIFN5c3RlbSIgIkV4dGVybmFsIG1lc3NhZ2luZyBwbGF0Zm9ybS4iICJFeHRlcm5hbCBTeXN0ZW0iCgogICAgICAgIGRlcGxveW1lbnRFbnZpcm9ubWVudCAiUHJvZHVjdGlvbiIgewogICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT0NJIiAiT3JhY2xlIENsb3VkIEluZnJhc3RydWN0dXJlIiB7CiAgICAgICAgICAgICAgICBjb250YWluZXJJbnN0YW5jZSBmcm9udGVuZAogICAgICAgICAgICAgICAgY29udGFpbmVySW5zdGFuY2UgdGVsZWdyYW1Cb3QKICAgICAgICAgICAgICAgIGNvbnRhaW5lckluc3RhbmNlIGFwaUFwcGxpY2F0aW9uCiAgICAgICAgICAgICAgICBjb250YWluZXJJbnN0YW5jZSBkYXRhYmFzZQogICAgICAgICAgICB9CiAgICAgICAgfQoKICAgICAgICB1c2VyIC0+IGZyb250ZW5kICJNYW5hZ2VzIHRvZG9zIHVzaW5nIgogICAgICAgIHVzZXIgLT4gdGVsZWdyYW1Cb3QgIk1hbmFnZXMgdG9kb3MgdmlhIFRlbGVncmFtIgogICAgICAgIHVzZXIgLT4gdGVsZWdyYW0gIlNlbmRzIGNvbW1hbmRzL21lc3NhZ2VzIHZpYSIKICAgICAgICB0ZWxlZ3JhbSAtPiB0ZWxlZ3JhbUJvdCAiV2ViaG9vay9Qb2xsaW5nIHVwZGF0ZXMiCiAgICAgICAgCiAgICAgICAgZnJvbnRlbmQgLT4gYXBpQXBwbGljYXRpb24gIk1ha2VzIEFQSSBjYWxscyB0byIgIkpTT04vSFRUUFMiCiAgICAgICAgdGVsZWdyYW1Cb3QgLT4gYXBpQXBwbGljYXRpb24gIk1ha2VzIEFQSSBjYWxscyB0byIgIkpTT04vSFRUUFMiCiAgICAgICAgYXBpQXBwbGljYXRpb24gLT4gZGF0YWJhc2UgIlJlYWRzIGZyb20gYW5kIHdyaXRlcyB0byIgIkpEQkMiCiAgICB9CgogICAgdmlld3MgewogICAgICAgIHN5c3RlbUxhbmRzY2FwZSAiU3lzdGVtTGFuZHNjYXBlIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvTGF5b3V0CiAgICAgICAgfQoKICAgICAgICBzeXN0ZW1Db250ZXh0IHRvZG9TeXN0ZW0gIlN5c3RlbUNvbnRleHQiIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9MYXlvdXQKICAgICAgICB9CgogICAgICAgIGNvbnRhaW5lciB0b2RvU3lzdGVtICJDb250YWluZXJzIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvTGF5b3V0CiAgICAgICAgfQoKICAgICAgICBjb21wb25lbnQgYXBpQXBwbGljYXRpb24gIkNvbXBvbmVudHMiIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9MYXlvdXQKICAgICAgICB9CgogICAgICAgIGRlcGxveW1lbnQgdG9kb1N5c3RlbSAiUHJvZHVjdGlvbiIgIkRldmVsb3BtZW50RGVwbG95bWVudCIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KICAgICAgICAKICAgICAgICBkeW5hbWljIHRvZG9TeXN0ZW0gIkNyZWF0ZVRvZG9Vc2UiICJEeW5hbWljIHZpZXcgc2hvd2luZyBob3cgYSB1c2VyIGNyZWF0ZXMgYSBUb2RvIiB7CiAgICAgICAgICAgIHVzZXIgLT4gZnJvbnRlbmQgIjEuIEVudGVycyBhIG5ldyB0by1kbyBpdGVtIgogICAgICAgICAgICBmcm9udGVuZCAtPiBhcGlBcHBsaWNhdGlvbiAiMi4gUG9zdHMgdGhlIGl0ZW0gdG8gdGhlIEFQSSIKICAgICAgICAgICAgYXBpQXBwbGljYXRpb24gLT4gZGF0YWJhc2UgIjMuIFNhdmVzIHRoZSBpdGVtIHRvIHRoZSBkYXRhYmFzZSIKICAgICAgICAgICAgZGF0YWJhc2UgLT4gYXBpQXBwbGljYXRpb24gIjQuIFJldHVybnMgc3RhdHVzIgogICAgICAgICAgICBhcGlBcHBsaWNhdGlvbiAtPiBmcm9udGVuZCAiNS4gUmV0dXJucyBzdWNjZXNzIgogICAgICAgICAgICBhdXRvTGF5b3V0CiAgICAgICAgfQoKICAgICAgICBzdHlsZXMgewogICAgICAgICAgICBlbGVtZW50ICJTb2Z0d2FyZSBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzExNjhiZAogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIlBlcnNvbiIgewogICAgICAgICAgICAgICAgc2hhcGUgUGVyc29uCiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMwODQyN2IKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJDb250YWluZXIiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzQzOGRkNQogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBDeWxpbmRlcgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkV4dGVybmFsIFN5c3RlbSIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjOTk5OTk5CiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0=",
+    "structurizr.inspection.error" : "28",
+    "structurizr.dsl" : "d29ya3NwYWNlICJUb2RvTGlzdCBBcmNoaXRlY3R1cmUiICJBcmNoaXRlY3R1cmUgb2YgdGhlIFRvZG9MaXN0IGFwcGxpY2F0aW9uIHdpdGggVGVsZWdyYW0gQm90IGludGVncmF0aW9uIiB7CgogICAgbW9kZWwgewogICAgICAgIGFkbWluID0gcGVyc29uICJBZG1pbiIgIlN5c3RlbSBhZG1pbmlzdHJhdG9yIgogICAgICAgIG1hbmFnZXIgPSBwZXJzb24gIk1hbmFnZXIiICJUZWFtIG1hbmFnZXIiCiAgICAgICAgZGV2ZWxvcGVyID0gcGVyc29uICJEZXZlbG9wZXIiICJUZWFtIG1lbWJlci9kZXZlbG9wZXIiCiAgICAgICAgYXV0b0pvYiA9IHBlcnNvbiAiQXV0byBTdW1tYXJ5IEpvYiIgIkF1dG9tYXRlZCByZXBvcnRpbmcgc2NyaXB0IiAiUm9ib3QiCiAgICAgICAgCiAgICAgICAgdGVsZWdyYW0gPSBzb2Z0d2FyZVN5c3RlbSAiVGVsZWdyYW0gU3lzdGVtIiAiRXh0ZXJuYWwgbWVzc2FnaW5nIHBsYXRmb3JtLiIgIkV4dGVybmFsIFN5c3RlbSIKICAgICAgICBhaUFwaSA9IHNvZnR3YXJlU3lzdGVtICJBSSBBUEkiICJFeHRlcm5hbCBBSSBwcm92aWRlciAoRGVlcFNlZWsvR2VtaW5pKS4iICJFeHRlcm5hbCBTeXN0ZW0iCgogICAgICAgIHRvZG9TeXN0ZW0gPSBzb2Z0d2FyZVN5c3RlbSAiVG9kb0xpc3QgU3lzdGVtIiAiQWxsb3dzIHVzZXJzIHRvIG1hbmFnZSB0aGVpciB0by1kbyBsaXN0cy4iIHsKICAgICAgICAgICAgCiAgICAgICAgICAgIHdlYkFwcGxpY2F0aW9uID0gY29udGFpbmVyICJXZWIgQXBwbGljYXRpb24iICJTZXJ2ZXMgdGhlIHdlYiBVSSBhbmQgcHJvdmlkZXMgdGhlIGNvcmUgQVBJLiIgIlNwcmluZyBCb290IChKYXZhKSArIFJlYWN0IiB7CiAgICAgICAgICAgICAgICB0YXNrTWFuYWdlbWVudCA9IGNvbXBvbmVudCAiVGFzayBNYW5hZ2VtZW50IFNlcnZpY2UiICJIYW5kbGVzIENSVUQgb3BlcmF0aW9ucyBmb3IgdGFza3MuIiAiU3ByaW5nIEJlYW4iCiAgICAgICAgICAgICAgICBpZGVudGl0eUFjY2VzcyA9IGNvbXBvbmVudCAiSWRlbnRpdHkgJiBBY2Nlc3MgU2VydmljZSIgIkNlbnRyYWxpemVkIGF1dGhvcml6YXRpb24gYW5kIHJvbGUgbWFuYWdlbWVudC4iICJTcHJpbmcgU2VjdXJpdHkgTW9kdWxlIgogICAgICAgICAgICAgICAgZGFzaGJvYXJkID0gY29tcG9uZW50ICJEYXNoYm9hcmQgU2VydmljZSIgIkhhbmRsZXMgcmVhZC1oZWF2eSBxdWVyaWVzIGFuZCBtZXRyaWNzIGFnZ3JlZ2F0aW9uLiIgIlNwcmluZyBCZWFuIgogICAgICAgICAgICAgICAgYWlTdW1tYXJ5ID0gY29tcG9uZW50ICJBSSBTdW1tYXJ5IFNlcnZpY2UiICJJbnRlZ3JhdGVzIHdpdGggQUkgQVBJcyBhbmQgcHJvdmlkZXMgYXV0b21hdGVkIHRhc2sgaW5zaWdodHMuIiAiU3ByaW5nIEJlYW4iCiAgICAgICAgICAgIH0KICAgICAgICAgICAgCiAgICAgICAgICAgIHRlbGVncmFtQm90ID0gY29udGFpbmVyICJUZWxlZ3JhbSBCb3QiICJQcm92aWRlcyBhIGNvbnZlcnNhdGlvbmFsIGludGVyZmFjZSB0byB0aGUgVG9kb0xpc3Qgc3lzdGVtIHZpYSBUZWxlZ3JhbS4iICJKYXZhIC8gUHl0aG9uIgogICAgICAgICAgICByYWJiaXRNcSA9IGNvbnRhaW5lciAiTWVzc2FnZSBCcm9rZXIiICJIYW5kbGVzIGFzeW5jaHJvbm91cyBldmVudCBkaXN0cmlidXRpb24uIiAiUmFiYml0TVEiCiAgICAgICAgICAgIGRhdGFiYXNlID0gY29udGFpbmVyICJEYXRhYmFzZSIgIlN0b3JlcyB0by1kbyBpdGVtcywgdXNlcnMsIGFuZCBhdWRpdCBzdGF0ZXMuIiAiT3JhY2xlIERhdGFiYXNlIChBVFApIiAiRGF0YWJhc2UiCiAgICAgICAgfQogICAgICAgIAogICAgICAgIGRlcGxveW1lbnRFbnZpcm9ubWVudCAiUHJvZHVjdGlvbiIgewogICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiSW50ZXJuZXQiICJQdWJsaWMgSW50ZXJuZXQiIHsKICAgICAgICAgICAgICAgIHVzZXJOb2RlID0gaW5mcmFzdHJ1Y3R1cmVOb2RlICJVc2VycyIgIkV4dGVybmFsIHVzZXJzIGFjY2Vzc2luZyB0aGUgc3lzdGVtIHZpYSBicm93c2VyIgogICAgICAgICAgICAgICAgdGVsZWdyYW1XZWJob29rTm9kZSA9IGluZnJhc3RydWN0dXJlTm9kZSAiVGVsZWdyYW0gV2ViaG9vayIgIlRlbGVncmFtIHBsYXRmb3JtIHNlbmRpbmcgdXBkYXRlcyB0byB0aGUgYm90IgogICAgICAgICAgICB9CgogICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT0NJIENsb3VkIiAiT3JhY2xlIENsb3VkIEluZnJhc3RydWN0dXJlIiB7CiAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT0NJIENvcmUgU2VydmljZXMiICJNYW5hZ2VkIE9DSSBTZXJ2aWNlcyIgewogICAgICAgICAgICAgICAgICAgIGxvYWRCYWxhbmNlck5vZGUgPSBpbmZyYXN0cnVjdHVyZU5vZGUgIk9DSSBMb2FkIEJhbGFuY2VyIiAiUmVjZWl2ZXMgcHVibGljIEhUVFBTIHRyYWZmaWMgYW5kIHJvdXRlcyBpdCB0byB0aGUgV2ViIEFwcGxpY2F0aW9uIHBvZCIKICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT0NJIEt1YmVybmV0ZXMgRW5naW5lIChPS0UpIiAiTWFuYWdlZCBLdWJlcm5ldGVzIENsdXN0ZXIiIHsKICAgICAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiV2ViIEFwcGxpY2F0aW9uIFBvZCIgIkt1YmVybmV0ZXMgUG9kIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHdlYkFwcEluc3QgPSBjb250YWluZXJJbnN0YW5jZSB3ZWJBcHBsaWNhdGlvbgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiVGVsZWdyYW0gQm90IFBvZCIgIkt1YmVybmV0ZXMgUG9kIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHRlbGVncmFtQm90SW5zdCA9IGNvbnRhaW5lckluc3RhbmNlIHRlbGVncmFtQm90CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIGRlcGxveW1lbnROb2RlICJSYWJiaXRNUSBQb2QiICJLdWJlcm5ldGVzIFBvZCIgewogICAgICAgICAgICAgICAgICAgICAgICByYWJiaXRNcUluc3QgPSBjb250YWluZXJJbnN0YW5jZSByYWJiaXRNcQogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT3JhY2xlIEFUUCIgIkF1dG9ub21vdXMgVHJhbnNhY3Rpb24gUHJvY2Vzc2luZyDigJQgTWFuYWdlZCBEQiBTZXJ2aWNlIiB7CiAgICAgICAgICAgICAgICAgICAgZGJJbnN0ID0gY29udGFpbmVySW5zdGFuY2UgZGF0YWJhc2UKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8gT25seSBpbmZyYXN0cnVjdHVyZSBub2RlIHJlbGF0aW9uc2hpcHMgYXJlIGFsbG93ZWQgaGVyZQogICAgICAgICAgICB1c2VyTm9kZSAtPiBsb2FkQmFsYW5jZXJOb2RlICJTZW5kcyBIVFRQUyByZXF1ZXN0cyIgIkhUVFBTIgogICAgICAgICAgICBsb2FkQmFsYW5jZXJOb2RlIC0+IHdlYkFwcEluc3QgIlJvdXRlcyB0cmFmZmljIHRvIiAiSFRUUCIKICAgICAgICAgICAgdGVsZWdyYW1XZWJob29rTm9kZSAtPiB0ZWxlZ3JhbUJvdEluc3QgIlNlbmRzIHdlYmhvb2sgdXBkYXRlcyB0byIgIkhUVFBTIgogICAgICAgIH0KCiAgICAgICAgLy8gLS0tIFJlbGF0aW9uc2hpcHMgLS0tCiAgICAgICAgCiAgICAgICAgYWRtaW4gLT4gd2ViQXBwbGljYXRpb24gIk1hbmFnZXMgc3lzdGVtIHVzZXJzICYgcm9sZXMgdmlhIiAiSFRUUFMiCiAgICAgICAgbWFuYWdlciAtPiB3ZWJBcHBsaWNhdGlvbiAiVmlld3MgY3Jvc3MtdGVhbSBkYXNoYm9hcmRzIHZpYSIgIkhUVFBTIgogICAgICAgIGRldmVsb3BlciAtPiB3ZWJBcHBsaWNhdGlvbiAiTWFuYWdlcyBwZXJzb25hbCB0YXNrcyB2aWEiICJIVFRQUyIKICAgICAgICBhdXRvSm9iIC0+IHdlYkFwcGxpY2F0aW9uICJUcmlnZ2VycyBBSSBzdW1tYXJpZXMiICJIVFRQUyIKICAgICAgICAKICAgICAgICBhZG1pbiAtPiB0ZWxlZ3JhbUJvdCAiSXNzdWVzIGFkbWluaXN0cmF0b3IgY29tbWFuZHMgdmlhIFRlbGVncmFtIgogICAgICAgIG1hbmFnZXIgLT4gdGVsZWdyYW1Cb3QgIkNoZWNrcyB0ZWFtIHN1bW1hcmllcyB2aWEgVGVsZWdyYW0iCiAgICAgICAgZGV2ZWxvcGVyIC0+IHRlbGVncmFtQm90ICJNYW5hZ2VzIHRhc2tzIHZpYSBUZWxlZ3JhbSIKICAgICAgICAKICAgICAgICB0ZWxlZ3JhbSAtPiB0ZWxlZ3JhbUJvdCAiU2VuZHMgV2ViaG9vayAvIExvbmcgUG9sbGluZyB1cGRhdGVzIHRvIgogICAgICAgIAogICAgICAgIGFkbWluIC0+IHRlbGVncmFtICJTZW5kcyBjb21tYW5kcyB2aWEiCiAgICAgICAgbWFuYWdlciAtPiB0ZWxlZ3JhbSAiU2VuZHMgY29tbWFuZHMgdmlhIgogICAgICAgIGRldmVsb3BlciAtPiB0ZWxlZ3JhbSAiU2VuZHMgY29tbWFuZHMgdmlhIgogICAgICAgIAogICAgICAgIHdlYkFwcGxpY2F0aW9uIC0+IGRhdGFiYXNlICJSZWFkcyBmcm9tIGFuZCB3cml0ZXMgdG8iICJKREJDIgogICAgICAgIHRlbGVncmFtQm90IC0+IHdlYkFwcGxpY2F0aW9uICJNYWtlcyBBUEkgY2FsbHMgdG8iICJKU09OL0hUVFAiCiAgICAgICAgCiAgICAgICAgdGVsZWdyYW1Cb3QgLT4gcmFiYml0TXEgIlB1Ymxpc2hlcyBldmVudHMgdG8iICJBTVFQIgogICAgICAgIHJhYmJpdE1xIC0+IHRlbGVncmFtQm90ICJTZW5kcyBldmVudHMgdG8iICJBTVFQIgogICAgICAgIHdlYkFwcGxpY2F0aW9uIC0+IHJhYmJpdE1xICJDb25zdW1lcyBvcGVyYXRpb25zIGZyb20iICJBTVFQIgogICAgICAgIAogICAgICAgIHdlYkFwcGxpY2F0aW9uIC0+IGFpQXBpICJSZXF1ZXN0cyBzdW1tYXJpZXMgdmlhIiAiSlNPTi9IVFRQUyIKICAgICAgICB0ZWxlZ3JhbUJvdCAtPiBhaUFwaSAiQW5hbHlzZXMgY29tbWFuZHMgdmlhIiAiSlNPTi9IVFRQUyIKICAgICAgICAKICAgICAgICB0YXNrTWFuYWdlbWVudCAtPiBkYXRhYmFzZSAiUmVhZHMvd3JpdGVzIHRhc2tzIgogICAgICAgIGlkZW50aXR5QWNjZXNzIC0+IGRhdGFiYXNlICJSZWFkcyB1c2Vycy9yb2xlcyIKICAgICAgICBkYXNoYm9hcmQgLT4gZGF0YWJhc2UgIlJlYWRzIHRlYW0gbWV0cmljcyIKICAgICAgICBhaVN1bW1hcnkgLT4gYWlBcGkgIkdlbmVyYXRlcyBpbnNpZ2h0cyB2aWEgQVBJIgogICAgfQoKICAgIHZpZXdzIHsKICAgICAgICBzeXN0ZW1MYW5kc2NhcGUgIlN5c3RlbUxhbmRzY2FwZSIgewogICAgICAgICAgICBpbmNsdWRlIGFkbWluIG1hbmFnZXIgZGV2ZWxvcGVyIGF1dG9Kb2IKICAgICAgICAgICAgaW5jbHVkZSB0ZWxlZ3JhbSBhaUFwaSB0b2RvU3lzdGVtCiAgICAgICAgICAgIGF1dG9MYXlvdXQKICAgICAgICB9CgogICAgICAgIHN5c3RlbUNvbnRleHQgdG9kb1N5c3RlbSAiU3lzdGVtQ29udGV4dCIgewogICAgICAgICAgICBpbmNsdWRlIGFkbWluIG1hbmFnZXIgZGV2ZWxvcGVyIGF1dG9Kb2IKICAgICAgICAgICAgaW5jbHVkZSB0b2RvU3lzdGVtCiAgICAgICAgICAgIGluY2x1ZGUgdGVsZWdyYW0gYWlBcGkKICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KCiAgICAgICAgY29udGFpbmVyIHRvZG9TeXN0ZW0gIkNvbnRhaW5lcnMiIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9MYXlvdXQKICAgICAgICB9CgogICAgICAgIGNvbXBvbmVudCB3ZWJBcHBsaWNhdGlvbiAiQ29tcG9uZW50cyIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KCiAgICAgICAgZGVwbG95bWVudCB0b2RvU3lzdGVtICJQcm9kdWN0aW9uIiAiRGVwbG95bWVudERpYWdyYW0iIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9MYXlvdXQgdGIKICAgICAgICB9CiAgICAgICAgCiAgICAgICAgZHluYW1pYyB0b2RvU3lzdGVtICJDcmVhdGVUYXNrRmxvdyIgIkR5bmFtaWMgdmlldyBzaG93aW5nIGhvdyBhIERldmVsb3BlciBjcmVhdGVzIGEgVGFzayB2aWEgV2ViIFVJIiB7CiAgICAgICAgICAgIGRldmVsb3BlciAtPiB3ZWJBcHBsaWNhdGlvbiAiMS4gU3VibWl0cyBuZXcgdGFzayBkZXRhaWxzIHZpYSBicm93c2VyIgogICAgICAgICAgICB3ZWJBcHBsaWNhdGlvbiAtPiBkYXRhYmFzZSAiMi4gU2F2ZXMgdGFzayB0byBkYXRhYmFzZSIKICAgICAgICAgICAgZGF0YWJhc2UgLT4gd2ViQXBwbGljYXRpb24gIjMuIFJldHVybnMgdHJhbnNhY3Rpb24gc3RhdHVzIgogICAgICAgICAgICB3ZWJBcHBsaWNhdGlvbiAtPiBkZXZlbG9wZXIgIjQuIERpc3BsYXlzIHN1Y2Nlc3MgY29uZmlybWF0aW9uIgogICAgICAgICAgICBhdXRvTGF5b3V0CiAgICAgICAgfQoKICAgICAgICBkeW5hbWljIHRvZG9TeXN0ZW0gIkF1dG9TdW1tYXJ5RmxvdyIgIkR5bmFtaWMgdmlldyBzaG93aW5nIGhvdyB0aGUgQXV0byBKb2IgcmVxdWVzdHMgYSBzdW1tYXJ5IiB7CiAgICAgICAgICAgIGF1dG9Kb2IgLT4gd2ViQXBwbGljYXRpb24gIjEuIFRyaWdnZXJzIHN1bW1hcnkgZ2VuZXJhdGlvbiBlbmRwb2ludCIKICAgICAgICAgICAgd2ViQXBwbGljYXRpb24gLT4gYWlBcGkgIjIuIEZvcm1hdHMgcHJvbXB0IGFuZCBzZW5kcyB0byBBSSIKICAgICAgICAgICAgYWlBcGkgLT4gd2ViQXBwbGljYXRpb24gIjMuIFJldHVybnMgZ2VuZXJhdGVkIHN1bW1hcnkiCiAgICAgICAgICAgIHdlYkFwcGxpY2F0aW9uIC0+IGRhdGFiYXNlICI0LiBTdG9yZXMgZ2VuZXJhdGVkIHN1bW1hcnkiCiAgICAgICAgICAgIHdlYkFwcGxpY2F0aW9uIC0+IHJhYmJpdE1xICI1LiBFbWl0cyBzdW1tYXJ5IGF2YWlsYWJsZSBldmVudCIKICAgICAgICAgICAgcmFiYml0TXEgLT4gdGVsZWdyYW1Cb3QgIjYuIE5vdGlmaWVzIGJvdCB0byBtZXNzYWdlIG1hbmFnZXJzIgogICAgICAgICAgICBhdXRvTGF5b3V0CiAgICAgICAgfQoKICAgICAgICBzdHlsZXMgewogICAgICAgICAgICBlbGVtZW50ICJTb2Z0d2FyZSBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzExNjhiZAogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIlBlcnNvbiIgewogICAgICAgICAgICAgICAgc2hhcGUgUGVyc29uCiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMwODQyN2IKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJSb2JvdCIgewogICAgICAgICAgICAgICAgc2hhcGUgUm9ib3QKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzIwODc1ZQogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkNvbnRhaW5lciIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjNDM4ZGQ1CiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiQ29tcG9uZW50IiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM4NWJiZjAKICAgICAgICAgICAgICAgIGNvbG9yICMwMDAwMDAKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJEYXRhYmFzZSIgewogICAgICAgICAgICAgICAgc2hhcGUgQ3lsaW5kZXIKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJFeHRlcm5hbCBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzk5OTk5OQogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkluZnJhc3RydWN0dXJlIE5vZGUiIHsKICAgICAgICAgICAgICAgIHNoYXBlIFJvdW5kZWRCb3gKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgI2U2ZTZlNgogICAgICAgICAgICAgICAgY29sb3IgIzAwMDAwMAogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQp9",
     "structurizr.inspection.info" : "0",
     "structurizr.inspection.ignore" : "0",
     "structurizr.inspection.warning" : "0"
@@ -201,15 +539,53 @@
         "rankSeparation" : 100,
         "vertices" : true
       },
-      "containerId" : "5",
+      "containerId" : "8",
+      "elements" : [ {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "10",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "12",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "15",
+        "x" : 0,
+        "y" : 0
+      } ],
       "externalContainerBoundariesVisible" : false,
       "key" : "Components",
-      "name" : "Component View: TodoList System - Backend API",
-      "order" : 4
+      "name" : "Component View: TodoList System - Web Application",
+      "order" : 4,
+      "relationships" : [ {
+        "id" : "58"
+      }, {
+        "id" : "59"
+      }, {
+        "id" : "60"
+      }, {
+        "id" : "61"
+      } ]
     } ],
     "configuration" : {
       "styles" : {
         "elements" : [ {
+          "background" : "#85bbf0",
+          "color" : "#000000",
+          "tag" : "Component"
+        }, {
           "background" : "#438dd5",
           "color" : "#ffffff",
           "tag" : "Container"
@@ -221,10 +597,20 @@
           "color" : "#ffffff",
           "tag" : "External System"
         }, {
+          "background" : "#e6e6e6",
+          "color" : "#000000",
+          "shape" : "RoundedBox",
+          "tag" : "Infrastructure Node"
+        }, {
           "background" : "#08427b",
           "color" : "#ffffff",
           "shape" : "Person",
           "tag" : "Person"
+        }, {
+          "background" : "#20875e",
+          "color" : "#ffffff",
+          "shape" : "Robot",
+          "tag" : "Robot"
         }, {
           "background" : "#1168bd",
           "color" : "#ffffff",
@@ -246,6 +632,303 @@
         "x" : 0,
         "y" : 0
       }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "15",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "Containers",
+      "name" : "Container View: TodoList System",
+      "order" : 3,
+      "relationships" : [ {
+        "id" : "34"
+      }, {
+        "id" : "36"
+      }, {
+        "id" : "38"
+      }, {
+        "id" : "40"
+      }, {
+        "id" : "42"
+      }, {
+        "id" : "43"
+      }, {
+        "id" : "44"
+      }, {
+        "id" : "45"
+      }, {
+        "id" : "47"
+      }, {
+        "id" : "48"
+      }, {
+        "id" : "49"
+      }, {
+        "id" : "50"
+      }, {
+        "id" : "51"
+      }, {
+        "id" : "52"
+      }, {
+        "id" : "53"
+      }, {
+        "id" : "54"
+      }, {
+        "id" : "55"
+      }, {
+        "id" : "57"
+      } ],
+      "softwareSystemId" : "7"
+    } ],
+    "deploymentViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "elements" : [ {
+        "id" : "16",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "17",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "18",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "19",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "20",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "21",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "22",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "23",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "24",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "25",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "26",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "27",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "28",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "29",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "30",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "environment" : "Production",
+      "key" : "DeploymentDiagram",
+      "name" : "Deployment View: TodoList System - Production",
+      "order" : 5,
+      "relationships" : [ {
+        "id" : "31"
+      }, {
+        "id" : "32"
+      }, {
+        "id" : "33"
+      } ],
+      "softwareSystemId" : "7"
+    } ],
+    "dynamicViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Dynamic view showing how a Developer creates a Task via Web UI",
+      "elementId" : "7",
+      "elements" : [ {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "15",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalBoundariesVisible" : false,
+      "key" : "CreateTaskFlow",
+      "name" : "Dynamic View: TodoList System",
+      "order" : 6,
+      "relationships" : [ {
+        "description" : "1. Submits new task details via browser",
+        "id" : "38",
+        "order" : "1",
+        "response" : false
+      }, {
+        "description" : "2. Saves task to database",
+        "id" : "50",
+        "order" : "2",
+        "response" : false
+      }, {
+        "description" : "3. Returns transaction status",
+        "id" : "50",
+        "order" : "3",
+        "response" : true
+      }, {
+        "description" : "4. Displays success confirmation",
+        "id" : "38",
+        "order" : "4",
+        "response" : true
+      } ]
+    }, {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Dynamic view showing how the Auto Job requests a summary",
+      "elementId" : "7",
+      "elements" : [ {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "15",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalBoundariesVisible" : false,
+      "key" : "AutoSummaryFlow",
+      "name" : "Dynamic View: TodoList System",
+      "order" : 7,
+      "relationships" : [ {
+        "description" : "1. Triggers summary generation endpoint",
+        "id" : "40",
+        "order" : "1",
+        "response" : false
+      }, {
+        "description" : "2. Formats prompt and sends to AI",
+        "id" : "55",
+        "order" : "2",
+        "response" : false
+      }, {
+        "description" : "3. Returns generated summary",
+        "id" : "55",
+        "order" : "3",
+        "response" : true
+      }, {
+        "description" : "4. Stores generated summary",
+        "id" : "50",
+        "order" : "4",
+        "response" : false
+      }, {
+        "description" : "5. Emits summary available event",
+        "id" : "54",
+        "order" : "5",
+        "response" : false
+      }, {
+        "description" : "6. Notifies bot to message managers",
+        "id" : "53",
+        "order" : "6",
+        "response" : false
+      } ]
+    } ],
+    "systemContextViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
         "id" : "3",
         "x" : 0,
         "y" : 0
@@ -266,153 +949,30 @@
         "x" : 0,
         "y" : 0
       } ],
-      "externalSoftwareSystemBoundariesVisible" : false,
-      "key" : "Containers",
-      "name" : "Container View: TodoList System",
-      "order" : 3,
-      "relationships" : [ {
-        "id" : "13"
-      }, {
-        "id" : "15"
-      }, {
-        "id" : "16"
-      }, {
-        "id" : "17"
-      }, {
-        "id" : "19"
-      }, {
-        "id" : "20"
-      }, {
-        "id" : "21"
-      } ],
-      "softwareSystemId" : "2"
-    } ],
-    "deploymentViews" : [ {
-      "automaticLayout" : {
-        "edgeSeparation" : 50,
-        "nodeSeparation" : 50,
-        "rankDirection" : "LeftRight",
-        "rankSeparation" : 100,
-        "vertices" : true
-      },
-      "elements" : [ {
-        "id" : "8",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "9",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "10",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "11",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "12",
-        "x" : 0,
-        "y" : 0
-      } ],
-      "environment" : "Production",
-      "key" : "DevelopmentDeployment",
-      "name" : "Deployment View: TodoList System - Production",
-      "order" : 5,
-      "softwareSystemId" : "2"
-    } ],
-    "dynamicViews" : [ {
-      "automaticLayout" : {
-        "edgeSeparation" : 50,
-        "nodeSeparation" : 50,
-        "rankDirection" : "LeftRight",
-        "rankSeparation" : 100,
-        "vertices" : true
-      },
-      "description" : "Dynamic view showing how a user creates a Todo",
-      "elementId" : "2",
-      "elements" : [ {
-        "id" : "1",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "3",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "5",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "6",
-        "x" : 0,
-        "y" : 0
-      } ],
-      "externalBoundariesVisible" : false,
-      "key" : "CreateTodoUse",
-      "name" : "Dynamic View: TodoList System",
-      "order" : 6,
-      "relationships" : [ {
-        "description" : "1. Enters a new to-do item",
-        "id" : "13",
-        "order" : "1",
-        "response" : false
-      }, {
-        "description" : "2. Posts the item to the API",
-        "id" : "19",
-        "order" : "2",
-        "response" : false
-      }, {
-        "description" : "3. Saves the item to the database",
-        "id" : "21",
-        "order" : "3",
-        "response" : false
-      }, {
-        "description" : "4. Returns status",
-        "id" : "21",
-        "order" : "4",
-        "response" : true
-      }, {
-        "description" : "5. Returns success",
-        "id" : "19",
-        "order" : "5",
-        "response" : true
-      } ]
-    } ],
-    "systemContextViews" : [ {
-      "automaticLayout" : {
-        "edgeSeparation" : 50,
-        "nodeSeparation" : 50,
-        "rankDirection" : "LeftRight",
-        "rankSeparation" : 100,
-        "vertices" : true
-      },
-      "elements" : [ {
-        "id" : "1",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "2",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "7",
-        "x" : 0,
-        "y" : 0
-      } ],
       "enterpriseBoundaryVisible" : true,
       "key" : "SystemContext",
       "name" : "System Context View: TodoList System",
       "order" : 2,
       "relationships" : [ {
-        "id" : "14"
+        "id" : "35"
       }, {
-        "id" : "16"
+        "id" : "37"
       }, {
-        "id" : "18"
+        "id" : "39"
+      }, {
+        "id" : "41"
+      }, {
+        "id" : "46"
+      }, {
+        "id" : "47"
+      }, {
+        "id" : "48"
+      }, {
+        "id" : "49"
+      }, {
+        "id" : "56"
       } ],
-      "softwareSystemId" : "2"
+      "softwareSystemId" : "7"
     } ],
     "systemLandscapeViews" : [ {
       "automaticLayout" : {
@@ -431,6 +991,22 @@
         "x" : 0,
         "y" : 0
       }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
         "id" : "7",
         "x" : 0,
         "y" : 0
@@ -440,11 +1016,23 @@
       "name" : "System Landscape View",
       "order" : 1,
       "relationships" : [ {
-        "id" : "14"
+        "id" : "35"
       }, {
-        "id" : "16"
+        "id" : "37"
       }, {
-        "id" : "18"
+        "id" : "39"
+      }, {
+        "id" : "41"
+      }, {
+        "id" : "46"
+      }, {
+        "id" : "47"
+      }, {
+        "id" : "48"
+      }, {
+        "id" : "49"
+      }, {
+        "id" : "56"
       } ]
     } ]
   }
