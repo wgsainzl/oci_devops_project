@@ -5,9 +5,12 @@ workspace "TodoList Architecture" "Architecture of the TodoList application with
         manager = person "Manager" "Team manager"
         developer = person "Developer" "Team member/developer"
         autoJob = person "Auto Summary Job" "Automated reporting script" "Robot"
+        devops = person "DevOps Engineer" "Manages infrastructure and CI/CD pipelines"
         
         telegram = softwareSystem "Telegram System" "External messaging platform." "External System"
         aiApi = softwareSystem "AI API" "External AI provider (DeepSeek/Gemini)." "External System"
+        vcs = softwareSystem "Version Control System" "Stores source code." "External System"
+        ciCd = softwareSystem "CI/CD Pipeline" "Automates builds, tests, and deployments (e.g., OCI DevOps)." "External System"
 
         todoSystem = softwareSystem "TodoList System" "Allows users to manage their to-do lists." {
             
@@ -74,6 +77,12 @@ workspace "TodoList Architecture" "Architecture of the TodoList application with
         manager -> telegram "Sends commands via"
         developer -> telegram "Sends commands via"
         
+        developer -> vcs "Commits code to"
+        devops -> vcs "Commits infrastructure code to"
+        devops -> ciCd "Configures and monitors"
+        vcs -> ciCd "Triggers builds on code changes"
+        ciCd -> todoSystem "Builds, containerizes, and deploys"
+        
         webApplication -> database "Reads from and writes to" "JDBC"
         telegramBot -> webApplication "Makes API calls to" "JSON/HTTP"
         
@@ -92,8 +101,8 @@ workspace "TodoList Architecture" "Architecture of the TodoList application with
 
     views {
         systemLandscape "SystemLandscape" {
-            include admin manager developer autoJob
-            include telegram aiApi todoSystem
+            include admin manager developer devops autoJob
+            include telegram aiApi vcs ciCd todoSystem
             autoLayout
         }
 

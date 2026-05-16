@@ -3,25 +3,25 @@
   "description" : "Architecture of the TodoList application with Telegram Bot integration",
   "documentation" : { },
   "id" : 1,
-  "lastModifiedDate" : "2026-05-14T23:22:16Z",
+  "lastModifiedDate" : "2026-05-16T00:06:03Z",
   "model" : {
     "deploymentNodes" : [ {
       "description" : "Public Internet",
       "environment" : "Production",
-      "id" : "16",
+      "id" : "19",
       "infrastructureNodes" : [ {
         "description" : "External users accessing the system via browser",
         "environment" : "Production",
-        "id" : "17",
+        "id" : "20",
         "name" : "Users",
         "properties" : {
           "structurizr.dsl.identifier" : "userNode"
         },
         "relationships" : [ {
           "description" : "Sends HTTPS requests",
-          "destinationId" : "21",
-          "id" : "31",
-          "sourceId" : "17",
+          "destinationId" : "24",
+          "id" : "34",
+          "sourceId" : "20",
           "tags" : "Relationship",
           "technology" : "HTTPS"
         } ],
@@ -29,16 +29,16 @@
       }, {
         "description" : "Telegram platform sending updates to the bot",
         "environment" : "Production",
-        "id" : "18",
+        "id" : "21",
         "name" : "Telegram Webhook",
         "properties" : {
           "structurizr.dsl.identifier" : "telegramWebhookNode"
         },
         "relationships" : [ {
           "description" : "Sends webhook updates to",
-          "destinationId" : "26",
-          "id" : "33",
-          "sourceId" : "18",
+          "destinationId" : "29",
+          "id" : "36",
+          "sourceId" : "21",
           "tags" : "Relationship",
           "technology" : "HTTPS"
         } ],
@@ -47,27 +47,27 @@
       "instances" : "1",
       "name" : "Internet",
       "properties" : {
-        "structurizr.dsl.identifier" : "30c14ba2-267e-4136-85e0-ad98fb090eaf"
+        "structurizr.dsl.identifier" : "2c15595d-6c28-4074-a6ad-3ff866599d9e"
       },
       "tags" : "Element,Deployment Node"
     }, {
       "children" : [ {
         "description" : "Managed OCI Services",
         "environment" : "Production",
-        "id" : "20",
+        "id" : "23",
         "infrastructureNodes" : [ {
           "description" : "Receives public HTTPS traffic and routes it to the Web Application pod",
           "environment" : "Production",
-          "id" : "21",
+          "id" : "24",
           "name" : "OCI Load Balancer",
           "properties" : {
             "structurizr.dsl.identifier" : "loadBalancerNode"
           },
           "relationships" : [ {
             "description" : "Routes traffic to",
-            "destinationId" : "24",
-            "id" : "32",
-            "sourceId" : "21",
+            "destinationId" : "27",
+            "id" : "35",
+            "sourceId" : "24",
             "tags" : "Relationship",
             "technology" : "HTTP"
           } ],
@@ -76,15 +76,15 @@
         "instances" : "1",
         "name" : "OCI Core Services",
         "properties" : {
-          "structurizr.dsl.identifier" : "37b1ebfe-1d7f-4316-9ca3-00a7ee941cdd"
+          "structurizr.dsl.identifier" : "d050a8e7-6a21-40c3-8554-0d2517cbe40c"
         },
         "tags" : "Element,Deployment Node"
       }, {
         "children" : [ {
           "containerInstances" : [ {
-            "containerId" : "8",
+            "containerId" : "11",
             "environment" : "Production",
-            "id" : "24",
+            "id" : "27",
             "instanceId" : 1,
             "properties" : {
               "structurizr.dsl.identifier" : "webAppInst"
@@ -93,18 +93,18 @@
           } ],
           "description" : "Kubernetes Pod",
           "environment" : "Production",
-          "id" : "23",
+          "id" : "26",
           "instances" : "1",
           "name" : "Web Application Pod",
           "properties" : {
-            "structurizr.dsl.identifier" : "84e121aa-44e1-4d05-93b8-0939310f1eb0"
+            "structurizr.dsl.identifier" : "a25b012d-14e6-4e57-9c4c-807b7ef7b7f5"
           },
           "tags" : "Element,Deployment Node"
         }, {
           "containerInstances" : [ {
-            "containerId" : "13",
+            "containerId" : "16",
             "environment" : "Production",
-            "id" : "26",
+            "id" : "29",
             "instanceId" : 1,
             "properties" : {
               "structurizr.dsl.identifier" : "telegramBotInst"
@@ -113,18 +113,18 @@
           } ],
           "description" : "Kubernetes Pod",
           "environment" : "Production",
-          "id" : "25",
+          "id" : "28",
           "instances" : "1",
           "name" : "Telegram Bot Pod",
           "properties" : {
-            "structurizr.dsl.identifier" : "94d430da-e1e0-4b9f-b1ff-21c0cbb27d55"
+            "structurizr.dsl.identifier" : "0d11c64c-77ee-498e-8aa1-a2a35afb63ea"
           },
           "tags" : "Element,Deployment Node"
         }, {
           "containerInstances" : [ {
-            "containerId" : "14",
+            "containerId" : "17",
             "environment" : "Production",
-            "id" : "28",
+            "id" : "31",
             "instanceId" : 1,
             "properties" : {
               "structurizr.dsl.identifier" : "rabbitMqInst"
@@ -133,28 +133,28 @@
           } ],
           "description" : "Kubernetes Pod",
           "environment" : "Production",
-          "id" : "27",
+          "id" : "30",
           "instances" : "1",
           "name" : "RabbitMQ Pod",
           "properties" : {
-            "structurizr.dsl.identifier" : "4636c32f-cac8-413f-8b8c-228a92202c05"
+            "structurizr.dsl.identifier" : "6e1baee9-7018-42dc-803c-83358eb9aaa8"
           },
           "tags" : "Element,Deployment Node"
         } ],
         "description" : "Managed Kubernetes Cluster",
         "environment" : "Production",
-        "id" : "22",
+        "id" : "25",
         "instances" : "1",
         "name" : "OCI Kubernetes Engine (OKE)",
         "properties" : {
-          "structurizr.dsl.identifier" : "a8b3915a-209f-46f2-a083-4b73bb551347"
+          "structurizr.dsl.identifier" : "8ff713d9-56e5-49e4-8db9-3bde64d41a71"
         },
         "tags" : "Element,Deployment Node"
       }, {
         "containerInstances" : [ {
-          "containerId" : "15",
+          "containerId" : "18",
           "environment" : "Production",
-          "id" : "30",
+          "id" : "33",
           "instanceId" : 1,
           "properties" : {
             "structurizr.dsl.identifier" : "dbInst"
@@ -163,21 +163,21 @@
         } ],
         "description" : "Autonomous Transaction Processing — Managed DB Service",
         "environment" : "Production",
-        "id" : "29",
+        "id" : "32",
         "instances" : "1",
         "name" : "Oracle ATP",
         "properties" : {
-          "structurizr.dsl.identifier" : "82613fd4-022a-4929-9930-0131c3fb4be6"
+          "structurizr.dsl.identifier" : "fe448854-db5c-4b9c-a3bd-9eecaccfbb90"
         },
         "tags" : "Element,Deployment Node"
       } ],
       "description" : "Oracle Cloud Infrastructure",
       "environment" : "Production",
-      "id" : "19",
+      "id" : "22",
       "instances" : "1",
       "name" : "OCI Cloud",
       "properties" : {
-        "structurizr.dsl.identifier" : "c3ef75fb-812d-4476-9cb2-0ceb2a21d82a"
+        "structurizr.dsl.identifier" : "56540e19-2982-4532-9dbb-cc53605464db"
       },
       "tags" : "Element,Deployment Node"
     } ],
@@ -190,28 +190,28 @@
       },
       "relationships" : [ {
         "description" : "Manages system users & roles via",
-        "destinationId" : "8",
-        "id" : "34",
+        "destinationId" : "11",
+        "id" : "37",
         "sourceId" : "1",
         "tags" : "Relationship",
         "technology" : "HTTPS"
       }, {
         "description" : "Manages system users & roles via",
-        "destinationId" : "7",
-        "id" : "35",
-        "linkedRelationshipId" : "34",
+        "destinationId" : "10",
+        "id" : "38",
+        "linkedRelationshipId" : "37",
         "sourceId" : "1",
         "technology" : "HTTPS"
       }, {
         "description" : "Issues administrator commands via Telegram",
-        "destinationId" : "13",
-        "id" : "42",
+        "destinationId" : "16",
+        "id" : "45",
         "sourceId" : "1",
         "tags" : "Relationship"
       }, {
         "description" : "Sends commands via",
-        "destinationId" : "5",
-        "id" : "47",
+        "destinationId" : "6",
+        "id" : "50",
         "sourceId" : "1",
         "tags" : "Relationship"
       } ],
@@ -225,28 +225,28 @@
       },
       "relationships" : [ {
         "description" : "Views cross-team dashboards via",
-        "destinationId" : "8",
-        "id" : "36",
+        "destinationId" : "11",
+        "id" : "39",
         "sourceId" : "2",
         "tags" : "Relationship",
         "technology" : "HTTPS"
       }, {
         "description" : "Views cross-team dashboards via",
-        "destinationId" : "7",
-        "id" : "37",
-        "linkedRelationshipId" : "36",
+        "destinationId" : "10",
+        "id" : "40",
+        "linkedRelationshipId" : "39",
         "sourceId" : "2",
         "technology" : "HTTPS"
       }, {
         "description" : "Checks team summaries via Telegram",
-        "destinationId" : "13",
-        "id" : "43",
+        "destinationId" : "16",
+        "id" : "46",
         "sourceId" : "2",
         "tags" : "Relationship"
       }, {
         "description" : "Sends commands via",
-        "destinationId" : "5",
-        "id" : "48",
+        "destinationId" : "6",
+        "id" : "51",
         "sourceId" : "2",
         "tags" : "Relationship"
       } ],
@@ -260,28 +260,34 @@
       },
       "relationships" : [ {
         "description" : "Manages personal tasks via",
-        "destinationId" : "8",
-        "id" : "38",
+        "destinationId" : "11",
+        "id" : "41",
         "sourceId" : "3",
         "tags" : "Relationship",
         "technology" : "HTTPS"
       }, {
         "description" : "Manages personal tasks via",
-        "destinationId" : "7",
-        "id" : "39",
-        "linkedRelationshipId" : "38",
+        "destinationId" : "10",
+        "id" : "42",
+        "linkedRelationshipId" : "41",
         "sourceId" : "3",
         "technology" : "HTTPS"
       }, {
         "description" : "Manages tasks via Telegram",
-        "destinationId" : "13",
-        "id" : "44",
+        "destinationId" : "16",
+        "id" : "47",
         "sourceId" : "3",
         "tags" : "Relationship"
       }, {
         "description" : "Sends commands via",
-        "destinationId" : "5",
-        "id" : "49",
+        "destinationId" : "6",
+        "id" : "52",
+        "sourceId" : "3",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Commits code to",
+        "destinationId" : "8",
+        "id" : "53",
         "sourceId" : "3",
         "tags" : "Relationship"
       } ],
@@ -295,67 +301,120 @@
       },
       "relationships" : [ {
         "description" : "Triggers AI summaries",
-        "destinationId" : "8",
-        "id" : "40",
+        "destinationId" : "11",
+        "id" : "43",
         "sourceId" : "4",
         "tags" : "Relationship",
         "technology" : "HTTPS"
       }, {
         "description" : "Triggers AI summaries",
-        "destinationId" : "7",
-        "id" : "41",
-        "linkedRelationshipId" : "40",
+        "destinationId" : "10",
+        "id" : "44",
+        "linkedRelationshipId" : "43",
         "sourceId" : "4",
         "technology" : "HTTPS"
       } ],
       "tags" : "Element,Person,Robot"
+    }, {
+      "description" : "Manages infrastructure and CI/CD pipelines",
+      "id" : "5",
+      "name" : "DevOps Engineer",
+      "properties" : {
+        "structurizr.dsl.identifier" : "devops"
+      },
+      "relationships" : [ {
+        "description" : "Commits infrastructure code to",
+        "destinationId" : "8",
+        "id" : "54",
+        "sourceId" : "5",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Configures and monitors",
+        "destinationId" : "9",
+        "id" : "55",
+        "sourceId" : "5",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Person"
     } ],
     "softwareSystems" : [ {
       "description" : "External messaging platform.",
       "documentation" : { },
-      "id" : "5",
+      "id" : "6",
       "name" : "Telegram System",
       "properties" : {
         "structurizr.dsl.identifier" : "telegram"
       },
       "relationships" : [ {
         "description" : "Sends Webhook / Long Polling updates to",
-        "destinationId" : "13",
-        "id" : "45",
-        "sourceId" : "5",
+        "destinationId" : "16",
+        "id" : "48",
+        "sourceId" : "6",
         "tags" : "Relationship"
       }, {
         "description" : "Sends Webhook / Long Polling updates to",
-        "destinationId" : "7",
-        "id" : "46",
-        "linkedRelationshipId" : "45",
-        "sourceId" : "5"
+        "destinationId" : "10",
+        "id" : "49",
+        "linkedRelationshipId" : "48",
+        "sourceId" : "6"
       } ],
       "tags" : "Element,Software System,External System"
     }, {
       "description" : "External AI provider (DeepSeek/Gemini).",
       "documentation" : { },
-      "id" : "6",
+      "id" : "7",
       "name" : "AI API",
       "properties" : {
         "structurizr.dsl.identifier" : "aiApi"
       },
       "tags" : "Element,Software System,External System"
     }, {
+      "description" : "Stores source code.",
+      "documentation" : { },
+      "id" : "8",
+      "name" : "Version Control System",
+      "properties" : {
+        "structurizr.dsl.identifier" : "vcs"
+      },
+      "relationships" : [ {
+        "description" : "Triggers builds on code changes",
+        "destinationId" : "9",
+        "id" : "56",
+        "sourceId" : "8",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Software System,External System"
+    }, {
+      "description" : "Automates builds, tests, and deployments (e.g., OCI DevOps).",
+      "documentation" : { },
+      "id" : "9",
+      "name" : "CI/CD Pipeline",
+      "properties" : {
+        "structurizr.dsl.identifier" : "ciCd"
+      },
+      "relationships" : [ {
+        "description" : "Builds, containerizes, and deploys",
+        "destinationId" : "10",
+        "id" : "57",
+        "sourceId" : "9",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Software System,External System"
+    }, {
       "containers" : [ {
         "components" : [ {
           "description" : "Handles CRUD operations for tasks.",
           "documentation" : { },
-          "id" : "9",
+          "id" : "12",
           "name" : "Task Management Service",
           "properties" : {
             "structurizr.dsl.identifier" : "taskManagement"
           },
           "relationships" : [ {
             "description" : "Reads/writes tasks",
-            "destinationId" : "15",
-            "id" : "58",
-            "sourceId" : "9",
+            "destinationId" : "18",
+            "id" : "66",
+            "sourceId" : "12",
             "tags" : "Relationship"
           } ],
           "tags" : "Element,Component",
@@ -363,16 +422,16 @@
         }, {
           "description" : "Centralized authorization and role management.",
           "documentation" : { },
-          "id" : "10",
+          "id" : "13",
           "name" : "Identity & Access Service",
           "properties" : {
             "structurizr.dsl.identifier" : "identityAccess"
           },
           "relationships" : [ {
             "description" : "Reads users/roles",
-            "destinationId" : "15",
-            "id" : "59",
-            "sourceId" : "10",
+            "destinationId" : "18",
+            "id" : "67",
+            "sourceId" : "13",
             "tags" : "Relationship"
           } ],
           "tags" : "Element,Component",
@@ -380,16 +439,16 @@
         }, {
           "description" : "Handles read-heavy queries and metrics aggregation.",
           "documentation" : { },
-          "id" : "11",
+          "id" : "14",
           "name" : "Dashboard Service",
           "properties" : {
             "structurizr.dsl.identifier" : "dashboard"
           },
           "relationships" : [ {
             "description" : "Reads team metrics",
-            "destinationId" : "15",
-            "id" : "60",
-            "sourceId" : "11",
+            "destinationId" : "18",
+            "id" : "68",
+            "sourceId" : "14",
             "tags" : "Relationship"
           } ],
           "tags" : "Element,Component",
@@ -397,16 +456,16 @@
         }, {
           "description" : "Integrates with AI APIs and provides automated task insights.",
           "documentation" : { },
-          "id" : "12",
+          "id" : "15",
           "name" : "AI Summary Service",
           "properties" : {
             "structurizr.dsl.identifier" : "aiSummary"
           },
           "relationships" : [ {
             "description" : "Generates insights via API",
-            "destinationId" : "6",
-            "id" : "61",
-            "sourceId" : "12",
+            "destinationId" : "7",
+            "id" : "69",
+            "sourceId" : "15",
             "tags" : "Relationship"
           } ],
           "tags" : "Element,Component",
@@ -414,30 +473,30 @@
         } ],
         "description" : "Serves the web UI and provides the core API.",
         "documentation" : { },
-        "id" : "8",
+        "id" : "11",
         "name" : "Web Application",
         "properties" : {
           "structurizr.dsl.identifier" : "webApplication"
         },
         "relationships" : [ {
           "description" : "Reads from and writes to",
-          "destinationId" : "15",
-          "id" : "50",
-          "sourceId" : "8",
+          "destinationId" : "18",
+          "id" : "58",
+          "sourceId" : "11",
           "tags" : "Relationship",
           "technology" : "JDBC"
         }, {
           "description" : "Consumes operations from",
-          "destinationId" : "14",
-          "id" : "54",
-          "sourceId" : "8",
+          "destinationId" : "17",
+          "id" : "62",
+          "sourceId" : "11",
           "tags" : "Relationship",
           "technology" : "AMQP"
         }, {
           "description" : "Requests summaries via",
-          "destinationId" : "6",
-          "id" : "55",
-          "sourceId" : "8",
+          "destinationId" : "7",
+          "id" : "63",
+          "sourceId" : "11",
           "tags" : "Relationship",
           "technology" : "JSON/HTTPS"
         } ],
@@ -446,30 +505,30 @@
       }, {
         "description" : "Provides a conversational interface to the TodoList system via Telegram.",
         "documentation" : { },
-        "id" : "13",
+        "id" : "16",
         "name" : "Telegram Bot",
         "properties" : {
           "structurizr.dsl.identifier" : "telegramBot"
         },
         "relationships" : [ {
           "description" : "Makes API calls to",
-          "destinationId" : "8",
-          "id" : "51",
-          "sourceId" : "13",
+          "destinationId" : "11",
+          "id" : "59",
+          "sourceId" : "16",
           "tags" : "Relationship",
           "technology" : "JSON/HTTP"
         }, {
           "description" : "Publishes events to",
-          "destinationId" : "14",
-          "id" : "52",
-          "sourceId" : "13",
+          "destinationId" : "17",
+          "id" : "60",
+          "sourceId" : "16",
           "tags" : "Relationship",
           "technology" : "AMQP"
         }, {
           "description" : "Analyses commands via",
-          "destinationId" : "6",
-          "id" : "57",
-          "sourceId" : "13",
+          "destinationId" : "7",
+          "id" : "65",
+          "sourceId" : "16",
           "tags" : "Relationship",
           "technology" : "JSON/HTTPS"
         } ],
@@ -478,16 +537,16 @@
       }, {
         "description" : "Handles asynchronous event distribution.",
         "documentation" : { },
-        "id" : "14",
+        "id" : "17",
         "name" : "Message Broker",
         "properties" : {
           "structurizr.dsl.identifier" : "rabbitMq"
         },
         "relationships" : [ {
           "description" : "Sends events to",
-          "destinationId" : "13",
-          "id" : "53",
-          "sourceId" : "14",
+          "destinationId" : "16",
+          "id" : "61",
+          "sourceId" : "17",
           "tags" : "Relationship",
           "technology" : "AMQP"
         } ],
@@ -496,7 +555,7 @@
       }, {
         "description" : "Stores to-do items, users, and audit states.",
         "documentation" : { },
-        "id" : "15",
+        "id" : "18",
         "name" : "Database",
         "properties" : {
           "structurizr.dsl.identifier" : "database"
@@ -506,17 +565,17 @@
       } ],
       "description" : "Allows users to manage their to-do lists.",
       "documentation" : { },
-      "id" : "7",
+      "id" : "10",
       "name" : "TodoList System",
       "properties" : {
         "structurizr.dsl.identifier" : "todoSystem"
       },
       "relationships" : [ {
         "description" : "Requests summaries via",
-        "destinationId" : "6",
-        "id" : "56",
-        "linkedRelationshipId" : "55",
-        "sourceId" : "7",
+        "destinationId" : "7",
+        "id" : "64",
+        "linkedRelationshipId" : "63",
+        "sourceId" : "10",
         "technology" : "JSON/HTTPS"
       } ],
       "tags" : "Element,Software System"
@@ -524,8 +583,8 @@
   },
   "name" : "TodoList Architecture",
   "properties" : {
-    "structurizr.inspection.error" : "28",
-    "structurizr.dsl" : "d29ya3NwYWNlICJUb2RvTGlzdCBBcmNoaXRlY3R1cmUiICJBcmNoaXRlY3R1cmUgb2YgdGhlIFRvZG9MaXN0IGFwcGxpY2F0aW9uIHdpdGggVGVsZWdyYW0gQm90IGludGVncmF0aW9uIiB7CgogICAgbW9kZWwgewogICAgICAgIGFkbWluID0gcGVyc29uICJBZG1pbiIgIlN5c3RlbSBhZG1pbmlzdHJhdG9yIgogICAgICAgIG1hbmFnZXIgPSBwZXJzb24gIk1hbmFnZXIiICJUZWFtIG1hbmFnZXIiCiAgICAgICAgZGV2ZWxvcGVyID0gcGVyc29uICJEZXZlbG9wZXIiICJUZWFtIG1lbWJlci9kZXZlbG9wZXIiCiAgICAgICAgYXV0b0pvYiA9IHBlcnNvbiAiQXV0byBTdW1tYXJ5IEpvYiIgIkF1dG9tYXRlZCByZXBvcnRpbmcgc2NyaXB0IiAiUm9ib3QiCiAgICAgICAgCiAgICAgICAgdGVsZWdyYW0gPSBzb2Z0d2FyZVN5c3RlbSAiVGVsZWdyYW0gU3lzdGVtIiAiRXh0ZXJuYWwgbWVzc2FnaW5nIHBsYXRmb3JtLiIgIkV4dGVybmFsIFN5c3RlbSIKICAgICAgICBhaUFwaSA9IHNvZnR3YXJlU3lzdGVtICJBSSBBUEkiICJFeHRlcm5hbCBBSSBwcm92aWRlciAoRGVlcFNlZWsvR2VtaW5pKS4iICJFeHRlcm5hbCBTeXN0ZW0iCgogICAgICAgIHRvZG9TeXN0ZW0gPSBzb2Z0d2FyZVN5c3RlbSAiVG9kb0xpc3QgU3lzdGVtIiAiQWxsb3dzIHVzZXJzIHRvIG1hbmFnZSB0aGVpciB0by1kbyBsaXN0cy4iIHsKICAgICAgICAgICAgCiAgICAgICAgICAgIHdlYkFwcGxpY2F0aW9uID0gY29udGFpbmVyICJXZWIgQXBwbGljYXRpb24iICJTZXJ2ZXMgdGhlIHdlYiBVSSBhbmQgcHJvdmlkZXMgdGhlIGNvcmUgQVBJLiIgIlNwcmluZyBCb290IChKYXZhKSArIFJlYWN0IiB7CiAgICAgICAgICAgICAgICB0YXNrTWFuYWdlbWVudCA9IGNvbXBvbmVudCAiVGFzayBNYW5hZ2VtZW50IFNlcnZpY2UiICJIYW5kbGVzIENSVUQgb3BlcmF0aW9ucyBmb3IgdGFza3MuIiAiU3ByaW5nIEJlYW4iCiAgICAgICAgICAgICAgICBpZGVudGl0eUFjY2VzcyA9IGNvbXBvbmVudCAiSWRlbnRpdHkgJiBBY2Nlc3MgU2VydmljZSIgIkNlbnRyYWxpemVkIGF1dGhvcml6YXRpb24gYW5kIHJvbGUgbWFuYWdlbWVudC4iICJTcHJpbmcgU2VjdXJpdHkgTW9kdWxlIgogICAgICAgICAgICAgICAgZGFzaGJvYXJkID0gY29tcG9uZW50ICJEYXNoYm9hcmQgU2VydmljZSIgIkhhbmRsZXMgcmVhZC1oZWF2eSBxdWVyaWVzIGFuZCBtZXRyaWNzIGFnZ3JlZ2F0aW9uLiIgIlNwcmluZyBCZWFuIgogICAgICAgICAgICAgICAgYWlTdW1tYXJ5ID0gY29tcG9uZW50ICJBSSBTdW1tYXJ5IFNlcnZpY2UiICJJbnRlZ3JhdGVzIHdpdGggQUkgQVBJcyBhbmQgcHJvdmlkZXMgYXV0b21hdGVkIHRhc2sgaW5zaWdodHMuIiAiU3ByaW5nIEJlYW4iCiAgICAgICAgICAgIH0KICAgICAgICAgICAgCiAgICAgICAgICAgIHRlbGVncmFtQm90ID0gY29udGFpbmVyICJUZWxlZ3JhbSBCb3QiICJQcm92aWRlcyBhIGNvbnZlcnNhdGlvbmFsIGludGVyZmFjZSB0byB0aGUgVG9kb0xpc3Qgc3lzdGVtIHZpYSBUZWxlZ3JhbS4iICJKYXZhIC8gUHl0aG9uIgogICAgICAgICAgICByYWJiaXRNcSA9IGNvbnRhaW5lciAiTWVzc2FnZSBCcm9rZXIiICJIYW5kbGVzIGFzeW5jaHJvbm91cyBldmVudCBkaXN0cmlidXRpb24uIiAiUmFiYml0TVEiCiAgICAgICAgICAgIGRhdGFiYXNlID0gY29udGFpbmVyICJEYXRhYmFzZSIgIlN0b3JlcyB0by1kbyBpdGVtcywgdXNlcnMsIGFuZCBhdWRpdCBzdGF0ZXMuIiAiT3JhY2xlIERhdGFiYXNlIChBVFApIiAiRGF0YWJhc2UiCiAgICAgICAgfQogICAgICAgIAogICAgICAgIGRlcGxveW1lbnRFbnZpcm9ubWVudCAiUHJvZHVjdGlvbiIgewogICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiSW50ZXJuZXQiICJQdWJsaWMgSW50ZXJuZXQiIHsKICAgICAgICAgICAgICAgIHVzZXJOb2RlID0gaW5mcmFzdHJ1Y3R1cmVOb2RlICJVc2VycyIgIkV4dGVybmFsIHVzZXJzIGFjY2Vzc2luZyB0aGUgc3lzdGVtIHZpYSBicm93c2VyIgogICAgICAgICAgICAgICAgdGVsZWdyYW1XZWJob29rTm9kZSA9IGluZnJhc3RydWN0dXJlTm9kZSAiVGVsZWdyYW0gV2ViaG9vayIgIlRlbGVncmFtIHBsYXRmb3JtIHNlbmRpbmcgdXBkYXRlcyB0byB0aGUgYm90IgogICAgICAgICAgICB9CgogICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT0NJIENsb3VkIiAiT3JhY2xlIENsb3VkIEluZnJhc3RydWN0dXJlIiB7CiAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT0NJIENvcmUgU2VydmljZXMiICJNYW5hZ2VkIE9DSSBTZXJ2aWNlcyIgewogICAgICAgICAgICAgICAgICAgIGxvYWRCYWxhbmNlck5vZGUgPSBpbmZyYXN0cnVjdHVyZU5vZGUgIk9DSSBMb2FkIEJhbGFuY2VyIiAiUmVjZWl2ZXMgcHVibGljIEhUVFBTIHRyYWZmaWMgYW5kIHJvdXRlcyBpdCB0byB0aGUgV2ViIEFwcGxpY2F0aW9uIHBvZCIKICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT0NJIEt1YmVybmV0ZXMgRW5naW5lIChPS0UpIiAiTWFuYWdlZCBLdWJlcm5ldGVzIENsdXN0ZXIiIHsKICAgICAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiV2ViIEFwcGxpY2F0aW9uIFBvZCIgIkt1YmVybmV0ZXMgUG9kIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHdlYkFwcEluc3QgPSBjb250YWluZXJJbnN0YW5jZSB3ZWJBcHBsaWNhdGlvbgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiVGVsZWdyYW0gQm90IFBvZCIgIkt1YmVybmV0ZXMgUG9kIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHRlbGVncmFtQm90SW5zdCA9IGNvbnRhaW5lckluc3RhbmNlIHRlbGVncmFtQm90CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIGRlcGxveW1lbnROb2RlICJSYWJiaXRNUSBQb2QiICJLdWJlcm5ldGVzIFBvZCIgewogICAgICAgICAgICAgICAgICAgICAgICByYWJiaXRNcUluc3QgPSBjb250YWluZXJJbnN0YW5jZSByYWJiaXRNcQogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT3JhY2xlIEFUUCIgIkF1dG9ub21vdXMgVHJhbnNhY3Rpb24gUHJvY2Vzc2luZyDigJQgTWFuYWdlZCBEQiBTZXJ2aWNlIiB7CiAgICAgICAgICAgICAgICAgICAgZGJJbnN0ID0gY29udGFpbmVySW5zdGFuY2UgZGF0YWJhc2UKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8gT25seSBpbmZyYXN0cnVjdHVyZSBub2RlIHJlbGF0aW9uc2hpcHMgYXJlIGFsbG93ZWQgaGVyZQogICAgICAgICAgICB1c2VyTm9kZSAtPiBsb2FkQmFsYW5jZXJOb2RlICJTZW5kcyBIVFRQUyByZXF1ZXN0cyIgIkhUVFBTIgogICAgICAgICAgICBsb2FkQmFsYW5jZXJOb2RlIC0+IHdlYkFwcEluc3QgIlJvdXRlcyB0cmFmZmljIHRvIiAiSFRUUCIKICAgICAgICAgICAgdGVsZWdyYW1XZWJob29rTm9kZSAtPiB0ZWxlZ3JhbUJvdEluc3QgIlNlbmRzIHdlYmhvb2sgdXBkYXRlcyB0byIgIkhUVFBTIgogICAgICAgIH0KCiAgICAgICAgLy8gLS0tIFJlbGF0aW9uc2hpcHMgLS0tCiAgICAgICAgCiAgICAgICAgYWRtaW4gLT4gd2ViQXBwbGljYXRpb24gIk1hbmFnZXMgc3lzdGVtIHVzZXJzICYgcm9sZXMgdmlhIiAiSFRUUFMiCiAgICAgICAgbWFuYWdlciAtPiB3ZWJBcHBsaWNhdGlvbiAiVmlld3MgY3Jvc3MtdGVhbSBkYXNoYm9hcmRzIHZpYSIgIkhUVFBTIgogICAgICAgIGRldmVsb3BlciAtPiB3ZWJBcHBsaWNhdGlvbiAiTWFuYWdlcyBwZXJzb25hbCB0YXNrcyB2aWEiICJIVFRQUyIKICAgICAgICBhdXRvSm9iIC0+IHdlYkFwcGxpY2F0aW9uICJUcmlnZ2VycyBBSSBzdW1tYXJpZXMiICJIVFRQUyIKICAgICAgICAKICAgICAgICBhZG1pbiAtPiB0ZWxlZ3JhbUJvdCAiSXNzdWVzIGFkbWluaXN0cmF0b3IgY29tbWFuZHMgdmlhIFRlbGVncmFtIgogICAgICAgIG1hbmFnZXIgLT4gdGVsZWdyYW1Cb3QgIkNoZWNrcyB0ZWFtIHN1bW1hcmllcyB2aWEgVGVsZWdyYW0iCiAgICAgICAgZGV2ZWxvcGVyIC0+IHRlbGVncmFtQm90ICJNYW5hZ2VzIHRhc2tzIHZpYSBUZWxlZ3JhbSIKICAgICAgICAKICAgICAgICB0ZWxlZ3JhbSAtPiB0ZWxlZ3JhbUJvdCAiU2VuZHMgV2ViaG9vayAvIExvbmcgUG9sbGluZyB1cGRhdGVzIHRvIgogICAgICAgIAogICAgICAgIGFkbWluIC0+IHRlbGVncmFtICJTZW5kcyBjb21tYW5kcyB2aWEiCiAgICAgICAgbWFuYWdlciAtPiB0ZWxlZ3JhbSAiU2VuZHMgY29tbWFuZHMgdmlhIgogICAgICAgIGRldmVsb3BlciAtPiB0ZWxlZ3JhbSAiU2VuZHMgY29tbWFuZHMgdmlhIgogICAgICAgIAogICAgICAgIHdlYkFwcGxpY2F0aW9uIC0+IGRhdGFiYXNlICJSZWFkcyBmcm9tIGFuZCB3cml0ZXMgdG8iICJKREJDIgogICAgICAgIHRlbGVncmFtQm90IC0+IHdlYkFwcGxpY2F0aW9uICJNYWtlcyBBUEkgY2FsbHMgdG8iICJKU09OL0hUVFAiCiAgICAgICAgCiAgICAgICAgdGVsZWdyYW1Cb3QgLT4gcmFiYml0TXEgIlB1Ymxpc2hlcyBldmVudHMgdG8iICJBTVFQIgogICAgICAgIHJhYmJpdE1xIC0+IHRlbGVncmFtQm90ICJTZW5kcyBldmVudHMgdG8iICJBTVFQIgogICAgICAgIHdlYkFwcGxpY2F0aW9uIC0+IHJhYmJpdE1xICJDb25zdW1lcyBvcGVyYXRpb25zIGZyb20iICJBTVFQIgogICAgICAgIAogICAgICAgIHdlYkFwcGxpY2F0aW9uIC0+IGFpQXBpICJSZXF1ZXN0cyBzdW1tYXJpZXMgdmlhIiAiSlNPTi9IVFRQUyIKICAgICAgICB0ZWxlZ3JhbUJvdCAtPiBhaUFwaSAiQW5hbHlzZXMgY29tbWFuZHMgdmlhIiAiSlNPTi9IVFRQUyIKICAgICAgICAKICAgICAgICB0YXNrTWFuYWdlbWVudCAtPiBkYXRhYmFzZSAiUmVhZHMvd3JpdGVzIHRhc2tzIgogICAgICAgIGlkZW50aXR5QWNjZXNzIC0+IGRhdGFiYXNlICJSZWFkcyB1c2Vycy9yb2xlcyIKICAgICAgICBkYXNoYm9hcmQgLT4gZGF0YWJhc2UgIlJlYWRzIHRlYW0gbWV0cmljcyIKICAgICAgICBhaVN1bW1hcnkgLT4gYWlBcGkgIkdlbmVyYXRlcyBpbnNpZ2h0cyB2aWEgQVBJIgogICAgfQoKICAgIHZpZXdzIHsKICAgICAgICBzeXN0ZW1MYW5kc2NhcGUgIlN5c3RlbUxhbmRzY2FwZSIgewogICAgICAgICAgICBpbmNsdWRlIGFkbWluIG1hbmFnZXIgZGV2ZWxvcGVyIGF1dG9Kb2IKICAgICAgICAgICAgaW5jbHVkZSB0ZWxlZ3JhbSBhaUFwaSB0b2RvU3lzdGVtCiAgICAgICAgICAgIGF1dG9MYXlvdXQKICAgICAgICB9CgogICAgICAgIHN5c3RlbUNvbnRleHQgdG9kb1N5c3RlbSAiU3lzdGVtQ29udGV4dCIgewogICAgICAgICAgICBpbmNsdWRlIGFkbWluIG1hbmFnZXIgZGV2ZWxvcGVyIGF1dG9Kb2IKICAgICAgICAgICAgaW5jbHVkZSB0b2RvU3lzdGVtCiAgICAgICAgICAgIGluY2x1ZGUgdGVsZWdyYW0gYWlBcGkKICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KCiAgICAgICAgY29udGFpbmVyIHRvZG9TeXN0ZW0gIkNvbnRhaW5lcnMiIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9MYXlvdXQKICAgICAgICB9CgogICAgICAgIGNvbXBvbmVudCB3ZWJBcHBsaWNhdGlvbiAiQ29tcG9uZW50cyIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KCiAgICAgICAgZGVwbG95bWVudCB0b2RvU3lzdGVtICJQcm9kdWN0aW9uIiAiRGVwbG95bWVudERpYWdyYW0iIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9MYXlvdXQgdGIKICAgICAgICB9CiAgICAgICAgCiAgICAgICAgZHluYW1pYyB0b2RvU3lzdGVtICJDcmVhdGVUYXNrRmxvdyIgIkR5bmFtaWMgdmlldyBzaG93aW5nIGhvdyBhIERldmVsb3BlciBjcmVhdGVzIGEgVGFzayB2aWEgV2ViIFVJIiB7CiAgICAgICAgICAgIGRldmVsb3BlciAtPiB3ZWJBcHBsaWNhdGlvbiAiMS4gU3VibWl0cyBuZXcgdGFzayBkZXRhaWxzIHZpYSBicm93c2VyIgogICAgICAgICAgICB3ZWJBcHBsaWNhdGlvbiAtPiBkYXRhYmFzZSAiMi4gU2F2ZXMgdGFzayB0byBkYXRhYmFzZSIKICAgICAgICAgICAgZGF0YWJhc2UgLT4gd2ViQXBwbGljYXRpb24gIjMuIFJldHVybnMgdHJhbnNhY3Rpb24gc3RhdHVzIgogICAgICAgICAgICB3ZWJBcHBsaWNhdGlvbiAtPiBkZXZlbG9wZXIgIjQuIERpc3BsYXlzIHN1Y2Nlc3MgY29uZmlybWF0aW9uIgogICAgICAgICAgICBhdXRvTGF5b3V0CiAgICAgICAgfQoKICAgICAgICBkeW5hbWljIHRvZG9TeXN0ZW0gIkF1dG9TdW1tYXJ5RmxvdyIgIkR5bmFtaWMgdmlldyBzaG93aW5nIGhvdyB0aGUgQXV0byBKb2IgcmVxdWVzdHMgYSBzdW1tYXJ5IiB7CiAgICAgICAgICAgIGF1dG9Kb2IgLT4gd2ViQXBwbGljYXRpb24gIjEuIFRyaWdnZXJzIHN1bW1hcnkgZ2VuZXJhdGlvbiBlbmRwb2ludCIKICAgICAgICAgICAgd2ViQXBwbGljYXRpb24gLT4gYWlBcGkgIjIuIEZvcm1hdHMgcHJvbXB0IGFuZCBzZW5kcyB0byBBSSIKICAgICAgICAgICAgYWlBcGkgLT4gd2ViQXBwbGljYXRpb24gIjMuIFJldHVybnMgZ2VuZXJhdGVkIHN1bW1hcnkiCiAgICAgICAgICAgIHdlYkFwcGxpY2F0aW9uIC0+IGRhdGFiYXNlICI0LiBTdG9yZXMgZ2VuZXJhdGVkIHN1bW1hcnkiCiAgICAgICAgICAgIHdlYkFwcGxpY2F0aW9uIC0+IHJhYmJpdE1xICI1LiBFbWl0cyBzdW1tYXJ5IGF2YWlsYWJsZSBldmVudCIKICAgICAgICAgICAgcmFiYml0TXEgLT4gdGVsZWdyYW1Cb3QgIjYuIE5vdGlmaWVzIGJvdCB0byBtZXNzYWdlIG1hbmFnZXJzIgogICAgICAgICAgICBhdXRvTGF5b3V0CiAgICAgICAgfQoKICAgICAgICBzdHlsZXMgewogICAgICAgICAgICBlbGVtZW50ICJTb2Z0d2FyZSBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzExNjhiZAogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIlBlcnNvbiIgewogICAgICAgICAgICAgICAgc2hhcGUgUGVyc29uCiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMwODQyN2IKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJSb2JvdCIgewogICAgICAgICAgICAgICAgc2hhcGUgUm9ib3QKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzIwODc1ZQogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkNvbnRhaW5lciIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjNDM4ZGQ1CiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiQ29tcG9uZW50IiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM4NWJiZjAKICAgICAgICAgICAgICAgIGNvbG9yICMwMDAwMDAKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJEYXRhYmFzZSIgewogICAgICAgICAgICAgICAgc2hhcGUgQ3lsaW5kZXIKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJFeHRlcm5hbCBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzk5OTk5OQogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkluZnJhc3RydWN0dXJlIE5vZGUiIHsKICAgICAgICAgICAgICAgIHNoYXBlIFJvdW5kZWRCb3gKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgI2U2ZTZlNgogICAgICAgICAgICAgICAgY29sb3IgIzAwMDAwMAogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQp9",
+    "structurizr.inspection.error" : "33",
+    "structurizr.dsl" : "d29ya3NwYWNlICJUb2RvTGlzdCBBcmNoaXRlY3R1cmUiICJBcmNoaXRlY3R1cmUgb2YgdGhlIFRvZG9MaXN0IGFwcGxpY2F0aW9uIHdpdGggVGVsZWdyYW0gQm90IGludGVncmF0aW9uIiB7CgogICAgbW9kZWwgewogICAgICAgIGFkbWluID0gcGVyc29uICJBZG1pbiIgIlN5c3RlbSBhZG1pbmlzdHJhdG9yIgogICAgICAgIG1hbmFnZXIgPSBwZXJzb24gIk1hbmFnZXIiICJUZWFtIG1hbmFnZXIiCiAgICAgICAgZGV2ZWxvcGVyID0gcGVyc29uICJEZXZlbG9wZXIiICJUZWFtIG1lbWJlci9kZXZlbG9wZXIiCiAgICAgICAgYXV0b0pvYiA9IHBlcnNvbiAiQXV0byBTdW1tYXJ5IEpvYiIgIkF1dG9tYXRlZCByZXBvcnRpbmcgc2NyaXB0IiAiUm9ib3QiCiAgICAgICAgZGV2b3BzID0gcGVyc29uICJEZXZPcHMgRW5naW5lZXIiICJNYW5hZ2VzIGluZnJhc3RydWN0dXJlIGFuZCBDSS9DRCBwaXBlbGluZXMiCiAgICAgICAgCiAgICAgICAgdGVsZWdyYW0gPSBzb2Z0d2FyZVN5c3RlbSAiVGVsZWdyYW0gU3lzdGVtIiAiRXh0ZXJuYWwgbWVzc2FnaW5nIHBsYXRmb3JtLiIgIkV4dGVybmFsIFN5c3RlbSIKICAgICAgICBhaUFwaSA9IHNvZnR3YXJlU3lzdGVtICJBSSBBUEkiICJFeHRlcm5hbCBBSSBwcm92aWRlciAoRGVlcFNlZWsvR2VtaW5pKS4iICJFeHRlcm5hbCBTeXN0ZW0iCiAgICAgICAgdmNzID0gc29mdHdhcmVTeXN0ZW0gIlZlcnNpb24gQ29udHJvbCBTeXN0ZW0iICJTdG9yZXMgc291cmNlIGNvZGUuIiAiRXh0ZXJuYWwgU3lzdGVtIgogICAgICAgIGNpQ2QgPSBzb2Z0d2FyZVN5c3RlbSAiQ0kvQ0QgUGlwZWxpbmUiICJBdXRvbWF0ZXMgYnVpbGRzLCB0ZXN0cywgYW5kIGRlcGxveW1lbnRzIChlLmcuLCBPQ0kgRGV2T3BzKS4iICJFeHRlcm5hbCBTeXN0ZW0iCgogICAgICAgIHRvZG9TeXN0ZW0gPSBzb2Z0d2FyZVN5c3RlbSAiVG9kb0xpc3QgU3lzdGVtIiAiQWxsb3dzIHVzZXJzIHRvIG1hbmFnZSB0aGVpciB0by1kbyBsaXN0cy4iIHsKICAgICAgICAgICAgCiAgICAgICAgICAgIHdlYkFwcGxpY2F0aW9uID0gY29udGFpbmVyICJXZWIgQXBwbGljYXRpb24iICJTZXJ2ZXMgdGhlIHdlYiBVSSBhbmQgcHJvdmlkZXMgdGhlIGNvcmUgQVBJLiIgIlNwcmluZyBCb290IChKYXZhKSArIFJlYWN0IiB7CiAgICAgICAgICAgICAgICB0YXNrTWFuYWdlbWVudCA9IGNvbXBvbmVudCAiVGFzayBNYW5hZ2VtZW50IFNlcnZpY2UiICJIYW5kbGVzIENSVUQgb3BlcmF0aW9ucyBmb3IgdGFza3MuIiAiU3ByaW5nIEJlYW4iCiAgICAgICAgICAgICAgICBpZGVudGl0eUFjY2VzcyA9IGNvbXBvbmVudCAiSWRlbnRpdHkgJiBBY2Nlc3MgU2VydmljZSIgIkNlbnRyYWxpemVkIGF1dGhvcml6YXRpb24gYW5kIHJvbGUgbWFuYWdlbWVudC4iICJTcHJpbmcgU2VjdXJpdHkgTW9kdWxlIgogICAgICAgICAgICAgICAgZGFzaGJvYXJkID0gY29tcG9uZW50ICJEYXNoYm9hcmQgU2VydmljZSIgIkhhbmRsZXMgcmVhZC1oZWF2eSBxdWVyaWVzIGFuZCBtZXRyaWNzIGFnZ3JlZ2F0aW9uLiIgIlNwcmluZyBCZWFuIgogICAgICAgICAgICAgICAgYWlTdW1tYXJ5ID0gY29tcG9uZW50ICJBSSBTdW1tYXJ5IFNlcnZpY2UiICJJbnRlZ3JhdGVzIHdpdGggQUkgQVBJcyBhbmQgcHJvdmlkZXMgYXV0b21hdGVkIHRhc2sgaW5zaWdodHMuIiAiU3ByaW5nIEJlYW4iCiAgICAgICAgICAgIH0KICAgICAgICAgICAgCiAgICAgICAgICAgIHRlbGVncmFtQm90ID0gY29udGFpbmVyICJUZWxlZ3JhbSBCb3QiICJQcm92aWRlcyBhIGNvbnZlcnNhdGlvbmFsIGludGVyZmFjZSB0byB0aGUgVG9kb0xpc3Qgc3lzdGVtIHZpYSBUZWxlZ3JhbS4iICJKYXZhIC8gUHl0aG9uIgogICAgICAgICAgICByYWJiaXRNcSA9IGNvbnRhaW5lciAiTWVzc2FnZSBCcm9rZXIiICJIYW5kbGVzIGFzeW5jaHJvbm91cyBldmVudCBkaXN0cmlidXRpb24uIiAiUmFiYml0TVEiCiAgICAgICAgICAgIGRhdGFiYXNlID0gY29udGFpbmVyICJEYXRhYmFzZSIgIlN0b3JlcyB0by1kbyBpdGVtcywgdXNlcnMsIGFuZCBhdWRpdCBzdGF0ZXMuIiAiT3JhY2xlIERhdGFiYXNlIChBVFApIiAiRGF0YWJhc2UiCiAgICAgICAgfQogICAgICAgIAogICAgICAgIGRlcGxveW1lbnRFbnZpcm9ubWVudCAiUHJvZHVjdGlvbiIgewogICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiSW50ZXJuZXQiICJQdWJsaWMgSW50ZXJuZXQiIHsKICAgICAgICAgICAgICAgIHVzZXJOb2RlID0gaW5mcmFzdHJ1Y3R1cmVOb2RlICJVc2VycyIgIkV4dGVybmFsIHVzZXJzIGFjY2Vzc2luZyB0aGUgc3lzdGVtIHZpYSBicm93c2VyIgogICAgICAgICAgICAgICAgdGVsZWdyYW1XZWJob29rTm9kZSA9IGluZnJhc3RydWN0dXJlTm9kZSAiVGVsZWdyYW0gV2ViaG9vayIgIlRlbGVncmFtIHBsYXRmb3JtIHNlbmRpbmcgdXBkYXRlcyB0byB0aGUgYm90IgogICAgICAgICAgICB9CgogICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT0NJIENsb3VkIiAiT3JhY2xlIENsb3VkIEluZnJhc3RydWN0dXJlIiB7CiAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT0NJIENvcmUgU2VydmljZXMiICJNYW5hZ2VkIE9DSSBTZXJ2aWNlcyIgewogICAgICAgICAgICAgICAgICAgIGxvYWRCYWxhbmNlck5vZGUgPSBpbmZyYXN0cnVjdHVyZU5vZGUgIk9DSSBMb2FkIEJhbGFuY2VyIiAiUmVjZWl2ZXMgcHVibGljIEhUVFBTIHRyYWZmaWMgYW5kIHJvdXRlcyBpdCB0byB0aGUgV2ViIEFwcGxpY2F0aW9uIHBvZCIKICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT0NJIEt1YmVybmV0ZXMgRW5naW5lIChPS0UpIiAiTWFuYWdlZCBLdWJlcm5ldGVzIENsdXN0ZXIiIHsKICAgICAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiV2ViIEFwcGxpY2F0aW9uIFBvZCIgIkt1YmVybmV0ZXMgUG9kIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHdlYkFwcEluc3QgPSBjb250YWluZXJJbnN0YW5jZSB3ZWJBcHBsaWNhdGlvbgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiVGVsZWdyYW0gQm90IFBvZCIgIkt1YmVybmV0ZXMgUG9kIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHRlbGVncmFtQm90SW5zdCA9IGNvbnRhaW5lckluc3RhbmNlIHRlbGVncmFtQm90CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIGRlcGxveW1lbnROb2RlICJSYWJiaXRNUSBQb2QiICJLdWJlcm5ldGVzIFBvZCIgewogICAgICAgICAgICAgICAgICAgICAgICByYWJiaXRNcUluc3QgPSBjb250YWluZXJJbnN0YW5jZSByYWJiaXRNcQogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT3JhY2xlIEFUUCIgIkF1dG9ub21vdXMgVHJhbnNhY3Rpb24gUHJvY2Vzc2luZyDigJQgTWFuYWdlZCBEQiBTZXJ2aWNlIiB7CiAgICAgICAgICAgICAgICAgICAgZGJJbnN0ID0gY29udGFpbmVySW5zdGFuY2UgZGF0YWJhc2UKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8gT25seSBpbmZyYXN0cnVjdHVyZSBub2RlIHJlbGF0aW9uc2hpcHMgYXJlIGFsbG93ZWQgaGVyZQogICAgICAgICAgICB1c2VyTm9kZSAtPiBsb2FkQmFsYW5jZXJOb2RlICJTZW5kcyBIVFRQUyByZXF1ZXN0cyIgIkhUVFBTIgogICAgICAgICAgICBsb2FkQmFsYW5jZXJOb2RlIC0+IHdlYkFwcEluc3QgIlJvdXRlcyB0cmFmZmljIHRvIiAiSFRUUCIKICAgICAgICAgICAgdGVsZWdyYW1XZWJob29rTm9kZSAtPiB0ZWxlZ3JhbUJvdEluc3QgIlNlbmRzIHdlYmhvb2sgdXBkYXRlcyB0byIgIkhUVFBTIgogICAgICAgIH0KCiAgICAgICAgLy8gLS0tIFJlbGF0aW9uc2hpcHMgLS0tCiAgICAgICAgCiAgICAgICAgYWRtaW4gLT4gd2ViQXBwbGljYXRpb24gIk1hbmFnZXMgc3lzdGVtIHVzZXJzICYgcm9sZXMgdmlhIiAiSFRUUFMiCiAgICAgICAgbWFuYWdlciAtPiB3ZWJBcHBsaWNhdGlvbiAiVmlld3MgY3Jvc3MtdGVhbSBkYXNoYm9hcmRzIHZpYSIgIkhUVFBTIgogICAgICAgIGRldmVsb3BlciAtPiB3ZWJBcHBsaWNhdGlvbiAiTWFuYWdlcyBwZXJzb25hbCB0YXNrcyB2aWEiICJIVFRQUyIKICAgICAgICBhdXRvSm9iIC0+IHdlYkFwcGxpY2F0aW9uICJUcmlnZ2VycyBBSSBzdW1tYXJpZXMiICJIVFRQUyIKICAgICAgICAKICAgICAgICBhZG1pbiAtPiB0ZWxlZ3JhbUJvdCAiSXNzdWVzIGFkbWluaXN0cmF0b3IgY29tbWFuZHMgdmlhIFRlbGVncmFtIgogICAgICAgIG1hbmFnZXIgLT4gdGVsZWdyYW1Cb3QgIkNoZWNrcyB0ZWFtIHN1bW1hcmllcyB2aWEgVGVsZWdyYW0iCiAgICAgICAgZGV2ZWxvcGVyIC0+IHRlbGVncmFtQm90ICJNYW5hZ2VzIHRhc2tzIHZpYSBUZWxlZ3JhbSIKICAgICAgICAKICAgICAgICB0ZWxlZ3JhbSAtPiB0ZWxlZ3JhbUJvdCAiU2VuZHMgV2ViaG9vayAvIExvbmcgUG9sbGluZyB1cGRhdGVzIHRvIgogICAgICAgIAogICAgICAgIGFkbWluIC0+IHRlbGVncmFtICJTZW5kcyBjb21tYW5kcyB2aWEiCiAgICAgICAgbWFuYWdlciAtPiB0ZWxlZ3JhbSAiU2VuZHMgY29tbWFuZHMgdmlhIgogICAgICAgIGRldmVsb3BlciAtPiB0ZWxlZ3JhbSAiU2VuZHMgY29tbWFuZHMgdmlhIgogICAgICAgIAogICAgICAgIGRldmVsb3BlciAtPiB2Y3MgIkNvbW1pdHMgY29kZSB0byIKICAgICAgICBkZXZvcHMgLT4gdmNzICJDb21taXRzIGluZnJhc3RydWN0dXJlIGNvZGUgdG8iCiAgICAgICAgZGV2b3BzIC0+IGNpQ2QgIkNvbmZpZ3VyZXMgYW5kIG1vbml0b3JzIgogICAgICAgIHZjcyAtPiBjaUNkICJUcmlnZ2VycyBidWlsZHMgb24gY29kZSBjaGFuZ2VzIgogICAgICAgIGNpQ2QgLT4gdG9kb1N5c3RlbSAiQnVpbGRzLCBjb250YWluZXJpemVzLCBhbmQgZGVwbG95cyIKICAgICAgICAKICAgICAgICB3ZWJBcHBsaWNhdGlvbiAtPiBkYXRhYmFzZSAiUmVhZHMgZnJvbSBhbmQgd3JpdGVzIHRvIiAiSkRCQyIKICAgICAgICB0ZWxlZ3JhbUJvdCAtPiB3ZWJBcHBsaWNhdGlvbiAiTWFrZXMgQVBJIGNhbGxzIHRvIiAiSlNPTi9IVFRQIgogICAgICAgIAogICAgICAgIHRlbGVncmFtQm90IC0+IHJhYmJpdE1xICJQdWJsaXNoZXMgZXZlbnRzIHRvIiAiQU1RUCIKICAgICAgICByYWJiaXRNcSAtPiB0ZWxlZ3JhbUJvdCAiU2VuZHMgZXZlbnRzIHRvIiAiQU1RUCIKICAgICAgICB3ZWJBcHBsaWNhdGlvbiAtPiByYWJiaXRNcSAiQ29uc3VtZXMgb3BlcmF0aW9ucyBmcm9tIiAiQU1RUCIKICAgICAgICAKICAgICAgICB3ZWJBcHBsaWNhdGlvbiAtPiBhaUFwaSAiUmVxdWVzdHMgc3VtbWFyaWVzIHZpYSIgIkpTT04vSFRUUFMiCiAgICAgICAgdGVsZWdyYW1Cb3QgLT4gYWlBcGkgIkFuYWx5c2VzIGNvbW1hbmRzIHZpYSIgIkpTT04vSFRUUFMiCiAgICAgICAgCiAgICAgICAgdGFza01hbmFnZW1lbnQgLT4gZGF0YWJhc2UgIlJlYWRzL3dyaXRlcyB0YXNrcyIKICAgICAgICBpZGVudGl0eUFjY2VzcyAtPiBkYXRhYmFzZSAiUmVhZHMgdXNlcnMvcm9sZXMiCiAgICAgICAgZGFzaGJvYXJkIC0+IGRhdGFiYXNlICJSZWFkcyB0ZWFtIG1ldHJpY3MiCiAgICAgICAgYWlTdW1tYXJ5IC0+IGFpQXBpICJHZW5lcmF0ZXMgaW5zaWdodHMgdmlhIEFQSSIKICAgIH0KCiAgICB2aWV3cyB7CiAgICAgICAgc3lzdGVtTGFuZHNjYXBlICJTeXN0ZW1MYW5kc2NhcGUiIHsKICAgICAgICAgICAgaW5jbHVkZSBhZG1pbiBtYW5hZ2VyIGRldmVsb3BlciBkZXZvcHMgYXV0b0pvYgogICAgICAgICAgICBpbmNsdWRlIHRlbGVncmFtIGFpQXBpIHZjcyBjaUNkIHRvZG9TeXN0ZW0KICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KCiAgICAgICAgc3lzdGVtQ29udGV4dCB0b2RvU3lzdGVtICJTeXN0ZW1Db250ZXh0IiB7CiAgICAgICAgICAgIGluY2x1ZGUgYWRtaW4gbWFuYWdlciBkZXZlbG9wZXIgYXV0b0pvYgogICAgICAgICAgICBpbmNsdWRlIHRvZG9TeXN0ZW0KICAgICAgICAgICAgaW5jbHVkZSB0ZWxlZ3JhbSBhaUFwaQogICAgICAgICAgICBhdXRvTGF5b3V0CiAgICAgICAgfQoKICAgICAgICBjb250YWluZXIgdG9kb1N5c3RlbSAiQ29udGFpbmVycyIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KCiAgICAgICAgY29tcG9uZW50IHdlYkFwcGxpY2F0aW9uICJDb21wb25lbnRzIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvTGF5b3V0CiAgICAgICAgfQoKICAgICAgICBkZXBsb3ltZW50IHRvZG9TeXN0ZW0gIlByb2R1Y3Rpb24iICJEZXBsb3ltZW50RGlhZ3JhbSIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dCB0YgogICAgICAgIH0KICAgICAgICAKICAgICAgICBkeW5hbWljIHRvZG9TeXN0ZW0gIkNyZWF0ZVRhc2tGbG93IiAiRHluYW1pYyB2aWV3IHNob3dpbmcgaG93IGEgRGV2ZWxvcGVyIGNyZWF0ZXMgYSBUYXNrIHZpYSBXZWIgVUkiIHsKICAgICAgICAgICAgZGV2ZWxvcGVyIC0+IHdlYkFwcGxpY2F0aW9uICIxLiBTdWJtaXRzIG5ldyB0YXNrIGRldGFpbHMgdmlhIGJyb3dzZXIiCiAgICAgICAgICAgIHdlYkFwcGxpY2F0aW9uIC0+IGRhdGFiYXNlICIyLiBTYXZlcyB0YXNrIHRvIGRhdGFiYXNlIgogICAgICAgICAgICBkYXRhYmFzZSAtPiB3ZWJBcHBsaWNhdGlvbiAiMy4gUmV0dXJucyB0cmFuc2FjdGlvbiBzdGF0dXMiCiAgICAgICAgICAgIHdlYkFwcGxpY2F0aW9uIC0+IGRldmVsb3BlciAiNC4gRGlzcGxheXMgc3VjY2VzcyBjb25maXJtYXRpb24iCiAgICAgICAgICAgIGF1dG9MYXlvdXQKICAgICAgICB9CgogICAgICAgIGR5bmFtaWMgdG9kb1N5c3RlbSAiQXV0b1N1bW1hcnlGbG93IiAiRHluYW1pYyB2aWV3IHNob3dpbmcgaG93IHRoZSBBdXRvIEpvYiByZXF1ZXN0cyBhIHN1bW1hcnkiIHsKICAgICAgICAgICAgYXV0b0pvYiAtPiB3ZWJBcHBsaWNhdGlvbiAiMS4gVHJpZ2dlcnMgc3VtbWFyeSBnZW5lcmF0aW9uIGVuZHBvaW50IgogICAgICAgICAgICB3ZWJBcHBsaWNhdGlvbiAtPiBhaUFwaSAiMi4gRm9ybWF0cyBwcm9tcHQgYW5kIHNlbmRzIHRvIEFJIgogICAgICAgICAgICBhaUFwaSAtPiB3ZWJBcHBsaWNhdGlvbiAiMy4gUmV0dXJucyBnZW5lcmF0ZWQgc3VtbWFyeSIKICAgICAgICAgICAgd2ViQXBwbGljYXRpb24gLT4gZGF0YWJhc2UgIjQuIFN0b3JlcyBnZW5lcmF0ZWQgc3VtbWFyeSIKICAgICAgICAgICAgd2ViQXBwbGljYXRpb24gLT4gcmFiYml0TXEgIjUuIEVtaXRzIHN1bW1hcnkgYXZhaWxhYmxlIGV2ZW50IgogICAgICAgICAgICByYWJiaXRNcSAtPiB0ZWxlZ3JhbUJvdCAiNi4gTm90aWZpZXMgYm90IHRvIG1lc3NhZ2UgbWFuYWdlcnMiCiAgICAgICAgICAgIGF1dG9MYXlvdXQKICAgICAgICB9CgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIlNvZnR3YXJlIFN5c3RlbSIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMTE2OGJkCiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiUGVyc29uIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBQZXJzb24KICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzA4NDI3YgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIlJvYm90IiB7CiAgICAgICAgICAgICAgICBzaGFwZSBSb2JvdAogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMjA4NzVlCiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiQ29udGFpbmVyIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM0MzhkZDUKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJDb21wb25lbnQiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzg1YmJmMAogICAgICAgICAgICAgICAgY29sb3IgIzAwMDAwMAogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBDeWxpbmRlcgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkV4dGVybmFsIFN5c3RlbSIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjOTk5OTk5CiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiSW5mcmFzdHJ1Y3R1cmUgTm9kZSIgewogICAgICAgICAgICAgICAgc2hhcGUgUm91bmRlZEJveAogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjZTZlNmU2CiAgICAgICAgICAgICAgICBjb2xvciAjMDAwMDAwCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0=",
     "structurizr.inspection.info" : "0",
     "structurizr.inspection.ignore" : "0",
     "structurizr.inspection.warning" : "0"
@@ -539,21 +598,9 @@
         "rankSeparation" : 100,
         "vertices" : true
       },
-      "containerId" : "8",
+      "containerId" : "11",
       "elements" : [ {
-        "id" : "6",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "9",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "10",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "11",
+        "id" : "7",
         "x" : 0,
         "y" : 0
       }, {
@@ -561,7 +608,19 @@
         "x" : 0,
         "y" : 0
       }, {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      }, {
         "id" : "15",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "18",
         "x" : 0,
         "y" : 0
       } ],
@@ -570,13 +629,13 @@
       "name" : "Component View: TodoList System - Web Application",
       "order" : 4,
       "relationships" : [ {
-        "id" : "58"
+        "id" : "66"
       }, {
-        "id" : "59"
+        "id" : "67"
       }, {
-        "id" : "60"
+        "id" : "68"
       }, {
-        "id" : "61"
+        "id" : "69"
       } ]
     } ],
     "configuration" : {
@@ -644,82 +703,18 @@
         "x" : 0,
         "y" : 0
       }, {
-        "id" : "5",
-        "x" : 0,
-        "y" : 0
-      }, {
         "id" : "6",
         "x" : 0,
         "y" : 0
       }, {
-        "id" : "8",
+        "id" : "7",
         "x" : 0,
         "y" : 0
       }, {
-        "id" : "13",
+        "id" : "11",
         "x" : 0,
         "y" : 0
       }, {
-        "id" : "14",
-        "x" : 0,
-        "y" : 0
-      }, {
-        "id" : "15",
-        "x" : 0,
-        "y" : 0
-      } ],
-      "externalSoftwareSystemBoundariesVisible" : false,
-      "key" : "Containers",
-      "name" : "Container View: TodoList System",
-      "order" : 3,
-      "relationships" : [ {
-        "id" : "34"
-      }, {
-        "id" : "36"
-      }, {
-        "id" : "38"
-      }, {
-        "id" : "40"
-      }, {
-        "id" : "42"
-      }, {
-        "id" : "43"
-      }, {
-        "id" : "44"
-      }, {
-        "id" : "45"
-      }, {
-        "id" : "47"
-      }, {
-        "id" : "48"
-      }, {
-        "id" : "49"
-      }, {
-        "id" : "50"
-      }, {
-        "id" : "51"
-      }, {
-        "id" : "52"
-      }, {
-        "id" : "53"
-      }, {
-        "id" : "54"
-      }, {
-        "id" : "55"
-      }, {
-        "id" : "57"
-      } ],
-      "softwareSystemId" : "7"
-    } ],
-    "deploymentViews" : [ {
-      "automaticLayout" : {
-        "edgeSeparation" : 50,
-        "nodeSeparation" : 50,
-        "rankDirection" : "TopBottom",
-        "rankSeparation" : 100,
-        "vertices" : true
-      },
-      "elements" : [ {
         "id" : "16",
         "x" : 0,
         "y" : 0
@@ -731,7 +726,59 @@
         "id" : "18",
         "x" : 0,
         "y" : 0
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "Containers",
+      "name" : "Container View: TodoList System",
+      "order" : 3,
+      "relationships" : [ {
+        "id" : "37"
       }, {
+        "id" : "39"
+      }, {
+        "id" : "41"
+      }, {
+        "id" : "43"
+      }, {
+        "id" : "45"
+      }, {
+        "id" : "46"
+      }, {
+        "id" : "47"
+      }, {
+        "id" : "48"
+      }, {
+        "id" : "50"
+      }, {
+        "id" : "51"
+      }, {
+        "id" : "52"
+      }, {
+        "id" : "58"
+      }, {
+        "id" : "59"
+      }, {
+        "id" : "60"
+      }, {
+        "id" : "61"
+      }, {
+        "id" : "62"
+      }, {
+        "id" : "63"
+      }, {
+        "id" : "65"
+      } ],
+      "softwareSystemId" : "10"
+    } ],
+    "deploymentViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "TopBottom",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "elements" : [ {
         "id" : "19",
         "x" : 0,
         "y" : 0
@@ -779,19 +826,31 @@
         "id" : "30",
         "x" : 0,
         "y" : 0
+      }, {
+        "id" : "31",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "32",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "33",
+        "x" : 0,
+        "y" : 0
       } ],
       "environment" : "Production",
       "key" : "DeploymentDiagram",
       "name" : "Deployment View: TodoList System - Production",
       "order" : 5,
       "relationships" : [ {
-        "id" : "31"
+        "id" : "34"
       }, {
-        "id" : "32"
+        "id" : "35"
       }, {
-        "id" : "33"
+        "id" : "36"
       } ],
-      "softwareSystemId" : "7"
+      "softwareSystemId" : "10"
     } ],
     "dynamicViews" : [ {
       "automaticLayout" : {
@@ -802,17 +861,17 @@
         "vertices" : true
       },
       "description" : "Dynamic view showing how a Developer creates a Task via Web UI",
-      "elementId" : "7",
+      "elementId" : "10",
       "elements" : [ {
         "id" : "3",
         "x" : 0,
         "y" : 0
       }, {
-        "id" : "8",
+        "id" : "11",
         "x" : 0,
         "y" : 0
       }, {
-        "id" : "15",
+        "id" : "18",
         "x" : 0,
         "y" : 0
       } ],
@@ -822,22 +881,22 @@
       "order" : 6,
       "relationships" : [ {
         "description" : "1. Submits new task details via browser",
-        "id" : "38",
+        "id" : "41",
         "order" : "1",
         "response" : false
       }, {
         "description" : "2. Saves task to database",
-        "id" : "50",
+        "id" : "58",
         "order" : "2",
         "response" : false
       }, {
         "description" : "3. Returns transaction status",
-        "id" : "50",
+        "id" : "58",
         "order" : "3",
         "response" : true
       }, {
         "description" : "4. Displays success confirmation",
-        "id" : "38",
+        "id" : "41",
         "order" : "4",
         "response" : true
       } ]
@@ -850,29 +909,29 @@
         "vertices" : true
       },
       "description" : "Dynamic view showing how the Auto Job requests a summary",
-      "elementId" : "7",
+      "elementId" : "10",
       "elements" : [ {
         "id" : "4",
         "x" : 0,
         "y" : 0
       }, {
-        "id" : "6",
+        "id" : "7",
         "x" : 0,
         "y" : 0
       }, {
-        "id" : "8",
+        "id" : "11",
         "x" : 0,
         "y" : 0
       }, {
-        "id" : "13",
+        "id" : "16",
         "x" : 0,
         "y" : 0
       }, {
-        "id" : "14",
+        "id" : "17",
         "x" : 0,
         "y" : 0
       }, {
-        "id" : "15",
+        "id" : "18",
         "x" : 0,
         "y" : 0
       } ],
@@ -882,32 +941,32 @@
       "order" : 7,
       "relationships" : [ {
         "description" : "1. Triggers summary generation endpoint",
-        "id" : "40",
+        "id" : "43",
         "order" : "1",
         "response" : false
       }, {
         "description" : "2. Formats prompt and sends to AI",
-        "id" : "55",
+        "id" : "63",
         "order" : "2",
         "response" : false
       }, {
         "description" : "3. Returns generated summary",
-        "id" : "55",
+        "id" : "63",
         "order" : "3",
         "response" : true
       }, {
         "description" : "4. Stores generated summary",
-        "id" : "50",
+        "id" : "58",
         "order" : "4",
         "response" : false
       }, {
         "description" : "5. Emits summary available event",
-        "id" : "54",
+        "id" : "62",
         "order" : "5",
         "response" : false
       }, {
         "description" : "6. Notifies bot to message managers",
-        "id" : "53",
+        "id" : "61",
         "order" : "6",
         "response" : false
       } ]
@@ -937,15 +996,15 @@
         "x" : 0,
         "y" : 0
       }, {
-        "id" : "5",
-        "x" : 0,
-        "y" : 0
-      }, {
         "id" : "6",
         "x" : 0,
         "y" : 0
       }, {
         "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "10",
         "x" : 0,
         "y" : 0
       } ],
@@ -954,25 +1013,25 @@
       "name" : "System Context View: TodoList System",
       "order" : 2,
       "relationships" : [ {
-        "id" : "35"
+        "id" : "38"
       }, {
-        "id" : "37"
+        "id" : "40"
       }, {
-        "id" : "39"
+        "id" : "42"
       }, {
-        "id" : "41"
-      }, {
-        "id" : "46"
-      }, {
-        "id" : "47"
-      }, {
-        "id" : "48"
+        "id" : "44"
       }, {
         "id" : "49"
       }, {
-        "id" : "56"
+        "id" : "50"
+      }, {
+        "id" : "51"
+      }, {
+        "id" : "52"
+      }, {
+        "id" : "64"
       } ],
-      "softwareSystemId" : "7"
+      "softwareSystemId" : "10"
     } ],
     "systemLandscapeViews" : [ {
       "automaticLayout" : {
@@ -1010,29 +1069,51 @@
         "id" : "7",
         "x" : 0,
         "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "10",
+        "x" : 0,
+        "y" : 0
       } ],
       "enterpriseBoundaryVisible" : true,
       "key" : "SystemLandscape",
       "name" : "System Landscape View",
       "order" : 1,
       "relationships" : [ {
-        "id" : "35"
+        "id" : "38"
       }, {
-        "id" : "37"
+        "id" : "40"
       }, {
-        "id" : "39"
+        "id" : "42"
       }, {
-        "id" : "41"
-      }, {
-        "id" : "46"
-      }, {
-        "id" : "47"
-      }, {
-        "id" : "48"
+        "id" : "44"
       }, {
         "id" : "49"
       }, {
+        "id" : "50"
+      }, {
+        "id" : "51"
+      }, {
+        "id" : "52"
+      }, {
+        "id" : "53"
+      }, {
+        "id" : "54"
+      }, {
+        "id" : "55"
+      }, {
         "id" : "56"
+      }, {
+        "id" : "57"
+      }, {
+        "id" : "64"
       } ]
     } ]
   }
