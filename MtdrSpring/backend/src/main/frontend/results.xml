@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<OWASPZAPReport programName="ZAP" version="2.17.0" generated="Sun, 17 May 2026 00:16:33" created="2026-05-17T00:16:33.104585864Z">
+	
+	
+		<insights>
+			
+				<insight>
+					<level>Low</level>
+					<reason>Warning</reason>
+					<site></site>
+					<key>insight.log.error</key>
+					<description>ZAP errors logged - see the zap.log file for details</description>
+					<statistic>1</statistic>
+				</insight>
+			
+			
+				<insight>
+					<level>Info</level>
+					<reason>Informational</reason>
+					<site></site>
+					<key>insight.network.failure</key>
+					<description>Percentage of network failures</description>
+					<statistic>25</statistic>
+				</insight>
+			
+		</insights>
+	
+</OWASPZAPReport>

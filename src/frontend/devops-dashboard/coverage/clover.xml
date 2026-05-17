@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1776875064253" clover="3.2.0">
+  <project timestamp="1776875064253" name="All files">
+    <metrics statements="66" coveredstatements="60" conditionals="30" coveredconditionals="19" methods="31" coveredmethods="27" elements="127" coveredelements="106" complexity="0" loc="66" ncloc="66" packages="5" files="15" classes="15"/>
+    <package name="components.charts">
+      <metrics statements="11" coveredstatements="6" conditionals="10" coveredconditionals="1" methods="6" coveredmethods="3"/>
+      <file name="SprintVelocityChart.tsx" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\components\charts\SprintVelocityChart.tsx">
+        <metrics statements="5" coveredstatements="2" conditionals="4" coveredconditionals="0" methods="3" coveredmethods="1"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="31" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="54" count="2" type="stmt"/>
+      </file>
+      <file name="TaskStatusChart.tsx" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\components\charts\TaskStatusChart.tsx">
+        <metrics statements="6" coveredstatements="4" conditionals="6" coveredconditionals="1" methods="3" coveredmethods="2"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="53" count="2" type="stmt"/>
+        <line num="70" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.layout">
+      <metrics statements="2" coveredstatements="2" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+      <file name="PageHeader.module.css" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\components\layout\PageHeader.module.css">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="PageHeader.tsx" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\components\layout\PageHeader.tsx">
+        <metrics statements="2" coveredstatements="2" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.tasks">
+      <metrics statements="32" coveredstatements="31" conditionals="14" coveredconditionals="13" methods="19" coveredmethods="19"/>
+      <file name="PendingActionsTable.module.css" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\components\tasks\PendingActionsTable.module.css">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="PendingActionsTable.tsx" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\components\tasks\PendingActionsTable.tsx">
+        <metrics statements="6" coveredstatements="5" conditionals="2" coveredconditionals="1" methods="3" coveredmethods="3"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="7" type="stmt"/>
+        <line num="17" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="33" count="7" type="stmt"/>
+      </file>
+      <file name="RecentActivity.module.css" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\components\tasks\RecentActivity.module.css">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="RecentActivity.tsx" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\components\tasks\RecentActivity.tsx">
+        <metrics statements="16" coveredstatements="16" conditionals="8" coveredconditionals="8" methods="8" coveredmethods="8"/>
+        <line num="10" count="3" type="stmt"/>
+        <line num="11" count="3" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="3" type="stmt"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="29" count="2" type="stmt"/>
+        <line num="35" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="47" count="3" type="stmt"/>
+      </file>
+      <file name="StatsCards.module.css" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\components\tasks\StatsCards.module.css">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="StatsCards.tsx" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\components\tasks\StatsCards.tsx">
+        <metrics statements="7" coveredstatements="7" conditionals="4" coveredconditionals="4" methods="6" coveredmethods="6"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="30" count="2" type="stmt"/>
+        <line num="37" count="2" type="stmt"/>
+        <line num="44" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="2" type="stmt"/>
+        <line num="52" count="8" type="stmt"/>
+      </file>
+      <file name="TeamWorkload.module.css" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\components\tasks\TeamWorkload.module.css">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="TeamWorkload.tsx" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\components\tasks\TeamWorkload.tsx">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="20" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="mocks">
+      <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="fixtures.ts" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\mocks\fixtures.ts">
+        <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="95" count="1" type="stmt"/>
+        <line num="102" count="1" type="stmt"/>
+        <line num="109" count="1" type="stmt"/>
+        <line num="116" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="pages">
+      <metrics statements="12" coveredstatements="12" conditionals="4" coveredconditionals="3" methods="5" coveredmethods="4"/>
+      <file name="HomePage.module.css" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\pages\HomePage.module.css">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="HomePage.tsx" path="C:\Users\Tec\oci_devops_project\src\frontend\devops-dashboard\src\pages\HomePage.tsx">
+        <metrics statements="12" coveredstatements="12" conditionals="4" coveredconditionals="3" methods="5" coveredmethods="4"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="122" count="2" type="stmt"/>
+        <line num="123" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="125" count="2" type="stmt"/>
+        <line num="127" count="2" type="stmt"/>
+        <line num="128" count="1" type="stmt"/>
+        <line num="130" count="1" type="stmt"/>
+        <line num="139" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="140" count="1" type="stmt"/>
+        <line num="153" count="1" type="stmt"/>
+        <line num="154" count="1" type="stmt"/>
+        <line num="158" count="2" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
