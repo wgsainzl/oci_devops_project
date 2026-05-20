@@ -25,11 +25,12 @@ import type {
 import type { CostEntry } from "./components/charts/CostPerDeveloperChart";
 import type { HoursEntry } from "./components/charts/HoursChart";
 import type { SprintSummary } from "./components/charts/SprintCostSummary";
+import {API_URLS} from "./constants.ts";
 
 // ==========================================
 // 1. AXIOS CONFIGURATION
 // ==========================================
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api";
+const BASE_URL = API_URLS.API
 
 const api = axios.create({
   baseURL: BASE_URL,

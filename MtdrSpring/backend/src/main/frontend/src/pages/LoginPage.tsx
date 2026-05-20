@@ -1,4 +1,5 @@
 import styles from './LoginPage.module.css'
+import {API_URLS} from "../constants.ts";
 
 const OracleMark = (): JSX.Element => (
     <img src="/oracle-icon.svg" alt="Oracle" className={styles.oracleMarkIcon}/>
@@ -8,7 +9,7 @@ export default function LoginPage(): JSX.Element {
 
     const handleOracleLogin = (): void => {
         // Directly trigger the Spring Boot OAuth2 flow
-        window.location.href = 'http://163.192.136.37/oauth2/authorization/oci'
+        window.location.href = API_URLS.AUTH_OCI;
     }
 
     return (
