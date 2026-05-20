@@ -77,3 +77,5 @@ wallet/
 *.jks
 config.bat
 node_modules
+
+*/.structurizr
