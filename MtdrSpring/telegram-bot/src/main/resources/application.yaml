@@ -13,3 +13,10 @@ gemini:
 
 backend:
   url: ${BACKEND_URL:http://localhost:8080}
+
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbitmq}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}

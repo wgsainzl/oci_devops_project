@@ -5,6 +5,11 @@ on:
   push:
     branches:
       - main
+      - deployment-ready
+  pull_request: # Runs when a PR is opened against these branches
+    branches:
+      - main
+      - deployment-ready
 
 env:
   IMAGE_TAG: ${{ github.sha }}
@@ -162,6 +167,14 @@ jobs:
             --from-literal=tenancy-name="${{ secrets.TENANCY_NAME }}" \
             --namespace mtdrworkshop \
             --dry-run=client -o yaml | kubectl apply -f -
+      
+      - name: Create RabbitMQ secret
+        run: |
+          kubectl create secret generic rabbitmq-secret \
+            --from-literal=rabbitmq-user="${{ secrets.RABBITMQ_USER }}" \
+            --from-literal=rabbitmq-password="${{ secrets.RABBITMQ_PASSWORD }}" \
+            --namespace mtdrworkshop \
+            --dry-run=client -o yaml | kubectl apply -f -
 
   # ---------------------------------------------------------------------------
   # JOB 3: Deploy to OKE
@@ -170,6 +183,8 @@ jobs:
     name: Deploy to OKE
     runs-on: ubuntu-latest
     needs: provision-k8s-secrets
+    # Prevents PRs from deploying to your live cluster
+    if: github.event_name != 'pull_request' 
 
     steps:
       - name: Checkout code
@@ -226,6 +241,10 @@ jobs:
 
       - name: Apply manifests
         run: |
+          kubectl apply -f MtdrSpring/k8s/rabbitmq.yaml
+          kubectl rollout status statefulset/rabbitmq \
+            --namespace mtdrworkshop \
+            --timeout=300s
           kubectl apply -f /tmp/todolistapp-springboot-rendered.yaml
           kubectl apply -f /tmp/telegram-bot-rendered.yaml
 
@@ -238,6 +257,8 @@ jobs:
             --namespace mtdrworkshop \
             --timeout=300s
 
+      
+
   # ---------------------------------------------------------------------------
   # JOB 4: Log deployment to ATP
   # ---------------------------------------------------------------------------
@@ -245,7 +266,8 @@ jobs:
     name: Log Deployment
     runs-on: ubuntu-latest
     needs: deploy
-    if: always()
+    # Also skip logging if it's a PR, since we skipped the deploy
+    if: always() && github.event_name != 'pull_request' 
 
     steps:
       - name: Checkout code
