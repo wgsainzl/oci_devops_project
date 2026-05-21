@@ -234,7 +234,7 @@ jobs:
           TODO_PDB_NAME: ${{ secrets.TODO_PDB_NAME }}
           OCI_REGION: ${{ secrets.OCI_REGION }}
         run: |
-          envsubst < MtdrSpring/backend/src/main/resources/todolistapp-springboot.yaml \
+          envsubst < MtdrSpring/backend/k8s/todolistapp-springboot.yaml \
             > /tmp/todolistapp-springboot-rendered.yaml
           envsubst < MtdrSpring/telegram-bot/k8s/telegram-bot.yaml \
             > /tmp/telegram-bot-rendered.yaml
