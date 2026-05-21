@@ -79,3 +79,6 @@ config.bat
 node_modules
 
 */.structurizr
+
+*MtdrSpring/backend/src/main/frontend/.env.development
+
