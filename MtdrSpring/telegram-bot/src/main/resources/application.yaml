@@ -17,6 +17,6 @@ backend:
 spring:
   rabbitmq:
     host: ${RABBITMQ_HOST:rabbitmq}
-    port: ${RABBITMQ_PORT:5672}
+    port: ${RABBITMQ_SERVICE_PORT:5672}
     username: ${RABBITMQ_USER}
     password: ${RABBITMQ_PASSWORD}
