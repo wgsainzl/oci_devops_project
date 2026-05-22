@@ -1,11 +1,14 @@
 app:
-  base-url: ${APP_REDIRECT_BASE_URL:http://localhost:8080}
+  base-url: ${APP_REDIRECT_BASE_URL:163.192.136.37}
   frontend-url: ${APP_FRONTEND_URL:${app.base-url}}
 
 logging:
   file:
     name: logs.log
   level:
+#    org:
+#      springframework:
+#        security: DEBUG
     root: info
     oracle.ucp: warn
     org.hibernate:
