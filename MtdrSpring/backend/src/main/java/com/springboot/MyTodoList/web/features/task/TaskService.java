@@ -119,7 +119,19 @@ public class TaskService {
     public List<Task> getTasksBySprintId(Integer sprintId) {
         return taskRepository.findBySprint_SprintId(sprintId);
     }
+
+    public List<Task> getTasksByTeamAndSprint(Integer sprintId, Integer teamId){
+        return taskRepository.findBySprint_SprintIdAndResponsible_Team_TeamId(sprintId, teamId);
+    }
+
+    public List<Task> getTasksByTeamId(Integer teamId){
+        return taskRepository.findByResponsible_Team_TeamId(teamId);
+    }
     
+    public List<Task> findWeeklySummaryTasksByTeamId(Integer teamId, OffsetDateTime weekStart, OffsetDateTime weekEnd){
+        return taskRepository.findTeamWeeklySummaryTasks(teamId, weekStart, weekEnd);
+    }
+
     public List<Task> getWeeklySummaryTasks(Integer userId, OffsetDateTime weekStart, OffsetDateTime weekEnd) {
         return taskRepository.findWeeklySummaryTasks(userId, weekStart, weekEnd);
     }
@@ -127,6 +139,8 @@ public class TaskService {
     public List<Task> findAllWeeklySummaryTasks(OffsetDateTime weekStart, OffsetDateTime weekEnd) {
         return taskRepository.findAllWeeklySummaryTasks(weekStart, weekEnd);
     }
+
+
    public Task createTaskFromTelegram(Task task, String telegramId) {
         // 1. Set default status
         if (task.getStatus() == null) {

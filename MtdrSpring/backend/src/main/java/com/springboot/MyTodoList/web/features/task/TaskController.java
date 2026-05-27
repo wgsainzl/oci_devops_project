@@ -1,8 +1,5 @@
 package com.springboot.MyTodoList.web.features.task;
 
-import com.springboot.MyTodoList.web.features.task.Task;
-import com.springboot.MyTodoList.web.features.task.TaskService;
-import com.springboot.MyTodoList.web.features.task.TaskStatus;
 import com.springboot.MyTodoList.web.features.task.dto.TaskDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +19,8 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    @Autowired
-    private com.springboot.MyTodoList.web.features.user.UserRepository userRepository;
+    //@Autowired
+    //private com.springboot.MyTodoList.web.features.user.UserRepository userRepository;
 
     @GetMapping
     public ResponseEntity<List<TaskDTO>> getAllToDoItems(){
