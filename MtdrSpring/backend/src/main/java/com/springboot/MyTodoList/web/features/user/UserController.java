@@ -1,12 +1,16 @@
 package com.springboot.MyTodoList.web.features.user;
 
 import com.springboot.MyTodoList.web.features.user.userDetails.CustomUserDetails;
+import com.springboot.MyTodoList.web.features.user.User;
+import com.springboot.MyTodoList.web.features.user.dto.UserSessionDTO;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -35,7 +39,8 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
+    
+    /*
     @GetMapping("/telegram/{telegramId}/role")
     public ResponseEntity<java.util.Map<String, Object>> getUserRoleByTelegramId(@PathVariable String telegramId) {
         java.util.Map<String, Object> roleInfo = userService.getUserByTelegramId(telegramId);
@@ -43,7 +48,37 @@ public class UserController {
             return ResponseEntity.ok(roleInfo);
         }
         return ResponseEntity.notFound().build();
+    }*/
+
+    @GetMapping("/telegram/{telegramId}")
+    public ResponseEntity<UserSessionDTO> getTeamIdByTelegramId(@PathVariable String telegramId){
+        Optional<User> userOpt = userService.getUserByTelegramId(telegramId);
+    
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User user = userOpt.get();
+        UserSessionDTO dto = new UserSessionDTO();
+        
+        dto.setUserId(user.getUserId());
+        dto.setTelegramUserId(user.getTelegramUserID());
+        
+        if (user.getTeam() != null) {
+            dto.setTeamId(user.getTeam().getTeamId());
+        }
+        
+        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+            // Just grabbing the first role for the bot's logic
+            dto.setRole(user.getRoles().iterator().next().getName()); 
+        } else {
+            dto.setRole("USER"); // Default fallback
+        }
+
+        return ResponseEntity.ok(dto);
     }
+    
+
 
     //@CrossOrigin
     @DeleteMapping(value = "deleteUser/{id}")

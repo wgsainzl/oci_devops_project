@@ -56,18 +56,18 @@ public class TaskCommandConsumer {
         Task task = new Task();
         task.setTitle(dto.title());
         task.setDescription(dto.description());
-        if (dto.startDate() != null)
-            task.setStartDate(java.time.OffsetDateTime.parse(dto.startDate()));
-        if (dto.dueDate() != null)
-            task.setDueDate(java.time.OffsetDateTime.parse(dto.dueDate()));
+        
+        // No more manual string parsing needed!
+        task.setStartDate(dto.startDate());
+        task.setDueDate(dto.dueDate());
         task.setEstimatedHours(dto.estimatedHours());
-        task.setPriority(dto.priority() != null
-            ? com.springboot.MyTodoList.web.features.task.TaskPriority.valueOf(dto.priority())
-            : null);
-        if (dto.sprint() != null && dto.sprint().get("sprintId") != null) {
+        task.setPriority(dto.priority());
+        
+        // Accessing the strongly-typed SprintReference record
+        if (dto.sprint() != null && dto.sprint().sprintId() != null) {
             com.springboot.MyTodoList.web.features.sprint.Sprint sprint =
                 new com.springboot.MyTodoList.web.features.sprint.Sprint();
-            sprint.setSprintId(((Number) dto.sprint().get("sprintId")).intValue());
+            sprint.setSprintId(dto.sprint().sprintId());
             task.setSprint(sprint);
         }
         return task;

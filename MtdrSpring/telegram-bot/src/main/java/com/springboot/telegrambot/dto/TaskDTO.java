@@ -4,27 +4,34 @@ import java.time.OffsetDateTime;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-// This tells the parser to safely ignore fields like createdAt, responsible, and sprint
 @JsonIgnoreProperties(ignoreUnknown = true) 
 public class TaskDTO {
     
+    // Maps the backend's "id" JSON key to this class's "taskId" variable
     @JsonProperty("id")
-    private Integer taskId; // Jackson will try to auto-coerce the String "83" to Integer 83
+    private Integer taskId; 
     
     private String title;
     private String description;
+    
     private OffsetDateTime startDate;
     private OffsetDateTime dueDate;
+    private OffsetDateTime createdAt;
+    
     private Double estimatedHours;
     private Double actualHours;
-    private TaskStatus status;
-    private String priority;
+    private TaskStatus status; 
+    private String priority; 
     
-    // CHANGED: Use a nested class instead of a String to fix the JSON parsing error
-    private UserReference responsible;
-    private String responsibleId;
+    private String responsible;
+    private Long responsibleId;
     
-    // Getters and Setters
+    private SprintReference sprint;
+
+    // --- Default Constructor ---
+    public TaskDTO() {}
+
+    // --- Getters and Setters ---
     public Integer getTaskId() { return taskId; }
     public void setTaskId(Integer taskId) { this.taskId = taskId; }
 
@@ -40,6 +47,9 @@ public class TaskDTO {
     public OffsetDateTime getDueDate() { return dueDate; }
     public void setDueDate(OffsetDateTime dueDate) { this.dueDate = dueDate; }
 
+    public OffsetDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+
     public Double getEstimatedHours() { return estimatedHours; }
     public void setEstimatedHours(Double estimatedHours) { this.estimatedHours = estimatedHours; }
 
@@ -52,19 +62,33 @@ public class TaskDTO {
     public String getPriority() { return priority; }
     public void setPriority(String priority) { this.priority = priority; }
 
-    // CHANGED: Updated getters and setters to match the new UserReference object
-    public UserReference getResponsible() { return responsible; }
-    public void setResponsible(UserReference responsible) { this.responsible = responsible; }
+    public String getResponsible() { return responsible; }
+    public void setResponsible(String responsible) { this.responsible = responsible; }
 
-    public String getResponsibleId() { return responsibleId; }
-    public void setResponsibleId(String responsibleId) { this.responsibleId = responsibleId; }
-    
-    private SprintReference sprint;
+    public Long getResponsibleId() { return responsibleId; }
+    public void setResponsibleId(Long responsibleId) { this.responsibleId = responsibleId; }
     
     public SprintReference getSprint() { return sprint; }
     public void setSprint(SprintReference sprint) { this.sprint = sprint; }
 
+    // --- Nested Class for Sprint ---
+    @JsonIgnoreProperties(ignoreUnknown = true) 
+    public static class SprintReference {
+        private Integer sprintId;
+        private String sprintName;
+        
+        public SprintReference() {}
+        
+        public Integer getSprintId() { return sprintId; }
+        public void setSprintId(Integer sprintId) { this.sprintId = sprintId; }
+        
+        public String getSprintName() { return sprintName; }
+        public void setSprintName(String sprintName) { this.sprintName = sprintName; }
+    }
+}
     // NEW: Nested class to map the "responsible" JSON object
+
+    /*
     public static class UserReference {
         private Integer userId;
         private String name;
@@ -96,3 +120,4 @@ public class TaskDTO {
         public void setSprintId(Integer sprintId) { this.sprintId = sprintId; }
     }
 }
+    */

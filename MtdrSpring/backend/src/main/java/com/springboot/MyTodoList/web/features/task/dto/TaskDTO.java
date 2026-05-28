@@ -1,48 +1,53 @@
 package com.springboot.MyTodoList.web.features.task.dto;
 
 import com.springboot.MyTodoList.web.features.task.Task;
-import java.util.HashMap;
-import java.util.Map;
+import com.springboot.MyTodoList.web.features.task.TaskStatus;
+import com.springboot.MyTodoList.web.features.task.TaskPriority;
+import java.time.OffsetDateTime;
 
 public record TaskDTO(
-    String id,
+    Integer id,                  // Strongly typed Integer
     String title,
     String description,
-    String status,
-    String priority,
-    String createdAt,
-    String dueDate,
-    String startDate,
-    String responsible,
-    String responsibleId,
-    Double estimatedHours, // <-- Changed to Double to match Task.java
-    Double actualHours,    // <-- Changed to Double to match Task.java
-    Map<String, Object> sprint
+    TaskStatus status,           // Strongly typed Enum
+    TaskPriority priority,       // Strongly typed Enum
+    OffsetDateTime createdAt,    // Strongly typed Date
+    OffsetDateTime dueDate,      // Strongly typed Date
+    OffsetDateTime startDate,    // Strongly typed Date
+    String responsible,          // User's name as String
+    Long responsibleId,          // Strongly typed Long (Matches User.userId)
+    Double estimatedHours, 
+    Double actualHours,    
+    SprintReference sprint       // Strongly typed Record
 ) {
+
+    // A clean, strict definition for the nested JSON object
+    public record SprintReference(Integer sprintId, String sprintName) {}
+
     public static TaskDTO fromEntity(Task task) {
         
-        // Build the nested map safely
-        Map<String, Object> sprintMap = null;
+        SprintReference sprintRef = null;
         if (task.getSprint() != null) {
-            sprintMap = new HashMap<>(); // <-- HashMap is safer as it allows null values
-            sprintMap.put("sprintId", task.getSprint().getSprintId());
-            sprintMap.put("sprintName", task.getSprint().getSprintName());
+            sprintRef = new SprintReference(
+                task.getSprint().getSprintId(),
+                task.getSprint().getSprintName()
+            );
         }
 
         return new TaskDTO(
-            String.valueOf(task.getTaskId()), 
+            task.getTaskId(), 
             task.getTitle(),
             task.getDescription(),
-            task.getStatus() != null ? task.getStatus().name() : null,
-            task.getPriority() != null ? task.getPriority().name() : null,
-            task.getCreatedAt() != null ? task.getCreatedAt().toString() : null,
-            task.getDueDate() != null ? task.getDueDate().toString() : null,
-            task.getStartDate() != null ? task.getStartDate().toString() : null,
+            task.getStatus(),
+            task.getPriority(),
+            task.getCreatedAt(),
+            task.getDueDate(),
+            task.getStartDate(),
             task.getResponsible() != null ? task.getResponsible().getName() : null,
-            task.getResponsible() != null ? String.valueOf(task.getResponsible().getUserId()) : null,
-            task.getEstimatedHours(), // <-- Now perfectly matches the Double type
-            task.getActualHours(),    // <-- Now perfectly matches the Double type
-            sprintMap 
+            task.getResponsible() != null ? task.getResponsible().getUserId() : null,
+            task.getEstimatedHours(),
+            task.getActualHours(),
+            sprintRef 
         );
     }
 }

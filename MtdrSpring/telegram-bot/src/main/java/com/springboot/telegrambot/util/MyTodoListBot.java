@@ -1,6 +1,7 @@
 package com.springboot.telegrambot.util;
 import java.time.OffsetDateTime;
 import com.springboot.telegrambot.client.BackendServiceClient;
+import com.springboot.telegrambot.command.BotCommandRouter;
 import com.springboot.telegrambot.gemini.GeminiService;
 import com.springboot.telegrambot.dto.TaskDTO;
 import org.springframework.stereotype.Component;
@@ -30,22 +31,12 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
 
     private final TelegramClient telegramClient;
     private final String telegramBotToken;
-    private final BackendServiceClient backendServiceClient;
-    private final GeminiService geminiService;
-    private final com.springboot.telegrambot.messaging.TaskCommandPublisher taskCommandPublisher;
-    private final com.springboot.telegrambot.messaging.TaskRpcClient taskRpcClient;
+    private final BotCommandRouter commandRouter;
 
     public MyTodoListBot(
-            @Value("${telegram.bot.token}") String telegramBotToken,
-            BackendServiceClient backendServiceClient,
-            GeminiService geminiService,
-            com.springboot.telegrambot.messaging.TaskCommandPublisher taskCommandPublisher,
-            com.springboot.telegrambot.messaging.TaskRpcClient taskRpcClient) {
+            @Value("${telegram.bot.token}") String telegramBotToken, BotCommandRouter commandRouter) {
         this.telegramBotToken = telegramBotToken;
-        this.backendServiceClient = backendServiceClient;
-        this.geminiService = geminiService;
-        this.taskCommandPublisher = taskCommandPublisher;
-        this.taskRpcClient = taskRpcClient;
+        this.commandRouter = commandRouter;
         this.telegramClient = new OkHttpTelegramClient(telegramBotToken);
     }
 
@@ -59,6 +50,20 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
         return this;
     }
 
+    @Override 
+    public void consume(Update update){
+        if (!update.hasMessage() || !update.getMessage().hasText()){
+            return;
+        }
+
+        long chatId = update.getMessage().getChatId();
+        String messageText = update.getMessage().getText().trim();
+
+        String telegramUserId = update.getMessage().getFrom() != null ? String.valueOf(update.getMessage().getFrom().getId()) : null;
+        commandRouter.processMessage(chatId, telegramUserId, messageText);
+
+    }
+    /*
     @Override
     public void consume(Update update) {
         if (!update.hasMessage() || !update.getMessage().hasText()) {
@@ -105,6 +110,8 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
         }
     }
 
+    */
+   /* 
     private void handleReportCommand(long chatId, String telegramUserId, String messageText) {
         if (telegramUserId == null || telegramUserId.isBlank()) {
             sendText(chatId, "Missing telegram user id in update payload.");
@@ -147,6 +154,7 @@ public class MyTodoListBot implements SpringLongPollingBot, LongPollingSingleThr
             sendText(chatId, "Could not generate report right now. Please verify backend and Gemini settings.");
         }
     }
+    */
 
     private void sendText(long chatId, String text) {
         if (text == null || text.isEmpty()) return;
