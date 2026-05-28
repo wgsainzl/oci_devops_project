@@ -73,6 +73,8 @@ public class TaskRpcClient {
                 RabbitMQConfig.RK_TASK_RPC_REQ,
                 request
         );
+        
+        System.out.print("RABBIT RESPONSE: " + response);
 
         return parseTaskList(response); 
     }

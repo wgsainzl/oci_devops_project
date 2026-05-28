@@ -5,6 +5,8 @@ import com.springboot.MyTodoList.web.features.task.TaskService;
 import com.springboot.MyTodoList.web.features.task.dto.TaskDTO;
 import com.springboot.MyTodoList.web.features.user.UserRepository;
 import com.springboot.MyTodoList.web.messaging.dto.TaskRpcRequest;
+
+import org.springframework.transaction.annotation.Transactional;
 import com.springboot.MyTodoList.web.messaging.dto.SprintDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ public class TaskRpcConsumer {
     @Autowired private UserRepository userRepository;
     @Autowired private com.springboot.MyTodoList.web.features.sprint.SprintRepository sprintRepository;
 
+    @Transactional(readOnly = true)
     @RabbitListener(queues = RabbitMQConfig.TASK_RPC_REQUEST)
     public Object handleRpcRequest(TaskRpcRequest request) {
         if (request == null || request.getQueryType() == null) {
