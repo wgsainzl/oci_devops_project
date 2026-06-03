@@ -26,7 +26,7 @@ public class AwaitingEstimatedHours implements WizardState {
         String text = context.getMessageText();
         try {
             double actualHours = Double.parseDouble(text);
-            session.draftTask.setActualHours(actualHours);
+            session.draftTask.setEstimatedHours(actualHours);
             session.state = TaskWizardManager.TaskCreationState.AWAITING_PRIORITY;
 
             BotHelper.sendHtmlMessageWithKeyboard(context.getChatId(), 
