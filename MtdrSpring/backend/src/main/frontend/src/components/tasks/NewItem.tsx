@@ -3,16 +3,20 @@
  * only ADMIN / MANAGER roles may create tasks
  * calls onCreated(newTask) on success so the parent can append to its list
  */
-
-import React, { type JSX, useState } from 'react'
-import { tasksAPI } from '../../API'
+import React, { type JSX, useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/AuthContext'
-import type { NewTaskPayload, Task, TaskStatus, TaskPriority } from '../../types'
+import type { Task, TaskStatus, TaskPriority } from '../../types'
 import styles from './NewItem.module.css'
 
 interface Props {
   onCreated?: (task: Task) => void
   onCancel?: () => void
+}
+
+interface DBUser {
+  userId: number
+  name: string
+  email: string
 }
 
 type TaskFormState = {
@@ -23,6 +27,7 @@ type TaskFormState = {
   startDate: string
   estimatedHours: string
   dueDate: string
+  responsibleId: string 
 }
 
 const DEFAULT_FORM: TaskFormState = {
@@ -33,6 +38,7 @@ const DEFAULT_FORM: TaskFormState = {
   startDate: '',
   estimatedHours: '',
   dueDate: '',
+  responsibleId: '', 
 }
 
 const toIsoString = (dateValue?: string): string | undefined => {
@@ -42,26 +48,45 @@ const toIsoString = (dateValue?: string): string | undefined => {
 }
 
 export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
-  const { isManager } = useAuth()
+  const { user } = useAuth() 
   const [form, setForm] = useState<TaskFormState>(DEFAULT_FORM)
+  const [dbUsers, setDbUsers] = useState<DBUser[]>([]) 
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
-  if (!isManager) {
-    return (
-      <p className={styles.denied}>Only Admins and Managers can create tasks.</p>
-    )
-  }
+  // CARGA DE MIEMBROS REALES DESDE TU TABLA DE ORACLE CLOUD
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        // Apuntamos a la ruta real de tu UserController: /api/users/
+        const response = await fetch("/api/users/", { credentials: "include" })
+        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`)
+        
+        const data = await response.json()
+        
+        if (Array.isArray(data)) {
+          setDbUsers(data)
+          if (data.length > 0) {
+            setForm(prev => ({ ...prev, responsibleId: data[0].userId.toString() }))
+          }
+        }
+      } catch (err: any) {
+        console.error("Falla de red o de parseo en catálogo real:", err)
+        setError("No se pudo conectar con el catálogo de usuarios reales de Oracle.")
+      }
+    }
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-  ): void => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    fetchUsers()
+  }, [])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.title.trim()) return
+    if (!form.title.trim() || !form.responsibleId) return
 
     setLoading(true)
     setError(null)
@@ -69,8 +94,8 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
     try {
       const isoStartDate = toIsoString(form.startDate)
       const isoDueDate = toIsoString(form.dueDate)
+      const selectedResponsibleId = parseInt(form.responsibleId)
 
-      // 1. Regresamos al objeto Task real que tu base de datos y negocio necesitan
       const payload = {
         title: form.title.trim(),
         description: form.description?.trim() || null,
@@ -80,26 +105,27 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
         actualHours: 0.0,
         status: form.status,     
         priority: form.priority, 
+
+        creator: { userId: selectedResponsibleId }, 
+        manager: { userId: selectedResponsibleId },     
+        responsible: { userId: selectedResponsibleId }, 
+        
+        sprint: null     
       }
 
-      console.log("Enviando petición autenticada a la API:", payload);
+      console.log("Insertando tarea real vinculada a un usuario real:", payload)
 
-      // 2. Apuntamos al endpoint real de tareas de tu controlador principal
       const response = await fetch("/api/tasks", { 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Si usas tokens JWT guardados en localStorage, descomenta la siguiente línea:
-          // "Authorization": `Bearer ${localStorage.getItem("auth_token")}`
         },
-        // CRUCIAL: Le indica al navegador que envíe las cookies de sesión (JSESSIONID) 
-        // creadas en el puerto 8080 a través del proxy de Vite.
         credentials: "include", 
         body: JSON.stringify(payload),
       })
 
-      if (response.status === 401 || response.status === 403) {
-        throw new Error("Tu sesión en el backend ha expirado. Por favor, recarga o inicia sesión en localhost:8080 primero.");
+      if (response.status === 409) {
+        throw new Error("Conflict (409): Comprueba que el Sprint ID 1 exista en tu tabla física de Oracle.")
       }
 
       if (!response.ok) {
@@ -109,12 +135,12 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
       const newTask = await response.json()
       if (onCreated) onCreated(newTask)
       
-      setForm(DEFAULT_FORM) 
-      alert("¡Tarea guardada exitosamente en Oracle Cloud Base de Datos!");
+      setForm({ ...DEFAULT_FORM, responsibleId: form.responsibleId }) 
+      alert("¡Tarea creada y asignada exitosamente en tu Base de Datos real!")
 
     } catch (err: any) {
       console.error("Error al crear la tarea:", err)
-      setError(err.message || "No se pudo conectar con el servidor.");
+      setError(err.message || "No se pudo conectar con el servidor.")
     } finally {
       setLoading(false)
     }
@@ -154,7 +180,30 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
         />
       </div>
 
-      {/* start date / due date / hours row */}
+      {/* developers connection */}
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="responsibleId">Assign Responsible *</label>
+        <select
+          id="responsibleId"
+          name="responsibleId"
+          className={styles.select}
+          value={form.responsibleId}
+          onChange={handleChange}
+          required
+        >
+          {dbUsers.length === 0 ? (
+            <option value="">Connecting with Developers...</option>
+          ) : (
+            dbUsers.map((member) => (
+              <option key={member.userId} value={member.userId}>
+                {member.name} - ({member.email})
+              </option>
+            ))
+          )}
+        </select>
+      </div>
+
+      {/* start date / estimated hours / priority row */}
       <div className={styles.row}>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="startDate">Start date</label>
@@ -192,7 +241,7 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
             value={form.priority}
             onChange={handleChange}
           >
-            {(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] as TaskPriority[]).map((p) => (
+            {['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].map((p) => (
               <option key={p} value={p}>{p}</option>
             ))}
           </select>
@@ -210,13 +259,11 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
             value={form.status}
             onChange={handleChange}
           >
-            {(['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'BLOCKED', 'DONE'] as TaskStatus[]).map(
-              (s) => (
-                <option key={s} value={s}>
-                  {s.replace(/_/g, ' ')}
-                </option>
-              ),
-            )}
+            {['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'BLOCKED', 'DONE'].map((s) => (
+              <option key={s} value={s}>
+                {s.replace(/_/g, ' ')}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -245,7 +292,7 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
             Cancel
           </button>
         )}
-        <button type="submit" className={styles.btnPrimary} disabled={loading}>
+        <button type="submit" className={styles.btnPrimary} disabled={loading || dbUsers.length === 0}>
           {loading ? 'Creating…' : 'Create Task'}
         </button>
       </div>

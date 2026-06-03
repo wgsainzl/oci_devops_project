@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           continue;
         }
 
-        // It's a different error (Server 500, Network error, etc.)
+        // if it's a different error (Server 500, Network error, etc.)
         console.error("User load failed:", err);
         setUser(null);
         setError(
@@ -99,13 +99,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const handleExpiredSession = () => {
     // If running on Vite dev server (port 5173), bypass the Oracle redirect completely
     if (window.location.port === '5173') {
-      console.log("Local Dev Mode: Bypassing Oracle Cloud Redirect");
-      setUser({
-        userId: "local-dev-admin",
-        username: "Sebastian Alett",
-        email: "sebastian@example.com",
-        role: "ADMIN" // This role grants you full access to see all pages and features
-      });
       setLoading(false);
       return;
     }
@@ -119,15 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // 1. Direct bypass check for the live reload server
       if (window.location.port === '5173') {
         // Only trigger state updates if user is not already initialized
-        if (!user) {
-          setUser({
-            userId: "local-dev-admin",
-            username: "Sebastian Alett",
-            email: "sebastian@example.com",
-            role: "ADMIN"
-          });
-          setLoading(false);
-        }
+        setLoading(false);
         return;
       }
 

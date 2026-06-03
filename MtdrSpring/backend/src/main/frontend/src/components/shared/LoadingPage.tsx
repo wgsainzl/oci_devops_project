@@ -8,7 +8,7 @@ type LoadingPageProps = {
 
 export default function LoadingPage({
   title = 'Loading',
-  description = 'Fetching dounce and preparing the view.',
+  description = 'Fetching information and preparing the view.',
 }: LoadingPageProps): JSX.Element {
   return (
     <div className={styles.page} role="status" aria-live="polite" aria-busy="true">
@@ -19,7 +19,7 @@ export default function LoadingPage({
         </div>
 
         <div className={styles.copy}>
-          <p className={styles.kicker}>Dounce wait</p>
+          <p className={styles.kicker}>Please wait</p>
           <h1 className={styles.title}>{title}</h1>
           <p className={styles.description}>{description}</p>
         </div>
