@@ -95,6 +95,7 @@ public class ListTasksCommand implements BotCommand {
                     sb.append("<b>ID: ").append(item.getTaskId()).append("</b> | <code>[").append(item.getStatus()).append("]</code>\n");
                     sb.append(title).append("\n\n");
                 }
+                sb.append("<i>To complete a task, type:</i> <code>/complete &lt;TaskID&gt; &lt;HOURS&gt;</code>");
                 sb.append("<i>To update a task, type:</i> <code>/updatetask &lt;ID&gt; &lt;STATUS&gt;</code>");
             }
 

@@ -11,6 +11,7 @@ public class TaskRpcRequest implements Serializable {
     private QueryType queryType;
     private Integer sprintId;
     private Integer teamId;
+    private double actualHours;
     private String telegramId;
 
     public TaskRpcRequest() {}
@@ -23,6 +24,9 @@ public class TaskRpcRequest implements Serializable {
 
     public Integer getTeamId() { return teamId; }
     public void setTeamId(Integer teamId) { this.teamId = teamId;}
+
+    public double getActualHours() {return actualHours; }
+    public void setActualHours(double actualHours) { this.actualHours = actualHours; }
 
     public String getTelegramId() { return telegramId; }
     public void setTelegramId(String telegramId) { this.telegramId = telegramId; }
