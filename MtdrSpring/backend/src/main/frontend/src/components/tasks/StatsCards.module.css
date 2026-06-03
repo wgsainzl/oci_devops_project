@@ -4,10 +4,18 @@
   border-radius: 5px;
   padding: var(--space-4) var(--space-5);
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
+  align-items: center; /* Changed from flex-start to align button horizontally */
+  justify-content: space-between; /* Pushes content left and button right if needed */
+  gap: var(--space-4);
   transition: box-shadow var(--transition-fast);
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+.cardContent {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  flex: 1;
 }
 
 /* .card:hover {
@@ -34,7 +42,6 @@
 
 .text {
   flex: 1.5;
-  
 }
 
 .count {
@@ -54,12 +61,27 @@
 }
 
 .sub {
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
   margin-top: 2px;
   font-size: 16px;
   color: #000000;
   font-style: normal;
   font-weight: 300;
   line-height: normal;
+}
+
+.inlineCreateBtn {
+  padding: var(--space-2) var(--space-4);
+  background: #0d1e3f; /* Deep navy matching your header */
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast);
+}
+
+.inlineCreateBtn:hover {
+  background: #1a3260;
 }

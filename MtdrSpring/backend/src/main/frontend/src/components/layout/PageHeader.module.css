@@ -10,12 +10,25 @@
   padding: var(--space-6) var(--space-6) var(--space-4);
   min-height: 110px;
   border-left: none;
+  
+  /* Add flexbox structure to align actions on the left of titles */
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
 }
 
 .inner {
   position: relative;
   z-index: 1;
-  margin-bottom: var(--space-3);
+  /* Remove or decrease bottom margins to let it align inside the row */
+  margin-bottom: 0; 
+}
+
+.toolbar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
 }
 
 .titleGroup {}
@@ -37,9 +50,37 @@
   margin-left: 10px;
 }
 
-.toolbar {
-  position: relative;
-  z-index: 1;
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(13, 30, 63, 0.18);
+  color: #0d1e3f;
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.actionBtn:hover {
+  transform: translateY(-1px);
+  background: #ffffff;
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.16);
+}
+
+.actionBtn:focus-visible {
+  outline: 2px solid var(--color-oracle-red);
+  outline-offset: 2px;
+}
+
+.actionBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .filterBtn {

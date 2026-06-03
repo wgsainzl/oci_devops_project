@@ -7,7 +7,7 @@
 import React, { type JSX, useState } from 'react'
 import { tasksAPI } from '../../API'
 import { useAuth } from '../../hooks/AuthContext'
-import type { NewTaskPayload, Task, TaskStatus, TaskPriority, TaskType } from '../../types'
+import type { NewTaskPayload, Task, TaskStatus, TaskPriority } from '../../types'
 import styles from './NewItem.module.css'
 
 interface Props {
@@ -15,19 +15,35 @@ interface Props {
   onCancel?: () => void
 }
 
-const DEFAULT_FORM: NewTaskPayload = {
+type TaskFormState = {
+  title: string
+  description: string
+  status: TaskStatus
+  priority: TaskPriority
+  startDate: string
+  estimatedHours: string
+  dueDate: string
+}
+
+const DEFAULT_FORM: TaskFormState = {
   title: '',
   description: '',
   status: 'TODO',
   priority: 'MEDIUM',
-  type: 'FEATURE',
-  assignedDevId: '',
+  startDate: '',
+  estimatedHours: '',
   dueDate: '',
+}
+
+const toIsoString = (dateValue?: string): string | undefined => {
+  if (!dateValue) return undefined
+  const parsed = new Date(`${dateValue}T00:00:00`)
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString()
 }
 
 export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
   const { isManager } = useAuth()
-  const [form, setForm] = useState<NewTaskPayload>(DEFAULT_FORM)
+  const [form, setForm] = useState<TaskFormState>(DEFAULT_FORM)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -43,23 +59,62 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
-    if (!form.title.trim()) {
-      setError('Title is required.')
-      return
-    }
+    if (!form.title.trim()) return
+
     setLoading(true)
+    setError(null)
+
     try {
-      const res = await tasksAPI.create(form)
-      onCreated?.(res.data)
-      setForm(DEFAULT_FORM)
-    } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-        'Failed to create task.'
-      setError(msg)
+      const isoStartDate = toIsoString(form.startDate)
+      const isoDueDate = toIsoString(form.dueDate)
+
+      // 1. Regresamos al objeto Task real que tu base de datos y negocio necesitan
+      const payload = {
+        title: form.title.trim(),
+        description: form.description?.trim() || null,
+        startDate: isoStartDate || null,
+        dueDate: isoDueDate || null,
+        estimatedHours: form.estimatedHours ? parseFloat(form.estimatedHours) : null,
+        actualHours: 0.0,
+        status: form.status,     
+        priority: form.priority, 
+      }
+
+      console.log("Enviando petición autenticada a la API:", payload);
+
+      // 2. Apuntamos al endpoint real de tareas de tu controlador principal
+      const response = await fetch("/api/tasks", { 
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Si usas tokens JWT guardados en localStorage, descomenta la siguiente línea:
+          // "Authorization": `Bearer ${localStorage.getItem("auth_token")}`
+        },
+        // CRUCIAL: Le indica al navegador que envíe las cookies de sesión (JSESSIONID) 
+        // creadas en el puerto 8080 a través del proxy de Vite.
+        credentials: "include", 
+        body: JSON.stringify(payload),
+      })
+
+      if (response.status === 401 || response.status === 403) {
+        throw new Error("Tu sesión en el backend ha expirado. Por favor, recarga o inicia sesión en localhost:8080 primero.");
+      }
+
+      if (!response.ok) {
+        throw new Error(`Error en el servidor: ${response.status}`)
+      }
+
+      const newTask = await response.json()
+      if (onCreated) onCreated(newTask)
+      
+      setForm(DEFAULT_FORM) 
+      alert("¡Tarea guardada exitosamente en Oracle Cloud Base de Datos!");
+
+    } catch (err: any) {
+      console.error("Error al crear la tarea:", err)
+      setError(err.message || "No se pudo conectar con el servidor.");
     } finally {
       setLoading(false)
     }
@@ -99,7 +154,52 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
         />
       </div>
 
-      {/* status / priority / type row */}
+      {/* start date / due date / hours row */}
+      <div className={styles.row}>
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="startDate">Start date</label>
+          <input
+            id="startDate"
+            name="startDate"
+            type="date"
+            className={styles.input}
+            value={form.startDate}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="estimatedHours">Estimated hours</label>
+          <input
+            id="estimatedHours"
+            name="estimatedHours"
+            type="number"
+            min="0"
+            step="0.5"
+            className={styles.input}
+            value={form.estimatedHours}
+            onChange={handleChange}
+            placeholder="0"
+          />
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="priority">Priority</label>
+          <select
+            id="priority"
+            name="priority"
+            className={styles.select}
+            value={form.priority}
+            onChange={handleChange}
+          >
+            {(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] as TaskPriority[]).map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* status / due date row */}
       <div className={styles.row}>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="status">Status</label>
@@ -118,51 +218,6 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
               ),
             )}
           </select>
-        </div>
-
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="priority">Priority</label>
-          <select
-            id="priority"
-            name="priority"
-            className={styles.select}
-            value={form.priority}
-            onChange={handleChange}
-          >
-            {(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] as TaskPriority[]).map((p) => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="type">Type</label>
-          <select
-            id="type"
-            name="type"
-            className={styles.select}
-            value={form.type}
-            onChange={handleChange}
-          >
-            {(['FEATURE', 'BUG'] as TaskType[]).map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* assignee / due date row */}
-      <div className={styles.row}>
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="assignedDevId">Assign to (user ID)</label>
-          <input
-            id="assignedDevId"
-            name="assignedDevId"
-            className={styles.input}
-            value={form.assignedDevId ?? ''}
-            onChange={handleChange}
-            placeholder="user-uuid"
-          />
         </div>
 
         <div className={styles.field}>

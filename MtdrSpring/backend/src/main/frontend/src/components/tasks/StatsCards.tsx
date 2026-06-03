@@ -4,6 +4,8 @@ import styles from './StatsCards.module.css'
 
 interface Props {
   stats: DashboardStats
+  isManager?: boolean 
+  onCreateTaskClick?: () => void 
 }
 
 interface CardConfig {
@@ -45,19 +47,33 @@ const CARDS: CardConfig[] = [
   },
 ]
 
-export default function StatsCards({ stats }: Props): JSX.Element {
+export default function StatsCards({ stats, isManager, onCreateTaskClick }: Props): JSX.Element {
   return (
     <>
       {CARDS.map((card) => (
         <div key={card.key} className={styles.card}>
-          <span className={`${styles.icon} ${styles[card.iconClass]}`} aria-hidden="true">
-            <img className={styles.iconImage} src={card.icon} alt="" />
-          </span>
-          <div className={styles.text}>
-            <span className={styles.count}>{stats[card.key] ?? '—'}</span>
-            <span className={styles.label}> {card.label}</span>
-            <p className={styles.sub}>{card.sub(stats)}</p>
+          {/* Main layout container wrapper for card content */}
+          <div className={styles.cardContent}>
+            <span className={`${styles.icon} ${styles[card.iconClass]}`} aria-hidden="true">
+              <img className={styles.iconImage} src={card.icon} alt="" />
+            </span>
+            <div className={styles.text}>
+              <span className={styles.count}>{stats[card.key] ?? '—'}</span>
+              <span className={styles.label}> {card.label}</span>
+              <p className={styles.sub}>{card.sub(stats)}</p>
+            </div>
           </div>
+
+          {/* If this is the 'created' card and user is a manager, inject the button on the right side of the card */}
+          {card.key === 'created' && isManager && onCreateTaskClick && (
+            <button 
+              type="button" 
+              className={styles.inlineCreateBtn} 
+              onClick={onCreateTaskClick}
+            >
+              New Task
+            </button>
+          )}
         </div>
       ))}
     </>

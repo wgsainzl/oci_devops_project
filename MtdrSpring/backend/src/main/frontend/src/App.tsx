@@ -2,6 +2,7 @@
 import { AuthProvider, useAuth } from "./hooks/AuthContext.tsx";
 import { Navigate, Route, Routes } from "react-router-dom";
 import AppShell from "./components/layout/AppShell.tsx";
+import LoadingPage from "./components/shared/LoadingPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
 import TimelinePage from "./pages/TimelinePage.tsx";
 import ApiDocsPage from "./pages/ApiDocsPage.tsx";
@@ -25,7 +26,14 @@ import LoginPage from "./pages/LoginPage.tsx";
 function ProtectedRoute({ children }: { children: JSX.Element }): JSX.Element {
   const { user, loading } = useAuth();
 
-  if (loading) return <div style={{ padding: 24 }}>Loading session...</div>;
+  if (loading) {
+    return (
+      <LoadingPage
+        title="Loading session"
+        description="Checking your account and recent activity."
+      />
+    );
+  }
 
   return user ? children : <Navigate to="/login" replace />;
 }

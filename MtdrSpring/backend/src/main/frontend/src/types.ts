@@ -54,10 +54,12 @@ export interface Task {
   description?: string
   status: TaskStatus
   priority: TaskPriority
-  type: TaskType
+  type?: TaskType
   createdAt: string        // 
   dueDate?: string         // 
-  startDate?: string       // used for Gantt bar start
+  startDate?: string | null       // used for Gantt bar start
+  estimatedHours?: number
+  actualHours?: number
   assignedDevId?: string
   responsible?: string     // display name denormalized for convenience
 }
@@ -67,7 +69,9 @@ export interface NewTaskPayload {
   description?: string
   status: TaskStatus
   priority: TaskPriority
-  type: TaskType
+  type?: TaskType
+  startDate?: string
+  estimatedHours?: number
   assignedDevId?: string
   dueDate?: string
 }

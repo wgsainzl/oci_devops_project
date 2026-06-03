@@ -97,21 +97,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const handleExpiredSession = () => {
-    window.location.href = API_URLS.AUTH_OCI
+    // If running on Vite dev server (port 5173), bypass the Oracle redirect completely
+    if (window.location.port === '5173') {
+      console.log("Local Dev Mode: Bypassing Oracle Cloud Redirect");
+      setUser({
+        userId: "local-dev-admin",
+        username: "Sebastian Alett",
+        email: "sebastian@example.com",
+        role: "ADMIN" // This role grants you full access to see all pages and features
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Otherwise, use the standard production login flow
+    window.location.href = API_URLS.AUTH_OCI;
   };
 
   useEffect(() => {
     const initAuth = async () => {
-      const savedToken = localStorage.getItem("auth_token");
+      // 1. Direct bypass check for the live reload server
+      if (window.location.port === '5173') {
+        // Only trigger state updates if user is not already initialized
+        if (!user) {
+          setUser({
+            userId: "local-dev-admin",
+            username: "Sebastian Alett",
+            email: "sebastian@example.com",
+            role: "ADMIN"
+          });
+          setLoading(false);
+        }
+        return;
+      }
 
-      // 1. If no token exists, we aren't logged in.
+      const savedToken = localStorage.getItem("auth_token");
       if (!savedToken) {
         setLoading(false);
         return;
       }
 
-      // 2. If we have a token but no user object yet, fetch it.
-      // We check !user to prevent re-fetching if the data is already there.
       if (!user) {
         await loadUser(savedToken);
       } else {
@@ -120,9 +145,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     initAuth();
-    // Dependency array: loadUser is memoized with useCallback,
-    // so this only runs once on mount.
-  }, [loadUser, user]);
+    // REMOVED 'user' from dependencies to kill the infinite crash loop cleanly
+  }, [loadUser]);
 
   const logout = useCallback(async (): Promise<void> => {
     try {
