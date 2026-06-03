@@ -12,6 +12,7 @@ public class TaskCommandMessage implements Serializable {
     private CommandType commandType;
     private TaskDTO task;
     private Integer taskId;
+    private double estimatedHours;
     private double actualHours;
     private String newStatus;
     private String telegramId;
@@ -29,6 +30,9 @@ public class TaskCommandMessage implements Serializable {
 
     public double getActualHours() {return actualHours; }
     public void setActualHours(double actualHours) { this.actualHours = actualHours; }
+
+    public double getEstimatedHours() {return estimatedHours; }
+    public void setEstimatedHours(double estimatedHours) { this.estimatedHours = estimatedHours; }
 
     public String getNewStatus() { return newStatus; }
     public void setNewStatus(String newStatus) { this.newStatus = newStatus; }
