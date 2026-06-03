@@ -301,7 +301,7 @@ jobs:
           envsubst < MtdrSpring/scripts/setup-cicd-schema.sql > /tmp/setup-cicd-schema.sql
 
           export TNS_ADMIN=/tmp/wallet
-          echo 'ADMIN/"'"${ATP_ADMIN_PASSWORD}"'"@'"${TODO_PDB_NAME}_tp" > /tmp/login.txt
+          echo 'CONNECT ADMIN/"'"${ATP_ADMIN_PASSWORD}"'"@'"${TODO_PDB_NAME}_tp" > /tmp/login.txt
           sql /nolog @/tmp/login.txt @/tmp/setup-cicd-schema.sql
 
       - name: Log deployment result
@@ -316,5 +316,5 @@ jobs:
           envsubst < MtdrSpring/scripts/log-deploy.sql > /tmp/log-deploy.sql
 
           export TNS_ADMIN=/tmp/wallet
-          echo 'ADMIN/"'"${ATP_ADMIN_PASSWORD}"'"@'"${TODO_PDB_NAME}_tp" > /tmp/login.txt
+          echo 'CONNECT ADMIN/"'"${ATP_ADMIN_PASSWORD}"'"@'"${TODO_PDB_NAME}_tp" > /tmp/login.txt
           sql /nolog @/tmp/login.txt @/tmp/log-deploy.sql
