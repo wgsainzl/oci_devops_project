@@ -16,6 +16,10 @@ public class SprintService {
         return sprintRepository.findAll();
     }
 
+    public List<Sprint> getSprintsByTeamId(Integer teamId){
+        return sprintRepository.findByTeam_TeamId(teamId);
+    }
+
     public Optional<Sprint> getSprintById(int id) {
         return sprintRepository.findById(id);
     }

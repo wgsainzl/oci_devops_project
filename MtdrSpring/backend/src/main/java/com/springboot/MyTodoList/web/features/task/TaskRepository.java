@@ -23,6 +23,11 @@ public interface TaskRepository extends JpaRepository<Task,Integer> {
     // Find all tasks for a user that are NOT done yet
     List<Task> findByResponsible_UserIdAndStatusNot(Integer userId, TaskStatus status);
 
+        List<Task> findBySprint_SprintIdAndResponsible_Team_TeamId(Integer sprintId, Integer teamId);
+
+        List<Task> findByResponsible_Team_TeamId(Integer teamId);
+
+
     @Query(value = "SELECT * FROM Tasks " +
             "WHERE responsible_id = :targetUserId " +
             "  AND ( " +
@@ -43,4 +48,19 @@ public interface TaskRepository extends JpaRepository<Task,Integer> {
             nativeQuery = true)
     List<Task> findAllWeeklySummaryTasks(@Param("weekStart") OffsetDateTime weekStart,
                                          @Param("weekEnd") OffsetDateTime weekEnd);
+
+       
+        @Query(value = "SELECT t.* FROM Tasks t " +
+            "JOIN USERS u ON t.responsible_id = u.user_id " +
+            "WHERE u.team_id = :teamId " +
+            "  AND ( " +
+            "      (t.status = 'DONE' AND t.completed_at BETWEEN :weekStart AND :weekEnd) " +
+            "      OR " +
+            "      t.status IN ('IN_PROGRESS', 'IN_REVIEW', 'BLOCKED') " +
+            "  ) " +
+            "ORDER BY t.status DESC, t.completed_at DESC",
+            nativeQuery = true)
+    List<Task> findTeamWeeklySummaryTasks(@Param("teamId") Integer teamId,
+                                          @Param("weekStart") OffsetDateTime weekStart,
+                                          @Param("weekEnd") OffsetDateTime weekEnd);
 }

@@ -57,6 +57,13 @@ public class User {
         this.ociSubjectID = ociSubjectID;
     }
 
+    @Setter
+    @Getter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id")
+    private com.springboot.MyTodoList.web.features.team.Team team;
+
+
 
     @Override
     public String toString() {

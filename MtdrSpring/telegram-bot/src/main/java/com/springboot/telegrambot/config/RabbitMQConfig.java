@@ -1,5 +1,8 @@
 package com.springboot.telegrambot.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -38,9 +41,19 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(taskRpcReplyQueue()).to(mtdrExchange()).with(RK_TASK_RPC_REPLY);
     }
 
+    // --- NEW: Custom ObjectMapper for Java 8 Dates ---
+    @Bean
+    public ObjectMapper rabbitObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule()); // Teaches Jackson how to handle OffsetDateTime
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // Forces ISO-8601 string format
+        return mapper;
+    }
+
+    // --- UPDATED: Pass the custom mapper to the converter ---
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter();
+        return new Jackson2JsonMessageConverter(rabbitObjectMapper());
     }
 
     @Bean

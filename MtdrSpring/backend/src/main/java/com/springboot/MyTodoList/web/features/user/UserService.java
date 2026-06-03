@@ -36,7 +36,11 @@ public class UserService {
         }
     }
 
-    public Map<String, Object> getUserByTelegramId(String telegramId) {
+    public Optional<User> getUserByTelegramId(String telegramId){
+        return userRepository.findByTelegramUserID(telegramId);
+    }
+
+    /*public Map<String, Object> getUserByTelegramId(String telegramId) {
         Optional<User> userOpt = userRepository.findByTelegramUserID(telegramId);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
@@ -49,7 +53,10 @@ public class UserService {
             return result;
         }
         return null;
-    }
+    }*/
+
+    
+
 
 
     public boolean deleteUser(Long id) {

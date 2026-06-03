@@ -8,7 +8,8 @@ public enum BotCommands {
 	ADD_ITEM("/addtask"),
 	LLM_REPORT("/report"),
 	SPRINTS_LIST("/sprints"),
-	UPDATE_TASK("/updatetask");
+	UPDATE_TASK("/updatetask"),
+	COMPLETE_TASK("/complete");
 
 	private String command;
 

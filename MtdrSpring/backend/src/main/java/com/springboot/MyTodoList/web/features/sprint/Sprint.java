@@ -1,9 +1,14 @@
 package com.springboot.MyTodoList.web.features.sprint;
 
 import jakarta.persistence.*;
-import java.time.OffsetDateTime;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
 
+import java.time.OffsetDateTime;
+
+import org.hibernate.annotations.Fetch;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+// add team?
 @Entity
 @Table(name = "sprints")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -22,6 +27,12 @@ public class Sprint {
 
     @Column(name = "end_date")
     private OffsetDateTime endDate;
+
+    @Getter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id")
+    private com.springboot.MyTodoList.web.features.team.Team team;
+
 
     public Sprint() {}
 

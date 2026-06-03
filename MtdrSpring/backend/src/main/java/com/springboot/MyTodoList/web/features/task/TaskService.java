@@ -82,7 +82,6 @@ public class TaskService {
             return null;
         }
     }
-
     public Task updateTaskStatus(int id, TaskStatus newStatus, Long currentUserId) {
         Optional<Task> existingData = taskRepository.findById(id);
         
@@ -115,11 +114,77 @@ public class TaskService {
         }
         return null;
     }
+    public Task updateTaskStatus(int id, TaskStatus newStatus, String telegramId) {
+
+        Optional<Task> existingData = taskRepository.findById(id);
+        Optional<User> user = userRepository.findByTelegramUserID(telegramId);
+        if (!user.isPresent()) { return null; }
+
+        if (existingData.isPresent()) {
+            Task task = existingData.get();
+            TaskStatus oldStatus = task.getStatus();
+            task.setStatus(newStatus);
+
+            if (newStatus == TaskStatus.DONE) {
+                task.setCompletedAt(OffsetDateTime.now());
+            } else {
+                task.setCompletedAt(null);
+            }
+
+            Task savedTask = taskRepository.save(task);
+
+            if (oldStatus != newStatus) {
+
+                String oldStatusStr = (oldStatus != null) ? oldStatus.name() : "NONE";
+                String newStatusStr = (newStatus != null) ? newStatus.name() : "NONE";
+                taskLogRepository.save(new TaskLog(savedTask, user.get(), "status", oldStatusStr, newStatusStr));
+            }
+
+            return savedTask;
+        }
+        return null;
+    }
+    
+    
+    public Task completeTaskWithHours(int id, Double actualHours, String telegramId) {
+        Optional<Task> existingData = taskRepository.findById(id);
+        Optional<User> user = userRepository.findByTelegramUserID(telegramId);
+        if (!user.isPresent()) { return null; }
+
+        if (existingData.isPresent()) {
+            Task task = existingData.get();
+            TaskStatus oldStatus = task.getStatus();
+            task.setStatus(TaskStatus.DONE);
+            task.setActualHours(actualHours);
+            task.setCompletedAt(OffsetDateTime.now());
+
+            Task savedTask = taskRepository.save(task);
+
+            // CREATE THE LOG
+            String oldStatusStr = (oldStatus != null) ? oldStatus.name() : "NONE";
+            taskLogRepository.save(new TaskLog(savedTask, user.get(), "status", oldStatusStr, "DONE"));
+
+            return savedTask;
+        }
+        return null;
+    }
 
     public List<Task> getTasksBySprintId(Integer sprintId) {
         return taskRepository.findBySprint_SprintId(sprintId);
     }
+
+    public List<Task> getTasksByTeamAndSprint(Integer sprintId, Integer teamId){
+        return taskRepository.findBySprint_SprintIdAndResponsible_Team_TeamId(sprintId, teamId);
+    }
+
+    public List<Task> getTasksByTeamId(Integer teamId){
+        return taskRepository.findByResponsible_Team_TeamId(teamId);
+    }
     
+    public List<Task> findWeeklySummaryTasksByTeamId(Integer teamId, OffsetDateTime weekStart, OffsetDateTime weekEnd){
+        return taskRepository.findTeamWeeklySummaryTasks(teamId, weekStart, weekEnd);
+    }
+
     public List<Task> getWeeklySummaryTasks(Integer userId, OffsetDateTime weekStart, OffsetDateTime weekEnd) {
         return taskRepository.findWeeklySummaryTasks(userId, weekStart, weekEnd);
     }
@@ -127,6 +192,8 @@ public class TaskService {
     public List<Task> findAllWeeklySummaryTasks(OffsetDateTime weekStart, OffsetDateTime weekEnd) {
         return taskRepository.findAllWeeklySummaryTasks(weekStart, weekEnd);
     }
+
+
    public Task createTaskFromTelegram(Task task, String telegramId) {
         // 1. Set default status
         if (task.getStatus() == null) {

@@ -1,6 +1,8 @@
 package com.springboot.telegrambot.client;
 
 import com.springboot.telegrambot.dto.TaskDTO;
+import com.springboot.telegrambot.dto.UserSessionDTO;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +41,14 @@ public class BackendServiceClient {
                 .uri("/users/telegram/" + telegramId + "/role")
                 .retrieve()
                 .bodyToMono(new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {})
+                .block();
+    }
+
+    public UserSessionDTO getUserDataByTelegramId(String telegramId) {
+        return webClient.get()
+                .uri("/users/telegram/" + telegramId)
+                .retrieve()
+                .bodyToMono(UserSessionDTO.class) // Mono = exactly 1 item expected
                 .block();
     }
 
@@ -215,10 +225,47 @@ public class BackendServiceClient {
                 .collectList()
                 .block();
     }
+    
+    public List<com.springboot.telegrambot.dto.SprintDTO> getSprintsByTeam(int teamId) {
+        logger.info("=====================================================");
+        logger.info("--> BOT FIRING REQUEST TO: /sprints");
+        
+        try {
+            // 1. Fetch the raw payload just to log it
+            String rawResponse = webClient.get()
+                    .uri("/teams/" + teamId + "/sprints")
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            logger.info("<-- RAW PAYLOAD RECEIVED FROM BACKEND:");
+            logger.info(rawResponse);
+            logger.info("=====================================================");
+        } catch (Exception e) {
+            logger.error("<-- WEBCLIENT CRASHED EXECUTING /sprints: {}", e.getMessage());
+            logger.info("=====================================================");
+        }
+
+        // 2. Do the actual mapping
+        return webClient.get()
+                .uri("/sprints")
+                .retrieve()
+                .bodyToFlux(com.springboot.telegrambot.dto.SprintDTO.class)
+                .collectList()
+                .block();
+    }
 
     public List<TaskDTO> getTasksForSprint(Integer sprintId) {
         return webClient.get()
                 .uri("/sprints/" + sprintId + "/tasks")
+                .retrieve()
+                .bodyToFlux(TaskDTO.class)
+                .collectList()
+                .block();
+    }
+
+    public List<TaskDTO> getTasksForSprintByTeamId(Integer teamId, Integer sprintId) {
+        return webClient.get()
+                .uri("/teams/" + teamId + "/sprints/" + sprintId + "/tasks")
                 .retrieve()
                 .bodyToFlux(TaskDTO.class)
                 .collectList()

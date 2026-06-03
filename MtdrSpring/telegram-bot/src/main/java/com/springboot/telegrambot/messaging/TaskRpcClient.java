@@ -36,6 +36,18 @@ public class TaskRpcClient {
         return parseTaskList(response);
     }
 
+    public List<TaskDTO> getTasksByTeamId(Integer teamId){
+        TaskRpcRequest request = new TaskRpcRequest();
+        request.setQueryType(TaskRpcRequest.QueryType.GET_TASKS_BY_TEAMID);
+        request.setTeamId(teamId);
+
+        Object response = rabbitTemplate.convertSendAndReceive(RabbitMQConfig.EXCHANGE,
+                RabbitMQConfig.RK_TASK_RPC_REQ,
+                request
+        );
+        return parseTaskList(response);
+    }
+
     public List<TaskDTO> getTasksForSprint(Integer sprintId) {
         TaskRpcRequest request = new TaskRpcRequest();
         request.setQueryType(TaskRpcRequest.QueryType.GET_TASKS_FOR_SPRINT);
@@ -48,6 +60,23 @@ public class TaskRpcClient {
         );
 
         return parseTaskList(response);
+    }
+
+    public List<TaskDTO> getTasksForSprintByTeam(Integer sprintId, Integer teamId){
+        TaskRpcRequest request = new TaskRpcRequest();
+        request.setQueryType(TaskRpcRequest.QueryType.GET_TASKS_FOR_SPRINT_BY_TEAMID);
+        request.setSprintId(sprintId);
+        request.setTeamId(teamId);;
+
+        Object response = rabbitTemplate.convertSendAndReceive(
+                RabbitMQConfig.EXCHANGE,
+                RabbitMQConfig.RK_TASK_RPC_REQ,
+                request
+        );
+        
+        System.out.print("RABBIT RESPONSE: " + response);
+
+        return parseTaskList(response); 
     }
 
     public Map<String, Object> getUserRole(String telegramId) {
@@ -86,6 +115,28 @@ public class TaskRpcClient {
     public List<com.springboot.telegrambot.dto.SprintDTO> getAllSprints() {
         TaskRpcRequest request = new TaskRpcRequest();
         request.setQueryType(TaskRpcRequest.QueryType.GET_ALL_SPRINTS);
+
+        Object response = rabbitTemplate.convertSendAndReceive(
+                RabbitMQConfig.EXCHANGE,
+                RabbitMQConfig.RK_TASK_RPC_REQ,
+                request
+        );
+
+        if (response == null) return Collections.emptyList();
+        try {
+            JavaType type = objectMapper.getTypeFactory()
+                    .constructCollectionType(List.class, com.springboot.telegrambot.dto.SprintDTO.class);
+            return objectMapper.convertValue(response, type);
+        } catch (Exception e) {
+            logger.error("Failed to parse sprint list response", e);
+            return Collections.emptyList();
+        }
+    }
+
+    public List<com.springboot.telegrambot.dto.SprintDTO> getAllSprintsByTeamId(Integer teamId) {
+        TaskRpcRequest request = new TaskRpcRequest();
+        request.setQueryType(TaskRpcRequest.QueryType.GET_ALL_SPRINTS_BY_TEAMID);
+        request.setTeamId(teamId);
 
         Object response = rabbitTemplate.convertSendAndReceive(
                 RabbitMQConfig.EXCHANGE,

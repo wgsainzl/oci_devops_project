@@ -6,12 +6,13 @@ import java.io.Serializable;
 public class TaskCommandMessage implements Serializable {
 
     public enum CommandType {
-        CREATE, UPDATE_STATUS, DELETE
+        CREATE, UPDATE_STATUS, DELETE, COMPLETE_TASK
     }
 
     private CommandType commandType;
     private TaskDTO task;
     private Integer taskId;
+    private double actualHours;
     private String newStatus;
     private String telegramId;
 
@@ -26,9 +27,13 @@ public class TaskCommandMessage implements Serializable {
     public Integer getTaskId() { return taskId; }
     public void setTaskId(Integer taskId) { this.taskId = taskId; }
 
+    public double getActualHours() {return actualHours; }
+    public void setActualHours(double actualHours) { this.actualHours = actualHours; }
+
     public String getNewStatus() { return newStatus; }
     public void setNewStatus(String newStatus) { this.newStatus = newStatus; }
 
     public String getTelegramId() { return telegramId; }
     public void setTelegramId(String telegramId) { this.telegramId = telegramId; }
+
 }
