@@ -1,0 +1,143 @@
+@startuml
+
+class com.springboot.MyTodoList.web.features.task.Task {
+	{field} +actualHours : Double
+	{field} +completedAt : java.time.OffsetDateTime
+	{field} -createdAt : java.time.OffsetDateTime
+	{field} +creator : com.springboot.MyTodoList.web.features.user.User
+	{field} +description : String
+	{field} +dueDate : java.time.OffsetDateTime
+	{field} +estimatedHours : Double
+	{field} -logs : java.util.List
+	{field} +manager : com.springboot.MyTodoList.web.features.user.User
+	{field} +responsible : com.springboot.MyTodoList.web.features.user.User
+	{field} +sprint : com.springboot.MyTodoList.web.features.sprint.Sprint
+	{field} +startDate : java.time.OffsetDateTime
+	{field} -taskId : Integer
+	{field} +title : String
+	{field} -updatedAt : java.time.OffsetDateTime
+}
+
+
+class com.springboot.MyTodoList.web.features.task.TaskController {
+	{method} +addToDoItem ( newTask : com.springboot.MyTodoList.web.features.task.Task ) : org.springframework.http.ResponseEntity
+	{method} +addToDoItemFromTelegram ( newTask : com.springboot.MyTodoList.web.features.task.Task , telegramId : String ) : org.springframework.http.ResponseEntity
+	{method} +deleteTaskItem ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +findAllWeeklySummaryTasks ( weekStart : java.time.OffsetDateTime , weekEnd : java.time.OffsetDateTime ) : org.springframework.http.ResponseEntity
+	{method} +getAllToDoItems () : org.springframework.http.ResponseEntity
+	{method} +getToDoItemById ( id : int ) : org.springframework.http.ResponseEntity
+	{method} +getWeeklySummaryTasks ( userId : Integer , weekStart : java.time.OffsetDateTime , weekEnd : java.time.OffsetDateTime ) : org.springframework.http.ResponseEntity
+	{method} +updateTaskStatus ( id : int , requestBody : java.util.Map ) : org.springframework.http.ResponseEntity
+	{method} +updateToDoItem ( updatedData : com.springboot.MyTodoList.web.features.task.Task , id : int ) : org.springframework.http.ResponseEntity
+}
+
+
+enum com.springboot.MyTodoList.web.features.task.TaskPriority {
+	{field} +CRITICAL
+	{field} +HIGH
+	{field} +LOW
+	{field} +MEDIUM
+}
+
+
+interface com.springboot.MyTodoList.web.features.task.TaskRepository {
+	{method}  {abstract} +findAllWeeklySummaryTasks ( weekStart : java.time.OffsetDateTime , weekEnd : java.time.OffsetDateTime ) : java.util.List
+	{method}  {abstract} +findByCreator_UserId ( userId : Integer ) : java.util.List
+	{method}  {abstract} +findByResponsible_Team_TeamId ( teamId : Integer ) : java.util.List
+	{method}  {abstract} +findByResponsible_UserId ( userId : Integer ) : java.util.List
+	{method}  {abstract} +findByResponsible_UserIdAndStatusNot ( userId : Integer , status : com.springboot.MyTodoList.web.features.task.TaskStatus ) : java.util.List
+	{method}  {abstract} +findBySprint_SprintId ( sprintId : Integer ) : java.util.List
+	{method}  {abstract} +findBySprint_SprintIdAndResponsible_Team_TeamId ( sprintId : Integer , teamId : Integer ) : java.util.List
+	{method}  {abstract} +findByStatus ( status : com.springboot.MyTodoList.web.features.task.TaskStatus ) : java.util.List
+	{method}  {abstract} +findTeamWeeklySummaryTasks ( teamId : Integer , weekStart : java.time.OffsetDateTime , weekEnd : java.time.OffsetDateTime ) : java.util.List
+	{method}  {abstract} +findWeeklySummaryTasks ( targetUserId : Integer , weekStart : java.time.OffsetDateTime , weekEnd : java.time.OffsetDateTime ) : java.util.List
+}
+
+
+class com.springboot.MyTodoList.web.features.task.TaskService {
+	{field} -sprintRepository : com.springboot.MyTodoList.web.features.sprint.SprintRepository
+	{field} -taskLogRepository : com.springboot.MyTodoList.web.features.tasklog.TaskLogRepository
+	{field} -userRepository : com.springboot.MyTodoList.web.features.user.UserRepository
+	{method} +completeTaskWithHours ( id : int , actualHours : Double , telegramId : String ) : com.springboot.MyTodoList.web.features.task.Task
+	{method} +createTask ( task : com.springboot.MyTodoList.web.features.task.Task ) : com.springboot.MyTodoList.web.features.task.Task
+	{method} +createTaskFromTelegram ( task : com.springboot.MyTodoList.web.features.task.Task , telegramId : String ) : com.springboot.MyTodoList.web.features.task.Task
+	{method} +deleteTaskItem ( id : int ) : boolean
+	{method} +findAll () : java.util.List
+	{method} +findAllWeeklySummaryTasks ( weekStart : java.time.OffsetDateTime , weekEnd : java.time.OffsetDateTime ) : java.util.List
+	{method} +findWeeklySummaryTasksByTeamId ( teamId : Integer , weekStart : java.time.OffsetDateTime , weekEnd : java.time.OffsetDateTime ) : java.util.List
+	{method} +getTaskById ( id : int ) : java.util.Optional
+	{method} +getTasksBySprintId ( sprintId : Integer ) : java.util.List
+	{method} +getTasksByTeamAndSprint ( sprintId : Integer , teamId : Integer ) : java.util.List
+	{method} +getTasksByTeamId ( teamId : Integer ) : java.util.List
+	{method} +getTasksByUserId ( userId : Integer ) : java.util.List
+	{method} +getWeeklySummaryTasks ( userId : Integer , weekStart : java.time.OffsetDateTime , weekEnd : java.time.OffsetDateTime ) : java.util.List
+	{method} +updateTask ( id : int , updatedTask : com.springboot.MyTodoList.web.features.task.Task ) : com.springboot.MyTodoList.web.features.task.Task
+	{method} +updateTaskStatus ( id : int , newStatus : com.springboot.MyTodoList.web.features.task.TaskStatus , currentUserId : Long ) : com.springboot.MyTodoList.web.features.task.Task
+	{method} +updateTaskStatus ( id : int , newStatus : com.springboot.MyTodoList.web.features.task.TaskStatus , telegramId : String ) : com.springboot.MyTodoList.web.features.task.Task
+}
+
+
+enum com.springboot.MyTodoList.web.features.task.TaskStatus {
+	{field} +BLOCKED
+	{field} +DONE
+	{field} +IN_PROGRESS
+	{field} +IN_REVIEW
+	{field} +TODO
+}
+
+
+class com.springboot.MyTodoList.web.features.task.dto.TaskDTO {
+	{field} -actualHours : Double
+	{field} -createdAt : java.time.OffsetDateTime
+	{field} -description : String
+	{field} -dueDate : java.time.OffsetDateTime
+	{field} -estimatedHours : Double
+	{field} -id : Integer
+	{field} -responsible : String
+	{field} -responsibleId : Long
+	{field} -startDate : java.time.OffsetDateTime
+	{field} -title : String
+	{method} +actualHours () : Double
+	{method} +createdAt () : java.time.OffsetDateTime
+	{method} +description () : String
+	{method} +dueDate () : java.time.OffsetDateTime
+	{method} +equals ( o : Object ) : boolean
+	{method} +estimatedHours () : Double
+	{method}  {static} +fromEntity ( task : com.springboot.MyTodoList.web.features.task.Task ) : com.springboot.MyTodoList.web.features.task.dto.TaskDTO
+	{method} +hashCode () : int
+	{method} +id () : Integer
+	{method} +priority () : com.springboot.MyTodoList.web.features.task.TaskPriority
+	{method} +responsible () : String
+	{method} +responsibleId () : Long
+	{method} +sprint () : com.springboot.MyTodoList.web.features.task.dto.TaskDTO$SprintReference
+	{method} +startDate () : java.time.OffsetDateTime
+	{method} +status () : com.springboot.MyTodoList.web.features.task.TaskStatus
+	{method} +title () : String
+	{method} +toString () : String
+}
+
+
+class com.springboot.MyTodoList.web.features.task.dto.TaskDTO$SprintReference {
+	{field} -sprintId : Integer
+	{field} -sprintName : String
+	{method} +equals ( o : Object ) : boolean
+	{method} +hashCode () : int
+	{method} +sprintId () : Integer
+	{method} +sprintName () : String
+	{method} +toString () : String
+}
+
+
+
+
+com.springboot.MyTodoList.web.features.task.Task "1" o-- "0..*"  com.springboot.MyTodoList.web.features.task.Task : dependentTasks
+com.springboot.MyTodoList.web.features.task.Task -->  com.springboot.MyTodoList.web.features.task.TaskPriority :  @Column("priority")\npriority
+com.springboot.MyTodoList.web.features.task.Task -->  com.springboot.MyTodoList.web.features.task.TaskStatus :  @Column("status")\nstatus
+com.springboot.MyTodoList.web.features.task.TaskController -->  com.springboot.MyTodoList.web.features.task.TaskService : taskService
+com.springboot.MyTodoList.web.features.task.TaskService -->  com.springboot.MyTodoList.web.features.task.TaskRepository : taskRepository
+com.springboot.MyTodoList.web.features.task.dto.TaskDTO *--  com.springboot.MyTodoList.web.features.task.TaskPriority : priority
+com.springboot.MyTodoList.web.features.task.dto.TaskDTO *--  com.springboot.MyTodoList.web.features.task.TaskStatus : status
+com.springboot.MyTodoList.web.features.task.dto.TaskDTO *--  com.springboot.MyTodoList.web.features.task.dto.TaskDTO$SprintReference : sprint
+
+
+@enduml
