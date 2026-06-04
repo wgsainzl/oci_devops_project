@@ -1,172 +1,158 @@
-/**
- * provides authentication state to app
- * handles two-step Oracle sign-in flow:
- 1. Email, password  →  receives 2FA challenge token from backend
- 2. 2FA code          →  receives session cookie and user object
- */
-
 import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  type ReactNode,
-  useEffect,
+    createContext,
+    useContext,
+    useState,
+    useCallback,
+    type ReactNode,
+    useEffect,
 } from "react";
-import { authAPI } from "../API.ts";
-// import { mockAuthAPI } from "../mocks";
-import type { User, UserRole } from "../types.ts";
+import {authAPI} from "../API.ts";
+import type {User, UserRole} from "../types.ts";
 import {API_URLS} from "../constants.ts";
 
-// Use mock API if VITE_USE_MOCKS=true
-// const API = import.meta.env.VITE_USE_MOCKS ? mockAuthAPI : authAPI
-
-// context shape
 interface AuthContextValue {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
-  loadUser: (token: string) => Promise<void>;
-  signOut: () => Promise<void>;
-  // RBAC helpers
-  isAdmin: boolean;
-  isManager: boolean; // true for both ADMIN / MANAGER roles
-  isDeveloper: boolean;
-  hasRole: (role: UserRole) => boolean;
+    user: User | null;
+    loading: boolean;
+    error: string | null;
+    loadUser: (token: string) => Promise<void>;
+    signOut: () => Promise<void>;
+    isAdmin: boolean;
+    isManager: boolean;
+    isDeveloper: boolean;
+    hasRole: (role: UserRole) => boolean;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function AuthProvider({children}: { children: ReactNode }) {
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  const loadUser = useCallback(async (token: string) => {
-    setLoading(true);
-    setError(null);
+    const loadUser = useCallback(async (token: string) => {
+        setLoading(true);
+        setError(null);
 
-    for (let attempt = 0; attempt < 2; attempt += 1) {
-      try {
-        const res = await authAPI.getMe(token);
-        setUser(res.data);
-        setLoading(false); // Success, stop loading and show app
-        return;
-      } catch (err: any) {
-        const status = err?.response?.status;
+        // Max 2 attempts for handling rate limits (429)
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+            try {
+                const res = await authAPI.getMe(token);
+                setUser(res.data);
+                setLoading(false);
+                return;
+            } catch (err: any) {
+                const status = err?.response?.status;
 
-        // If the token is specifically expired or invalid
-        if (status === 401) {
-          console.warn("JWT Expired. Triggering silent OCI refresh...");
+                // 401 Unauthorized / Expired
+                if (status === 401) {
+                    console.warn("JWT Expired. Triggering OCI refresh...");
+                    localStorage.removeItem("auth_token");
+                    setUser(null);
+                    window.location.href = API_URLS.AUTH_OCI;
+                    return;
+                }
 
-          // Redirect immediately.
-          // We do NOT set loading(false) so the ProtectedRoute
-          // keeps showing the spinner until the browser leaves.
-          handleExpiredSession();
-          return;
+                // 429 Too Many Requests (Retry Logic)
+                if (status === 429 && attempt === 0) {
+                    const retryAfterSeconds = Number(err?.response?.headers?.["retry-after"]);
+                    const waitMs = Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
+                        ? retryAfterSeconds * 1000
+                        : 1500;
+                    await sleep(waitMs);
+                    continue;
+                }
+
+                // Generic fallback for 500s, 404s, Network Errors
+                console.error("User load failed:", err);
+                localStorage.removeItem("auth_token"); // Clean up bad token
+                setUser(null);
+                setError(
+                    status === 429
+                        ? "Too many requests right now. Please wait a moment and refresh."
+                        : "Session lost or invalid. Please log in again."
+                );
+                setLoading(false);
+                return;
+            }
         }
 
-        // Retry once if backend rate-limited this call.
-        if (status === 429 && attempt === 0) {
-          const retryAfterSeconds = Number(err?.response?.headers?.["retry-after"]);
-          const waitMs = Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
-            ? retryAfterSeconds * 1000
-            : 1500;
-          await sleep(waitMs);
-          continue;
-        }
-
-        // if it's a different error (Server 500, Network error, etc.)
-        console.error("User load failed:", err);
+        // Fallback if loop finishes without returning
         setUser(null);
-        setError(
-          status === 429
-            ? "Too many requests right now. Please wait a moment and refresh."
-            : "Session lost. Please log in again.",
-        );
+        setError("Unable to load user session.");
         setLoading(false);
-        return;
-      }
-    }
+    }, []);
 
-    setUser(null);
-    setError("Unable to load user session.");
-    setLoading(false);
-  }, []);
+    // Initialize auth state on page load/refresh
+    useEffect(() => {
+        let isMounted = true;
 
-  const handleExpiredSession = () => {
-    // If running on Vite dev server (port 5173), bypass the Oracle redirect completely
-    if (window.location.port === '5173') {
-      setLoading(false);
-      return;
-    }
+        const initAuth = async () => {
+            // 1. CHECK: If there is a token in the URL, DO NOT auto-initialize.
+            // Let OAuth2RedirectHandler handle saving and loading it first.
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('token')) {
+                if (isMounted) setLoading(false);
+                return;
+            }
 
-    // Otherwise, use the standard production login flow
-    window.location.href = API_URLS.AUTH_OCI;
-  };
+            const savedToken = localStorage.getItem("auth_token");
 
-  useEffect(() => {
-    const initAuth = async () => {
-      // 1. Direct bypass check for the live reload server
-      if (window.location.port === '5173') {
-        // Only trigger state updates if user is not already initialized
-        setLoading(false);
-        return;
-      }
+            if (!savedToken) {
+                if (isMounted) setLoading(false);
+                return;
+            }
 
-      const savedToken = localStorage.getItem("auth_token");
-      if (!savedToken) {
-        setLoading(false);
-        return;
-      }
+            try {
+                if (!user) {
+                    await loadUser(savedToken);
+                }
+            } catch (e) {
+                console.error("Initialization auth error", e);
+            } finally {
+                if (isMounted) setLoading(false);
+            }
+        };
 
-      if (!user) {
-        await loadUser(savedToken);
-      } else {
-        setLoading(false);
-      }
+        initAuth();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [loadUser]);
+
+    const logout = useCallback(async (): Promise<void> => {
+        try {
+            localStorage.removeItem("auth_token");
+            setUser(null);
+        } finally {
+            window.location.href = API_URLS.LOGOUT;
+        }
+    }, []);
+
+    const hasRole = useCallback(
+        (role: UserRole): boolean => user?.role === role,
+        [user],
+    );
+
+    const value: AuthContextValue = {
+        user,
+        loading,
+        error,
+        loadUser,
+        signOut: logout,
+        isAdmin: user?.role === "ADMIN",
+        isManager: user?.role === "ADMIN" || user?.role === "MANAGER",
+        isDeveloper: user?.role === "DEVELOPER",
+        hasRole,
     };
 
-    initAuth();
-    // REMOVED 'user' from dependencies to kill the infinite crash loop cleanly
-  }, [loadUser]);
-
-  const logout = useCallback(async (): Promise<void> => {
-    try {
-      localStorage.removeItem("auth_token");
-      setUser(null);
-    } finally {
-      window.location.href = API_URLS.LOGOUT
-    }
-  }, []);
-
-  const hasRole = useCallback(
-    (role: UserRole): boolean => user?.role === role,
-    [user],
-  );
-
-  const value: AuthContextValue = {
-    user,
-    loading,
-    error,
-    loadUser,
-    signOut: logout,
-    isAdmin: user?.role === "ADMIN",
-    isManager: user?.role === "ADMIN" || user?.role === "MANAGER",
-    isDeveloper: user?.role === "DEVELOPER",
-    hasRole,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-/*
- * hook to throw if used outside AuthProvider
- */
 export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within <AuthProvider>");
-  return ctx;
+    const ctx = useContext(AuthContext);
+    if (!ctx) throw new Error("useAuth must be used within <AuthProvider>");
+    return ctx;
 }
