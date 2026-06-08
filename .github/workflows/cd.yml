@@ -320,7 +320,13 @@ jobs:
           sql /nolog @/tmp/login.txt @/tmp/log-deploy.sql
 
       - name: Debug Wallet Connection Names
+        if: always()
+        continue-on-error: true
         run: |
           echo "=== Available Database Services inside Wallet ==="
-          grep -E '^[A-Za-z0-9_]+ =' /tmp/wallet/tnsnames.ora
+          if [ -f /tmp/wallet/tnsnames.ora ]; then
+            grep -E '^[A-Za-z0-9_]+[[:space:]]*=' /tmp/wallet/tnsnames.ora || true
+          else
+            echo "tnsnames.ora not found at /tmp/wallet/tnsnames.ora"
+          fi
           echo "================================================="
