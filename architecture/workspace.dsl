@@ -15,13 +15,27 @@ workspace "TodoList Architecture" "Architecture of the TodoList application with
         todoSystem = softwareSystem "TodoList System" "Allows users to manage their to-do lists." {
             
             webApplication = container "Web Application" "Serves the web UI and provides the core API." "Spring Boot (Java) + React" {
-                taskManagement = component "Task Management Service" "Handles CRUD operations for tasks." "Spring Bean"
-                identityAccess = component "Identity & Access Service" "Centralized authorization and role management." "Spring Security Module"
-                dashboard = component "Dashboard Service" "Handles read-heavy queries and metrics aggregation." "Spring Bean"
-                aiSummary = component "AI Summary Service" "Integrates with AI APIs and provides automated task insights." "Spring Bean"
+                taskManagement = component "Task Management Service" "Handles CRUD operations for tasks." "Spring Bean" {
+                    url "https://github.com/wgsainzl/oci_devops_project/blob/main/MtdrSpring/backend/docs/diagrams/task-management.puml"
+                }
+                identityAccess = component "Identity & Access Service" "Centralized authorization and role management." "Spring Security Module" {
+                    url "https://github.com/wgsainzl/oci_devops_project/blob/main/MtdrSpring/backend/docs/diagrams/identity-access.puml"
+                }
+                dashboard = component "Dashboard Service" "Handles read-heavy queries and metrics aggregation." "Spring Bean" {
+                    url "https://github.com/wgsainzl/oci_devops_project/blob/main/MtdrSpring/backend/docs/diagrams/dashboard.puml"
+                }
+                aiSummary = component "AI Summary Service" "Integrates with AI APIs and provides automated task insights." "Spring Bean" {
+                    url "https://github.com/wgsainzl/oci_devops_project/blob/main/MtdrSpring/backend/docs/diagrams/ai-summary.puml"
+                }
             }
             
-            telegramBot = container "Telegram Bot" "Provides a conversational interface to the TodoList system via Telegram." "Java / Python"
+            telegramBot = container "Telegram Bot" "Provides a conversational interface to the TodoList system via Telegram." "Java" {
+                botController = component "Bot Controller Service" "Manages Telegram polling, command parsing, and updates." "Spring Bean" {
+                    url "https://github.com/wgsainzl/oci_devops_project/blob/main/MtdrSpring/telegram-bot/docs/diagrams/bot-controller.puml"
+                }
+                
+                botController -> webApplication "Makes API calls to" "JSON/HTTP"
+            }
             rabbitMq = container "Message Broker" "Handles asynchronous event distribution." "RabbitMQ"
             database = container "Database" "Stores to-do items, users, and audit states." "Oracle Database (ATP)" "Database"
         }
@@ -84,7 +98,6 @@ workspace "TodoList Architecture" "Architecture of the TodoList application with
         ciCd -> todoSystem "Builds, containerizes, and deploys"
         
         webApplication -> database "Reads from and writes to" "JDBC"
-        telegramBot -> webApplication "Makes API calls to" "JSON/HTTP"
         
         telegramBot -> rabbitMq "Publishes events to" "AMQP"
         rabbitMq -> telegramBot "Sends events to" "AMQP"
@@ -103,6 +116,11 @@ workspace "TodoList Architecture" "Architecture of the TodoList application with
         systemLandscape "SystemLandscape" {
             include admin manager developer devops autoJob
             include telegram aiApi vcs ciCd todoSystem
+            autoLayout
+        }
+
+        component telegramBot "BotComponents" {
+            include *
             autoLayout
         }
 
