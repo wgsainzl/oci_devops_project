@@ -1,0 +1,68 @@
+@startuml
+
+class com.springboot.MyTodoList.web.features.summaryjob.SummaryJob {
+	{field} +createdAt : java.time.OffsetDateTime
+	{field} +errorMessage : String
+	{field} +generatedSummary : String
+	{field} +jobId : Long
+	{field} +retryCount : Integer
+	{field} +targetRole : String
+	{field} +updatedAt : java.time.OffsetDateTime
+	{field} +user : com.springboot.MyTodoList.web.features.user.User
+	{field} +weekEnd : java.time.OffsetDateTime
+	{field} +weekStart : java.time.OffsetDateTime
+}
+
+
+class com.springboot.MyTodoList.web.features.summaryjob.SummaryJobController {
+	{method} +createPending ( request : com.springboot.MyTodoList.web.features.summaryjob.dto.SummaryJobCreateRequest ) : org.springframework.http.ResponseEntity
+	{method} +markFailed ( jobId : Long , request : com.springboot.MyTodoList.web.features.summaryjob.dto.SummaryJobUpdateRequest ) : org.springframework.http.ResponseEntity
+	{method} +markProcessing ( jobId : Long ) : org.springframework.http.ResponseEntity
+	{method} +markSent ( jobId : Long , request : com.springboot.MyTodoList.web.features.summaryjob.dto.SummaryJobUpdateRequest ) : org.springframework.http.ResponseEntity
+}
+
+
+interface com.springboot.MyTodoList.web.features.summaryjob.SummaryJobRepository {
+}
+
+
+class com.springboot.MyTodoList.web.features.summaryjob.SummaryJobService {
+	{field} -userRepository : com.springboot.MyTodoList.web.features.user.UserRepository
+	{method} +createPendingJob ( request : com.springboot.MyTodoList.web.features.summaryjob.dto.SummaryJobCreateRequest ) : com.springboot.MyTodoList.web.features.summaryjob.SummaryJob
+	{method} -getJob ( jobId : Long ) : com.springboot.MyTodoList.web.features.summaryjob.SummaryJob
+	{method} +markFailed ( jobId : Long , errorMessage : String ) : com.springboot.MyTodoList.web.features.summaryjob.SummaryJob
+	{method} +markProcessing ( jobId : Long ) : com.springboot.MyTodoList.web.features.summaryjob.SummaryJob
+	{method} +markSent ( jobId : Long , generatedSummary : String ) : com.springboot.MyTodoList.web.features.summaryjob.SummaryJob
+	{method} -resolvePrimaryRole ( user : com.springboot.MyTodoList.web.features.user.User ) : String
+}
+
+
+enum com.springboot.MyTodoList.web.features.summaryjob.SummaryJobStatus {
+	{field} +FAILED
+	{field} +PENDING
+	{field} +PROCESSING
+	{field} +SENT
+}
+
+
+class com.springboot.MyTodoList.web.features.summaryjob.dto.SummaryJobCreateRequest {
+	{field} +telegramUserId : String
+	{field} +weekEnd : java.time.OffsetDateTime
+	{field} +weekStart : java.time.OffsetDateTime
+}
+
+
+class com.springboot.MyTodoList.web.features.summaryjob.dto.SummaryJobUpdateRequest {
+	{field} +errorMessage : String
+	{field} +generatedSummary : String
+}
+
+
+
+
+com.springboot.MyTodoList.web.features.summaryjob.SummaryJob -->  com.springboot.MyTodoList.web.features.summaryjob.SummaryJobStatus :  @Column("STATUS")\nstatus
+com.springboot.MyTodoList.web.features.summaryjob.SummaryJobController *--  com.springboot.MyTodoList.web.features.summaryjob.SummaryJobService : summaryJobService
+com.springboot.MyTodoList.web.features.summaryjob.SummaryJobService *--  com.springboot.MyTodoList.web.features.summaryjob.SummaryJobRepository : summaryJobRepository
+
+
+@enduml

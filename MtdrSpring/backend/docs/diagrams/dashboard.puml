@@ -1,0 +1,23 @@
+@startuml
+
+class com.springboot.MyTodoList.web.features.dashboard.DashboardAnalyticsController {
+	{method} +getCostsKpi () : org.springframework.http.ResponseEntity
+	{method} +getHoursKpi () : org.springframework.http.ResponseEntity
+	{method} +getTasksKpi () : org.springframework.http.ResponseEntity
+}
+
+
+class com.springboot.MyTodoList.web.features.dashboard.DashboardAnalyticsService {
+	{field} -jdbcTemplate : org.springframework.jdbc.core.JdbcTemplate
+	{method} +getHoursPerDeveloperPerSprint () : java.util.List
+	{method} +getInfrastructureCosts () : java.util.List
+	{method} +getTasksPerSprint () : java.util.List
+}
+
+
+
+
+com.springboot.MyTodoList.web.features.dashboard.DashboardAnalyticsController -->  com.springboot.MyTodoList.web.features.dashboard.DashboardAnalyticsService : analyticsService
+
+
+@enduml

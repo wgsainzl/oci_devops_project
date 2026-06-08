@@ -160,6 +160,68 @@
             </plugin>
 
             <plugin>
+                <groupId>de.elnarion.maven</groupId>
+                <artifactId>plantuml-generator-maven-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>generate-task-management-diagram</id>
+                        <goals><goal>generate</goal></goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <outputFilename>task-management.puml</outputFilename>
+                            <outputDirectory>${project.basedir}/docs/diagrams</outputDirectory>
+                            <scanPackages>
+                                <scanPackage>com.springboot.MyTodoList.web.features.task</scanPackage>
+                                <scanPackage>com.springboot.MyTodoList.web.features.task.dto</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-identity-access-diagram</id>
+                        <goals><goal>generate</goal></goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <outputFilename>identity-access.puml</outputFilename>
+                            <outputDirectory>${project.basedir}/docs/diagrams</outputDirectory>
+                            <scanPackages>
+                                <scanPackage>com.springboot.MyTodoList.web.auth</scanPackage>
+                                <scanPackage>com.springboot.MyTodoList.web.auth.dto</scanPackage>
+                                <scanPackage>com.springboot.MyTodoList.web.auth.filters</scanPackage>
+                                <scanPackage>com.springboot.MyTodoList.web.auth.jwt</scanPackage>
+                                <scanPackage>com.springboot.MyTodoList.web.security</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-dashboard-diagram</id>
+                        <goals><goal>generate</goal></goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <outputFilename>dashboard.puml</outputFilename>
+                            <outputDirectory>${project.basedir}/docs/diagrams</outputDirectory>
+                            <scanPackages>
+                                <scanPackage>com.springboot.MyTodoList.web.features.dashboard</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-ai-summary-diagram</id>
+                        <goals><goal>generate</goal></goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <outputFilename>ai-summary.puml</outputFilename>
+                            <outputDirectory>${project.basedir}/docs/diagrams</outputDirectory>
+                            <scanPackages>
+                                <scanPackage>com.springboot.MyTodoList.web.features.summaryjob</scanPackage>
+                                <scanPackage>com.springboot.MyTodoList.web.features.summaryjob.dto</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>1.15.0</version>
@@ -168,6 +230,7 @@
                     <npmVersion>${npm.version}</npmVersion>
                     <workingDirectory>${frontend-src-dir}</workingDirectory>
                     <installDirectory>${project.build.directory}</installDirectory>
+                    <skip>${skip.frontend}</skip>
                 </configuration>
                 <executions>
                     <execution>
