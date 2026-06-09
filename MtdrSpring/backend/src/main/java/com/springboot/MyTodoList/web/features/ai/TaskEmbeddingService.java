@@ -30,30 +30,28 @@ public class TaskEmbeddingService {
     @Transactional
     public int vectorizeAllTasks() {
         List<Map<String, Object>> rows = jdbcTemplate.queryForList("""
-                SELECT
-                    t.TASK_ID,
-                    t.TEAM_ID,
-                    t.SPRINT_ID,
-                    t.RESPONSIBLE_ID,
-                    t.TITLE,
-                    t.UPDATED_AT,
-                    'Task ID: ' || t.TASK_ID || CHR(10) ||
-                    'Title: ' || NVL(t.TITLE, 'No title') || CHR(10) ||
-                    'Description: ' || NVL(t.DESCRIPTION, 'No description') || CHR(10) ||
-                    'Status: ' || NVL(t.STATUS, 'No status') || CHR(10) ||
-                    'Priority: ' || NVL(t.PRIORITY, 'No priority') || CHR(10) ||
-                    'Sprint: ' || NVL(s.SPRINT_NAME, 'No sprint') || CHR(10) ||
-                    'Responsible: ' || NVL(u.NAME, 'No responsible') || CHR(10) ||
-                    'Estimated hours: ' || NVL(TO_CHAR(t.ESTIMATED_HOURS), 'N/A') || CHR(10) ||
-                    'Actual hours: ' || NVL(TO_CHAR(t.ACTUAL_HOURS), 'N/A') || CHR(10) ||
-                    'Start date: ' || NVL(TO_CHAR(t.START_DATE), 'N/A') || CHR(10) ||
-                    'Due date: ' || NVL(TO_CHAR(t.DUE_DATE), 'N/A') || CHR(10) ||
-                    'Completed at: ' || NVL(TO_CHAR(t.COMPLETED_AT), 'N/A') AS CONTENT_TEXT
-                FROM TASKS t
-                LEFT JOIN SPRINTS s ON t.SPRINT_ID = s.SPRINT_ID
-                LEFT JOIN USERS u ON t.RESPONSIBLE_ID = u.USER_ID
-                """);
-
+        SELECT
+            t.TASK_ID,
+            t.TITLE,
+            t.DESCRIPTION,
+            t.STATUS,
+            t.PRIORITY,
+            t.RESPONSIBLE_ID,
+            t.SPRINT_ID,
+            t.CREATOR_ID,
+            t.MANAGER_ID,
+            t.ACTUAL_HOURS,
+            t.ESTIMATED_HOURS,
+            t.START_DATE,
+            t.DUE_DATE,
+            t.CREATED_AT,
+            t.UPDATED_AT,
+            t.COMPLETED_AT,
+            u.NAME AS RESPONSIBLE_NAME,
+            u.TEAM_ID
+        FROM TASKS t
+        LEFT JOIN USERS u ON t.RESPONSIBLE_ID = u.USER_ID
+        """);
         int count = 0;
 
         for (Map<String, Object> row : rows) {
@@ -72,7 +70,32 @@ public class TaskEmbeddingService {
 
         Object updatedAt = row.get("UPDATED_AT");
         String title = stringValue(row.get("TITLE"));
-        String contentText = stringValue(row.get("CONTENT_TEXT"));
+
+        String contentText = """
+                Task ID: %s
+                Title: %s
+                Description: %s
+                Status: %s
+                Priority: %s
+                Responsible: %s
+                Sprint ID: %s
+                Estimated hours: %s
+                Actual hours: %s
+                Start date: %s
+                Due date: %s
+                """.formatted(
+                row.get("TASK_ID"),
+                row.get("TITLE"),
+                row.get("DESCRIPTION"),
+                row.get("STATUS"),
+                row.get("PRIORITY"),
+                row.get("RESPONSIBLE_NAME"),
+                row.get("SPRINT_ID"),
+                row.get("ESTIMATED_HOURS"),
+                row.get("ACTUAL_HOURS"),
+                row.get("START_DATE"),
+                row.get("DUE_DATE")
+        );
 
         float[] vector = geminiEmbeddingClient.embedTaskDocument(title, contentText);
 
