@@ -1,18 +1,15 @@
 package com.springboot.MyTodoList.web.features.ai;
 
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.List;
+import java.util.Map;
 
 @Service
-@Profile("vectorize")
 public class GeminiEmbeddingClient {
 
     private final WebClient webClient = WebClient.builder().build();
@@ -30,18 +27,34 @@ public class GeminiEmbeddingClient {
     private int dimensions;
 
     public float[] embedTaskDocument(String title, String contentText) {
+        String prompt = """
+                title: %s | text: %s
+                """.formatted(
+                title == null || title.isBlank() ? "none" : title,
+                contentText == null ? "" : contentText
+        );
+
+        return embedText(prompt);
+    }
+
+    public float[] embedQuery(String query) {
+        String prompt = """
+                query: %s
+                """.formatted(query == null ? "" : query);
+
+        return embedText(prompt);
+    }
+
+    private float[] embedText(String text) {
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException("GEMINI_API_KEY is not configured");
         }
 
-        String prompt = """
-                title: %s | text: %s
-                """.formatted(title == null || title.isBlank() ? "none" : title, contentText);
-
         Map<String, Object> body = Map.of(
+                "model", normalizedModelName(),
                 "content", Map.of(
                         "parts", List.of(
-                                Map.of("text", prompt)
+                                Map.of("text", text)
                         )
                 ),
                 "output_dimensionality", dimensions
@@ -57,6 +70,18 @@ public class GeminiEmbeddingClient {
                 .block();
 
         return extractEmbeddingValues(response);
+    }
+
+    private String normalizedModelName() {
+        if (model == null || model.isBlank()) {
+            return "models/gemini-embedding-2";
+        }
+
+        if (model.startsWith("models/")) {
+            return model;
+        }
+
+        return "models/" + model;
     }
 
     private float[] extractEmbeddingValues(JsonNode response) {
