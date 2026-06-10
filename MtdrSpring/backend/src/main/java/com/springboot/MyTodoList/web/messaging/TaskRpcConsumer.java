@@ -2,6 +2,7 @@ package com.springboot.MyTodoList.web.messaging;
 
 import com.springboot.MyTodoList.web.config.RabbitMQConfig;
 import com.springboot.MyTodoList.web.features.ai.TaskSemanticSearchService;
+import com.springboot.MyTodoList.web.features.link.UserLinkService;
 import com.springboot.MyTodoList.web.features.task.TaskService;
 import com.springboot.MyTodoList.web.features.task.TaskStatus;
 import com.springboot.MyTodoList.web.features.task.dto.TaskDTO;
@@ -29,6 +30,7 @@ public class TaskRpcConsumer {
     @Autowired private UserRepository userRepository;
     @Autowired private com.springboot.MyTodoList.web.features.sprint.SprintRepository sprintRepository;
     @Autowired private TaskSemanticSearchService semanticService;
+    @Autowired private UserLinkService linkService;
     @Transactional(readOnly = true)
     @RabbitListener(queues = RabbitMQConfig.TASK_RPC_REQUEST)
     public Object handleRpcRequest(TaskRpcRequest request) {
@@ -114,6 +116,11 @@ public class TaskRpcConsumer {
                         })
                         .toList(); // 4. Collect it into a List properly
             }
+
+            case LINK: {
+                return linkService.linkTelegramId(request.getCode(), request.getTelegramId());
+            }
+
             
             default: {
                 logger.warn("Unknown RPC query type: {}", request.getQueryType());

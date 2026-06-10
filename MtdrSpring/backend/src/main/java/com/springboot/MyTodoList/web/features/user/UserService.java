@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.lang.StackWalker.Option;
 import java.util.*;
 
 @Service
@@ -34,6 +35,10 @@ public class UserService {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    public Optional<User> getUserOptionalById(Long id){
+        return userRepository.findById(id);
     }
 
     public Optional<User> getUserByTelegramId(String telegramId){
@@ -151,6 +156,12 @@ public class UserService {
     public void updateEmail(User user, String email) {
         User updatedUser = userRepository.getUserByUserId(user.userId);
         updatedUser.setEmail(email);
+        userRepository.save(updatedUser);
+    }
+
+    public void updateTelegramId(User user, String telegramId) {
+        User updatedUser = userRepository.getUserByUserId(user.userId);
+        updatedUser.setTelegramUserID(telegramId);
         userRepository.save(updatedUser);
     }
 }
