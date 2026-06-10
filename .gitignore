@@ -82,3 +82,37 @@ node_modules
 
 *MtdrSpring/backend/src/main/frontend/.env.development
 
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+.env.mock
+
+# Editor directories and files
+.vscode/
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.gz
+
+# Additional backend log rules
+MtdrSpring/backend/*.log*
+MtdrSpring/backend/*.tmp
+MtdrSpring/backend/*.gz
+
+
