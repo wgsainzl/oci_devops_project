@@ -12,7 +12,7 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
         // ADD THIS LINE: It removes "/api" so Spring Boot just sees "/teams"
-        rewrite: (path) => path.replace(/^\/api/, ""),
+        // rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

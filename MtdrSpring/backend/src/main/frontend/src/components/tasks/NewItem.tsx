@@ -59,7 +59,7 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
     const fetchUsers = async () => {
       try {
         
-        const response = await fetch("/api/api/users/", { credentials: "include" })
+        const response = await fetch("/api/users/", { credentials: "include" })
         if (!response.ok) throw new Error(`Error HTTP: ${response.status}`)
         
         const data = await response.json()
@@ -115,7 +115,7 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
 
       console.log("Inserting a real task linked to a real user:", payload)
 
-      const response = await fetch("/api/api/tasks", { 
+      const response = await fetch("/api/tasks", { 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
