@@ -26,6 +26,11 @@ gemini:
   api:
     key: ${GEMINI_API_KEY}
     url: ${GEMINI_URL}
+  url: ${GEMINI_URL}
+  embedding:
+    url: ${GEMINI_EMBEDDING_URL}
+    model: ${GEMINI_EMBEDDING_MODEL}
+    dimensions: ${GEMINI_EMBEDDING_DIMENSIONS}
 
 telegram:
   bot:

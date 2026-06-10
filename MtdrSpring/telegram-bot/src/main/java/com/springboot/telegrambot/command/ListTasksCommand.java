@@ -102,7 +102,7 @@ public class ListTasksCommand implements BotCommand {
             BotHelper.sendHtmlMessageToTelegram(chatId, sb.toString(), telegramClient);
         } catch (Exception e) {
             logger.error("Failed to fetch tasks", e);
-            BotHelper.sendMessageToTelegram(chatId, "⚠️ Error: Cannot fetch tasks right now.", telegramClient);
+            BotHelper.sendMessageToTelegram(chatId, "Error: Cannot fetch tasks right now.", telegramClient);
         }
     }
 }

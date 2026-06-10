@@ -36,6 +36,17 @@ public class TaskRpcClient {
         return parseTaskList(response);
     }
 
+    public List<TaskDTO> getVectorSearch(String query){
+        TaskRpcRequest request = new TaskRpcRequest();
+        request.setQueryType(TaskRpcRequest.QueryType.VECTOR_SEARCH);
+        request.setVectorQuery(query);
+        Object response = rabbitTemplate.convertSendAndReceive(RabbitMQConfig.EXCHANGE,
+                RabbitMQConfig.RK_TASK_RPC_REQ,
+                request
+        );
+        return parseTaskList(response);
+    }
+
     public List<TaskDTO> getTasksByTeamId(Integer teamId){
         TaskRpcRequest request = new TaskRpcRequest();
         request.setQueryType(TaskRpcRequest.QueryType.GET_TASKS_BY_TEAMID);
