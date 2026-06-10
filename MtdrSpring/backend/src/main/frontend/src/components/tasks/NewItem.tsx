@@ -54,12 +54,12 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
-  // CARGA DE MIEMBROS REALES DESDE TU TABLA DE ORACLE CLOUD
+  // load members from OCI
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        // Apuntamos a la ruta real de tu UserController: /api/users/
-        const response = await fetch("/api/users/", { credentials: "include" })
+        
+        const response = await fetch("/api/users", { credentials: "include" })
         if (!response.ok) throw new Error(`Error HTTP: ${response.status}`)
         
         const data = await response.json()
@@ -71,8 +71,8 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
           }
         }
       } catch (err: any) {
-        console.error("Falla de red o de parseo en catálogo real:", err)
-        setError("No se pudo conectar con el catálogo de usuarios reales de Oracle.")
+        console.error("Network or parsing failure in real catalog:", err)
+        setError("Unable to connect to delevopers user catalog.")
       }
     }
 
@@ -113,7 +113,7 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
         sprint: null     
       }
 
-      console.log("Insertando tarea real vinculada a un usuario real:", payload)
+      console.log("Inserting a real task linked to a real user:", payload)
 
       const response = await fetch("/api/tasks", { 
         method: "POST",
@@ -125,22 +125,22 @@ export default function NewItem({ onCreated, onCancel }: Props): JSX.Element {
       })
 
       if (response.status === 409) {
-        throw new Error("Conflict (409): Comprueba que el Sprint ID 1 exista en tu tabla física de Oracle.")
+        throw new Error("Conflict (409): Verify that Sprint ID 1 exists in your Oracle physical table.")
       }
 
       if (!response.ok) {
-        throw new Error(`Error en el servidor: ${response.status}`)
+        throw new Error(`Server error: ${response.status}`)
       }
 
       const newTask = await response.json()
       if (onCreated) onCreated(newTask)
       
       setForm({ ...DEFAULT_FORM, responsibleId: form.responsibleId }) 
-      alert("¡Tarea creada y asignada exitosamente en tu Base de Datos real!")
+      alert("Task created and successfully assigned to the developer")
 
     } catch (err: any) {
-      console.error("Error al crear la tarea:", err)
-      setError(err.message || "No se pudo conectar con el servidor.")
+      console.error("Error creating task:", err)
+      setError(err.message || "Unable to connect to the server.")
     } finally {
       setLoading(false)
     }

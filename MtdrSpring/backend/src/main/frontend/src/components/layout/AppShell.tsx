@@ -78,7 +78,7 @@ export default function AppShell(): JSX.Element {
 
         <div className={styles.headerRight}>
           <button
-            className={styles.iconBtn}
+            className={styles.iconBtnProfile}
             aria-label="User menu"
             title={user?.email}
             onClick={handleSignOut}

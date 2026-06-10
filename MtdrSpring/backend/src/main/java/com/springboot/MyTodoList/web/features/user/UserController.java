@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
@@ -22,7 +22,7 @@ public class UserController {
     }
 
     //@CrossOrigin
-    @GetMapping(value = "/")
+    @GetMapping
     public List<User> getAllUsers() {
         return userService.findAll();
     }

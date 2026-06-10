@@ -50,6 +50,15 @@ const CARDS: CardConfig[] = [
 export default function StatsCards({ stats, isManager, onCreateTaskClick }: Props): JSX.Element {
   return (
     <>
+    {isManager && onCreateTaskClick && (
+            <button 
+              type="button" 
+              className={styles.inlineCreateBtn} 
+              onClick={onCreateTaskClick}
+            >
+              New Task
+            </button>
+          )}
       {CARDS.map((card) => (
         <div key={card.key} className={styles.card}>
           {/* Main layout container wrapper for card content */}
@@ -64,7 +73,7 @@ export default function StatsCards({ stats, isManager, onCreateTaskClick }: Prop
             </div>
           </div>
 
-          {/* If this is the 'created' card and user is a manager, inject the button on the right side of the card */}
+          {/* If this is the 'created' card and user is a manager, inject the button on the right side of the card
           {card.key === 'created' && isManager && onCreateTaskClick && (
             <button 
               type="button" 
@@ -73,7 +82,7 @@ export default function StatsCards({ stats, isManager, onCreateTaskClick }: Prop
             >
               New Task
             </button>
-          )}
+          )} */}
         </div>
       ))}
     </>

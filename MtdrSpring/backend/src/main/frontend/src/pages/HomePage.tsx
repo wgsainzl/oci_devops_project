@@ -303,7 +303,7 @@ export default function HomePage(): JSX.Element {
                 onClick={() => setIsCreateTaskOpen(false)}
                 aria-label="Close create task dialog"
               >
-                ×
+                <span>x</span>
               </button>
             </div>
             <NewItem

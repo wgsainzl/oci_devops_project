@@ -14,6 +14,7 @@ dist-ssr
 .env.mock
 
 # Editor directories and files
+.vscode/
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -23,3 +24,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.gz
+
+# Additional backend log rules
+MtdrSpring/backend/*.log*
+MtdrSpring/backend/*.tmp
+MtdrSpring/backend/*.gz

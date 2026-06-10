@@ -78,6 +78,20 @@
   background: rgba(255,255,255,0.10);
 }
 
+.iconBtnProfile {
+  color: var(--color-text-on-dark);
+  display: flex;
+  align-items: center;
+  padding: var(--space-2);
+  border-radius: 10px;
+  transition: background var(--transition-fast);
+}
+
+.iconBtnProfile:hover {
+  background: rgba(255,255,255,0.10);
+  border-radius: 10px;
+}
+
 /* ── Body (sidebar + main) ── */
 .body {
   display: flex;
