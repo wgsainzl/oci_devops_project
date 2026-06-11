@@ -17,7 +17,9 @@ export default function TeamWorkload({ members }: Props): JSX.Element {
         <span className={styles.col}>Work distribution</span>
       </div>
 
-      {members.map((m, i) => (
+      {members
+      .filter((m) => m.name !== "Unassigned")
+      .map((m, i) => (
         <div
           key={m.name}
           className={styles.row}
@@ -38,22 +40,8 @@ export default function TeamWorkload({ members }: Props): JSX.Element {
               className={styles.bar}
               style={{ width: `${m.pct}%`, background: "#222222" }}
             >
-              {m.pct >= 10 && <span className={styles.pct}>{m.pct}%</span>}
+              {m.pct >= 0 && <span className={styles.pct}>{m.pct}%</span>}
             </div>
-
-            {m.pct < 10 && (
-              <span
-                className={styles.pct}
-                style={{
-                  color: "#000",
-                  position: "absolute",
-                  left: `${m.pct}%`,
-                  paddingLeft: "8px",
-                }}
-              >
-                {m.pct}%
-              </span>
-            )}
           </div>
         </div>
       ))}

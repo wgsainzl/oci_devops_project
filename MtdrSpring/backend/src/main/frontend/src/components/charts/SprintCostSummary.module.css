@@ -1,18 +1,70 @@
+/* Contenedor principal que se alinea con la altura de las otras gráficas */
+.widgetContainer {
+  display: flex;
+  flex-direction: column;
+  /* CAMBIO: Incrementamos la separación entre el header (filtro) y el cuerpo de la tarjeta */
+  gap: var(--space-4); 
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Encabezado del título y el selector */
+.widgetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* CAMBIO: Añadimos un pequeño margen o espacio abajo para separar aún más */
+  padding-bottom: var(--space-2); 
+}
+
+.widgetTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #1b1f24);
+  margin: 0;
+}
+
+.dropdownFilter {
+  background-color: #ffffff;
+  border: 1px solid #e0d8cc;
+  border-radius: 6px;
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #1b1f24;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 150ms ease;
+}
+
+.dropdownFilter:focus {
+  border-color: #5aacbe;
+}
+
+/* Rejilla/Lista interna */
 .grid {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  /* CAMBIO: Le indicamos al contenedor que se expanda en todo el espacio vertical sobrante */
+  flex: 1; 
   height: 100%;
-  overflow-y: auto; /* enables scrolling if the content is taller than the widget */
-  padding-right: 4px; /* adds a little breathing room if a scrollbar appears */
 }
 
+/* Tarjeta de información */
 .card {
   border-radius: var(--radius-md);
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-5) var(--space-5); /* Un poco más de padding interno para rellenar */
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  
+  /* CAMBIO CLAVE: Hace que la tarjeta se estire verticalmente y abarque el 100% 
+     del espacio en blanco que tenía abajo en el componente */
+  flex: 1; 
+  justify-content: space-around; /* Distribuye el contenido interno de forma equilibrada a lo largo del alto */
+  
+  box-sizing: border-box;
 }
 
 .primary {
@@ -32,16 +84,17 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   opacity: 0.8;
+  margin: 0;
 }
 
 .stat {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .statValue {
-  font-size: 1.5rem;
+  font-size: 1.65rem; /* Un pelín más grande para complementar el espacio expandido */
   font-weight: 700;
   line-height: 1;
 }
@@ -59,21 +112,21 @@
 
 .row {
   display: flex;
-  gap: var(--space-4);
+  gap: var(--space-5);
 }
 
 .miniStat {
   display: flex;
   flex-direction: column;
-  gap: 1px;
 }
 
 .miniValue {
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 .miniLabel {
-  font-size: 0.7rem;
-  opacity: 0.75;
+  font-size: 0.68rem;
+  opacity: 0.7;
 }

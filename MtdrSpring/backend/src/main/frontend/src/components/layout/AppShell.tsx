@@ -1,119 +1,97 @@
-import { type JSX, useState, useEffect, useRef } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/AuthContext";
-import styles from "./AppShell.module.css";
+import { type JSX, useState, useEffect, useRef } from 'react'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../hooks/AuthContext'
+import styles from './AppShell.module.css'
 
-// inline SVG icons
+// inline SVG icons 
 const IconMenu = (): JSX.Element => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
     <rect y="3" width="20" height="2" rx="1" />
     <rect y="9" width="20" height="2" rx="1" />
     <rect y="15" width="20" height="2" rx="1" />
   </svg>
-);
+)
 const IconBell = (): JSX.Element => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
     <path d="M10 2a6 6 0 0 0-6 6v3.586l-.707.707A1 1 0 0 0 4 14h12a1 1 0 0 0 .707-1.707L16 11.586V8a6 6 0 0 0-6-6zm0 16a2 2 0 0 1-2-2h4a2 2 0 0 1-2 2z" />
   </svg>
-);
+)
 const IconUser = (): JSX.Element => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
     <path d="M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0H3z" />
   </svg>
-);
+)
 const OracleMark = (): JSX.Element => (
   <img src="/oracle-icon.svg" alt="Oracle" className={styles.oracleMarkIcon} />
-);
+)
 
 // appshell component
 export default function AppShell(): JSX.Element {
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
-  const [itemsVisible, setItemsVisible] = useState<boolean>(true);
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false)
+  const [itemsVisible, setItemsVisible] = useState<boolean>(true)
+  const { user, signOut } = useAuth()
+  const navigate = useNavigate()
 
   // state to handle profile dropdown menu visibility
-  const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   // states for telegram code management
-  const [telegramCode, setTelegramCode] = useState<number | null>(null);
-  const [isGenerating, setIsGenerating] = useState<boolean>(false);
-  const [showCodeModal, setShowCodeModal] = useState<boolean>(false);
+  const [telegramCode, setTelegramCode] = useState<number | null>(null)
+  const [isGenerating, setIsGenerating] = useState<boolean>(false)
+  const [showCodeModal, setShowCodeModal] = useState<boolean>(false)
 
   // Delay showing items when sidebar opens, hide immediately when it closes
   useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-
-    if (sidebarOpen) {
-      // Faster initial opening - only 20ms delay
-      timeoutId = setTimeout(() => setItemsVisible(true), 20);
-    } else {
-      // Hide immediately, no delay
-      setItemsVisible(false);
-    }
-
-    // Always cleanup pending timeout
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-    };
+  // Set visibility instantly matching the sidebar state, no timeouts!
+    setItemsVisible(sidebarOpen);
   }, [sidebarOpen]);
 
   // Close dropdown if user clicks anywhere outside of it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setUserMenuOpen(false);
+        setUserMenuOpen(false)
       }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const handleSignOut = async (): Promise<void> => {
-    await signOut();
-    setUserMenuOpen(false);
-    navigate("/login", { replace: true });
-  };
+    await signOut()
+    setUserMenuOpen(false)
+    navigate('/login', { replace: true })
+  }
 
-  // fetching  linking token
   // fetching  linking token
   const handleGenerateTelegramCode = async () => {
-    setIsGenerating(true);
-    setUserMenuOpen(false); // close dropdown item view
+    setIsGenerating(true)
+    setUserMenuOpen(false) // close dropdown item view
     try {
-      // 1. Grab the token from local storage
-      const token = localStorage.getItem("auth_token");
-
       const response = await fetch("/api/link", {
         method: "POST",
+        credentials: "include", // Pass cookies/JWT session safely
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // 2. Inject the token here!
-        },
-      });
+        }
+      })
 
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`HTTP Error ${response.status}: ${errText}`);
-      }
-
-      // 3. Read as text first because the backend returns a raw integer, not a JSON object
-      const code = await response.text();
-      setTelegramCode(parseInt(code));
-      setShowCodeModal(true);
+      if (!response.ok) throw new Error(`HTTP Error: ${response.status}`)
+      
+      const code = await response.json() // Server returns raw Integer code
+      setTelegramCode(code)
+      setShowCodeModal(true)
     } catch (err) {
-      console.error("Failed generating validation link token:", err);
-      alert(
-        "Could not generate a temporary integration code. Please verify authentication.",
-      );
+      console.error("Failed generating validation link token:", err)
+      alert("Could not generate a temporary integration code. Please verify authentication.")
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(false)
     }
-  };
+  }
 
   const navClass = ({ isActive }: { isActive: boolean }): string =>
-    `${styles.navItem} ${isActive ? styles.navItemActive : ""}`;
+    `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
 
   return (
     <div className={styles.shell}>
@@ -137,7 +115,7 @@ export default function AppShell(): JSX.Element {
         <div className={styles.headerRight} ref={menuRef}>
           <div className={styles.profileContainer}>
             <button
-              className={`${styles.iconBtnProfile} ${userMenuOpen ? styles.activeProfileBtn : ""}`}
+              className={`${styles.iconBtnProfile} ${userMenuOpen ? styles.activeProfileBtn : ''}`}
               aria-label="User menu"
               title={user?.email}
               onClick={() => setUserMenuOpen((prev) => !prev)}
@@ -150,10 +128,10 @@ export default function AppShell(): JSX.Element {
                 <div className={styles.dropdownHeader}>
                   <p className={styles.userEmail}>{user?.email}</p>
                 </div>
-
+                
                 {/* generate Telegram ID button */}
-                <button
-                  type="button"
+                <button 
+                  type="button" 
                   className={styles.dropdownItem}
                   disabled={isGenerating}
                   onClick={handleGenerateTelegramCode}
@@ -202,23 +180,15 @@ export default function AppShell(): JSX.Element {
         <div className={styles.modalOverlay}>
           <div className={styles.modalCard}>
             <h3>Link Telegram Bot</h3>
-            <p>
-              Send the following 6-digit synchronization token directly to your
-              Telegram Chatbot to authorize updates:
-            </p>
+            <p>Send the following 6-digit synchronization token directly to your Telegram Chatbot to authorize updates:</p>
             <div className={styles.codeBox}>{telegramCode}</div>
-            <p className={styles.expiryWarning}>
-              This registration token expires automatically after 15 minutes.
-            </p>
-            <button
-              className={styles.closeModalBtn}
-              onClick={() => setShowCodeModal(false)}
-            >
+            <p className={styles.expiryWarning}>This registration token expires automatically after 15 minutes.</p>
+            <button className={styles.closeModalBtn} onClick={() => setShowCodeModal(false)}>
               Got it, Close
             </button>
           </div>
         </div>
       )}
     </div>
-  );
+  )
 }

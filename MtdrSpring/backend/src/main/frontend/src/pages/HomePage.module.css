@@ -100,13 +100,14 @@
 }
 
 .content {
-  padding: var(--space-6);
+  padding: var(--space-6) var(--space-8); 
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
-  max-width: 1700px;
-  width: 100%;
-  margin: 0 auto;
+  gap: var(--space-6); 
+  max-width: calc(100% - 80px);
+  width: 100%; 
+  margin: 0 auto; 
+  box-sizing: border-box;
 }
 
 .card {
@@ -207,20 +208,59 @@
 }
 
 /* ── Responsive ── */
-@media (max-width: 1024px) {
-  .row1,
-  .row2,
-  .row3 {
-    grid-template-columns: 1fr;
-  }
-  .statsAside {
-    flex-direction: row;
-    flex-wrap: wrap;
+@media (min-width: 1200px) {
+  .content {
+    /* En pantallas grandes, aumentamos ligeramente el colchón lateral a 120px totales */
+    max-width: calc(100% - 120px); 
+    padding: var(--space-6) var(--space-2); /* Reducimos padding interno para que la tarjeta use más su espacio */
   }
 }
 
+/* Ajuste para pantallas pequeñas (Móviles) */
 @media (max-width: 600px) {
   .content {
-    padding: var(--space-4);
+    max-width: calc(100% - 32px); /* Un respiro más pequeño en teléfonos */
+    padding: var(--space-4) var(--space-1);
+    gap: var(--space-4);
+  }
+}
+
+.dashboardContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5); /* Unified vertical spacing between rows */
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Row wrapper for KPI summary cards */
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+/* Responsive grid layout separating your charts */
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr; 
+  gap: var(--space-6); 
+  width: 100%;
+}
+
+/* Large full-width sections for tables and workload metrics */
+.tableSection {
+  background: #ffffff;
+  border: 1px solid #e0d8cc;
+  border-radius: 8px;
+  padding: var(--space-5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Fix for full screen width breaks on smaller monitors */
+@media (max-width: 1024px) {
+  .chartsGrid {
+    grid-template-columns: 1fr; /* Pasa a una sola columna en pantallas compactas */
+    gap: var(--space-4);
   }
 }
