@@ -19,3 +19,6 @@ spring:
         registration:
           oci:
             redirect-uri: "${app.base-url}/login/oauth2/code/oci"
+gemini:
+  embedding:
+    url: "https://generativelanguage.googleapis.com"

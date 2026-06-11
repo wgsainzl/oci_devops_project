@@ -36,6 +36,11 @@ export default function AppShell(): JSX.Element {
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
+  // states for telegram code management
+  const [telegramCode, setTelegramCode] = useState<number | null>(null)
+  const [isGenerating, setIsGenerating] = useState<boolean>(false)
+  const [showCodeModal, setShowCodeModal] = useState<boolean>(false)
+
   // Delay showing items when sidebar opens, hide immediately when it closes
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>
@@ -71,6 +76,32 @@ export default function AppShell(): JSX.Element {
     navigate('/login', { replace: true })
   }
 
+  // fetching  linking token
+  const handleGenerateTelegramCode = async () => {
+    setIsGenerating(true)
+    setUserMenuOpen(false) // close dropdown item view
+    try {
+      const response = await fetch("/api/link", {
+        method: "POST",
+        credentials: "include", // Pass cookies/JWT session safely
+        headers: {
+          "Content-Type": "application/json",
+        }
+      })
+
+      if (!response.ok) throw new Error(`HTTP Error: ${response.status}`)
+      
+      const code = await response.json() // Server returns raw Integer code
+      setTelegramCode(code)
+      setShowCodeModal(true)
+    } catch (err) {
+      console.error("Failed generating validation link token:", err)
+      alert("Could not generate a temporary integration code. Please verify authentication.")
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
   const navClass = ({ isActive }: { isActive: boolean }): string =>
     `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
 
@@ -99,7 +130,7 @@ export default function AppShell(): JSX.Element {
               className={`${styles.iconBtnProfile} ${userMenuOpen ? styles.activeProfileBtn : ''}`}
               aria-label="User menu"
               title={user?.email}
-              onClick={() => setUserMenuOpen((prev) => !prev)} // Toggles menu
+              onClick={() => setUserMenuOpen((prev) => !prev)}
             >
               <IconUser />
             </button>
@@ -114,12 +145,10 @@ export default function AppShell(): JSX.Element {
                 <button 
                   type="button" 
                   className={styles.dropdownItem}
-                  onClick={() => {
-                    alert("Future feature placeholder clicked!")
-                    setUserMenuOpen(false)
-                  }}
+                  disabled={isGenerating}
+                  onClick={handleGenerateTelegramCode}
                 >
-                  Generate Telegram ID
+                  {isGenerating ? "Generating..." : "Generate Telegram ID"}
                 </button>
 
                 <hr className={styles.dropdownDivider} />
@@ -157,6 +186,21 @@ export default function AppShell(): JSX.Element {
           <Outlet />
         </main>
       </div>
+
+      {/* modal layer overlay displaying the random integration code */}
+      {showCodeModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalCard}>
+            <h3>Link Telegram Bot</h3>
+            <p>Send the following 6-digit synchronization token directly to your Telegram Chatbot to authorize updates:</p>
+            <div className={styles.codeBox}>{telegramCode}</div>
+            <p className={styles.expiryWarning}>This registration token expires automatically after 15 minutes.</p>
+            <button className={styles.closeModalBtn} onClick={() => setShowCodeModal(false)}>
+              Got it, Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

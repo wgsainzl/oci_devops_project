@@ -42,7 +42,7 @@
 }
 
 .menuBtn:hover {
-  background: rgba(255,255,255,0.10);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .oracleMark {
@@ -75,7 +75,7 @@
 }
 
 .iconBtn:hover {
-  background: rgba(255,255,255,0.10);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .iconBtnProfile {
@@ -88,7 +88,7 @@
 }
 
 .iconBtnProfile:hover {
-  background: rgba(255,255,255,0.10);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
 
@@ -108,19 +108,23 @@
   padding: var(--space-4) var(--space-2);
   overflow-y: auto;
   flex-shrink: 0;
-  transition: width 240ms ease, padding 240ms ease;
-  
-
+  transition:
+    width 240ms ease,
+    padding 240ms ease;
 }
 
 /* When items are visible (opening), width expands immediately */
 .sidebar[data-items-visible="true"] {
-  transition: width 240ms ease, padding 240ms ease;
+  transition:
+    width 240ms ease,
+    padding 240ms ease;
 }
 
 /* When items are hidden (closing), delay width collapse until items fade out */
 .sidebar[data-items-visible="false"] {
-  transition: width 240ms ease 300ms, padding 240ms ease 300ms;
+  transition:
+    width 240ms ease 300ms,
+    padding 240ms ease 300ms;
 }
 
 .sidebarOpen {
@@ -145,11 +149,17 @@
   font-size: 1rem;
   font-weight: 400;
   text-decoration: none;
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
   white-space: nowrap;
   opacity: 0;
   transform: translateX(-8px);
-  transition: opacity 200ms ease, transform 200ms ease, background 120ms ease, border-color 120ms ease;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease,
+    background 120ms ease,
+    border-color 120ms ease;
 }
 
 .sidebar[data-items-visible="true"] .navItem {
@@ -277,4 +287,76 @@
 .signOutBtn:hover {
   background-color: #fbebeb;
   color: #c93333;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(27, 31, 36, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+/* Modal Content Card */
+.modalCard {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  border: 1px solid #e0d8cc;
+}
+
+.modalCard h3 {
+  margin-top: 0;
+  color: #1b1f24;
+  font-size: 1.3rem;
+}
+
+.modalCard p {
+  color: #5f6772;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* 6-Digit Code Token display wrap */
+.codeBox {
+  background-color: #f7f3eb;
+  border: 2px dashed #c0b29d;
+  color: #4e4637;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  padding: 12px;
+  margin: 18px 0;
+  border-radius: 6px;
+  font-family: monospace;
+}
+
+.expiryWarning {
+  font-size: 0.8rem !important;
+  color: #a97524 !important;
+  margin-bottom: 20px;
+}
+
+.closeModalBtn {
+  background-color: #1b1f24;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 150ms ease;
+}
+
+.closeModalBtn:hover {
+  background-color: #000000;
 }
