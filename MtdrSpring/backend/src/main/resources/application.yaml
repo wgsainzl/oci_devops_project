@@ -3,6 +3,29 @@ app:
   frontend-url: ${APP_FRONTEND_URL:${app.base-url}}
 
 spring:
+  # Hibernate Settings
+  jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  # Database Connection & UCP Connection Pool
+  datasource:
+    url: jdbc:oracle:thin:@${TODO_PDB_NAME}_tp?TNS_ADMIN=/mtdrworkshop/creds
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: oracle.jdbc.OracleDriver
+    type: oracle.ucp.jdbc.PoolDataSource
+    oracleucp:
+      connection-factory-class-name: oracle.jdbc.pool.OracleDataSource
+      sql-for-validate-connection: select * from dual
+      connection-pool-name: connectionPoolName1
+      initial-pool-size: 15
+      min-pool-size: 10
+      max-pool-size: 30
+
+  # Spring Security OAuth2
   security:
     oauth2:
       client:
@@ -22,6 +45,26 @@ spring:
             user-info-uri: https://idcs-0afee46b18294db68c4a47945c38f043.identity.oraclecloud.com/oauth2/v1/userinfo
             user-name-attribute: sub
 
+  # RabbitMQ
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbitmq}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
+
+# Logging
+logging:
+  file:
+    name: logs.log
+  level:
+#    root: info
+#    oracle.ucp: warn
+    org.hibernate.SQL: warn
+#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+#    org.hibernate.type: TRACE
+#    Security
+#    org.springframework.security: DEBUG
+
+# Third-Party APIs
 gemini:
   api:
     key: ${GEMINI_API_KEY}
@@ -31,6 +74,10 @@ telegram:
   bot:
     token: ${TELEGRAM_KEY}
     name: ${TELEGRAM_BOT_NAME}
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
 
 oci:
   domain:
@@ -44,7 +91,3 @@ oci:
     email: ${TENANCY_EMAIL}
     ocid: ${TENANCY_OCID}
     name: ${TENANCY_NAME}
-
-jwt:
-  secret:
-    key: ${JWT_SECRET_KEY}

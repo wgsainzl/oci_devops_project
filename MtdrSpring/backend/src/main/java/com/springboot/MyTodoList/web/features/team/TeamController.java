@@ -2,8 +2,11 @@
 package com.springboot.MyTodoList.web.features.team;
 import java.util.List;
 
+import com.springboot.MyTodoList.web.features.sprint.Sprint;
+import com.springboot.MyTodoList.web.features.sprint.SprintService;
+import com.springboot.MyTodoList.web.features.task.Task;
+import com.springboot.MyTodoList.web.features.task.TaskService;
 import org.springframework.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,21 +15,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import com.rabbitmq.client.RpcClient.Response;
+import com.springboot.MyTodoList.web.features.user.userDetails.CustomUserDetails;
+import org.springframework.security.core.Authentication;
 
 @Controller
 @RequestMapping("/api/teams")
 public class TeamController {
-    @Autowired
-    TeamService teamService;
+    final TeamService teamService;
 
-    @Autowired
-    private com.springboot.MyTodoList.web.features.task.TaskService taskService;
+    private final TaskService taskService;
 
-    @Autowired
-    private com.springboot.MyTodoList.web.features.sprint.SprintService sprintService;
+    private final SprintService sprintService;
+
+    public TeamController(TeamService teamService, TaskService taskService, SprintService sprintService) {
+        this.teamService = teamService;
+        this.taskService = taskService;
+        this.sprintService = sprintService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Team>> getAllTeams(){
@@ -54,17 +60,17 @@ public class TeamController {
     }
 
     @GetMapping("/{id}/sprints")
-    public ResponseEntity<List<com.springboot.MyTodoList.web.features.sprint.Sprint>> getSprintsByTeamId(@PathVariable int id){
+    public ResponseEntity<List<Sprint>> getSprintsByTeamId(@PathVariable int id){
         return ResponseEntity.ok(sprintService.getSprintsByTeamId(id));
     }
 
     @GetMapping("/{id}/tasks")
-    public ResponseEntity<List<com.springboot.MyTodoList.web.features.task.Task>> getTasksByTeamId(@PathVariable int id){
+    public ResponseEntity<List<Task>> getTasksByTeamId(@PathVariable int id){
         return ResponseEntity.ok(taskService.getTasksByTeamId(id));
     } 
 
     @GetMapping("/{teamId}/sprints/{sprintId}/tasks")
-    public ResponseEntity<List<com.springboot.MyTodoList.web.features.task.Task>> getTaskByTeamAndSprintId(@PathVariable int teamId, @PathVariable int sprintId){
+    public ResponseEntity<List<Task>> getTaskByTeamAndSprintId(@PathVariable int teamId, @PathVariable int sprintId){
         return ResponseEntity.ok(taskService.getTasksByTeamAndSprint(sprintId, teamId));
     }
 

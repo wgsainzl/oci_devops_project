@@ -5,7 +5,7 @@
  */
 
 import { dashboardAPI, tasksAPI, teamsAPI, timelineAPI } from './API'
-import { mockDashboardAPI, mockTeamsAPI, mockTimelineAPI } from './mocks'
+import { mockDashboardAPI, mockTeamsAPI} from './mocks'
 
 const useMocks = String(import.meta.env.VITE_USE_MOCKS).toLowerCase() === 'true'
 
@@ -20,6 +20,7 @@ export const useAPI = {
     return useMocks ? mockTeamsAPI : teamsAPI
   },
   get timeline() { 
-    return useMocks ? mockTimelineAPI : timelineAPI
+    // return useMocks ? mockTimelineAPI : timelineAPI
+    return timelineAPI
   }
 }

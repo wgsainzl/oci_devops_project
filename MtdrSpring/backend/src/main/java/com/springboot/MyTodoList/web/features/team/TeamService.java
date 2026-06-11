@@ -3,13 +3,15 @@ package com.springboot.MyTodoList.web.features.team;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TeamService {
-    @Autowired
-    private TeamRepository teamRepository;
+    private final TeamRepository teamRepository;
+
+    public TeamService(TeamRepository teamRepository) {
+        this.teamRepository = teamRepository;
+    }
 
     public List<Team> getAllTeams() {
         return teamRepository.findAll();

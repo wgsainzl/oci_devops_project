@@ -26,6 +26,7 @@ public class UserAuthResponseDTO {
         private String ociSubjectID;
         private String telegramUserID;
         private List<String> roles;
+        private Integer teamId;
     }
 
 }

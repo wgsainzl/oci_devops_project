@@ -2,6 +2,7 @@ package com.springboot.MyTodoList.web.auth;
 
 import com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO;
 import com.springboot.MyTodoList.web.features.role.Role;
+import com.springboot.MyTodoList.web.features.team.Team;
 import com.springboot.MyTodoList.web.features.user.userDetails.CustomUserDetails;
 import com.springboot.MyTodoList.web.initializers.list.PermissionList;
 import org.springframework.http.HttpStatus;
@@ -10,10 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,6 +48,7 @@ public class AuthService {
                 .roles(roleNames)
                 .ociSubjectID(user.getOciSubjectID())
                 .telegramUserID(user.getTelegramUserID())
+                .teamId(user.getTeam() != null ? user.getTeam().getTeamId() : null)
                 .build();
     }
 

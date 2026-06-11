@@ -9,6 +9,7 @@ const PAGE_SIZE = 20;
 
 export default function TimelinePage(): JSX.Element {
     const {user} = useAuth()
+
     const [tasks, setTasks] = useState<TimelineTask[]>([])
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(1)
@@ -18,20 +19,27 @@ export default function TimelinePage(): JSX.Element {
     const observer = useRef<IntersectionObserver | null>(null)
     const scrollRef = useRef<HTMLDivElement>(null);
 
+    // Fetch tasks using your timelineAPI footprint: getTasks(currentTeamId, params)
     const fetchTasks = useCallback(async (pageNum: number) => {
         setLoading(true);
         try {
-            const res = await useAPI.timeline.getTasks(user?.currentTeamId, pageNum, PAGE_SIZE);
+            const queryParams = {
+                page: String(pageNum),
+                size: String(PAGE_SIZE)
+            };
+
+
+            const res = await useAPI.timeline.getTasks(user?.currentTeamId, queryParams);
             const newTasks = res.data;
+
             setTasks(prev => (pageNum === 1 ? newTasks : [...prev, ...newTasks]));
             setHasMore(newTasks.length === PAGE_SIZE);
         } catch (err) {
-            console.error("Failed to load tasks", err);
+            console.error("Failed to load timeline tasks", err);
         } finally {
             setLoading(false);
         }
     }, [user?.currentTeamId]);
-
 
     const lastTaskRef = useCallback((node: HTMLDivElement) => {
         if (loading) return;
@@ -42,12 +50,10 @@ export default function TimelinePage(): JSX.Element {
         if (node) observer.current.observe(node);
     }, [loading, hasMore]);
 
-
-// Handle scroll events to update visibility
+    // Handle scroll events to update visibility
     const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
         setScrollX(e.currentTarget.scrollLeft);
     };
-
 
     const {startBound, weeks, todayOffset} = useMemo(() => {
         const today = new Date();
@@ -76,9 +82,9 @@ export default function TimelinePage(): JSX.Element {
         const diffDays = (d.getTime() - startBound.getTime()) / (1000 * 60 * 60 * 24);
         return (diffDays / 7) * COLUMN_WIDTH;
     };
+
     const isTodayVisible = useMemo(() => {
         const frozenWidth = 750;
-        // We add a small buffer (5-10px) so it doesn't flicker right at the edge
         const buffer = 5;
 
         // The viewport's width minus the frozen section is the visible "window" for the Gantt track
@@ -86,29 +92,30 @@ export default function TimelinePage(): JSX.Element {
             ? scrollRef.current.clientWidth - frozenWidth
             : 1000; // Fallback during initial render
 
-        // The line is visible if:
-        // It is further right than the current scroll amount (accounting for frozen cols)
-        // AND it hasn't scrolled past the right edge of the screen
         const isPastFrozen = todayOffset > (scrollX + buffer);
         const isBeforeRightEdge = todayOffset < (scrollX + visibleWindowWidth - buffer);
 
         return isPastFrozen && isBeforeRightEdge;
     }, [todayOffset, scrollX]);
 
+    // Trigger full reset whenever the active team context switches
     useEffect(() => {
+        setPage(1);
+        setTasks([]);
         fetchTasks(1);
-    }, [fetchTasks]);
+    }, [user?.currentTeamId, fetchTasks]);
 
-
+    // Infinite scroll pagination trigger
     useEffect(() => {
-        if (page > 1) fetchTasks(page);
+        if (page > 1) {
+            fetchTasks(page);
+        }
     }, [page, fetchTasks]);
 
+    // Auto-scroll to today marker on component mount
     useEffect(() => {
         if (scrollRef.current && todayOffset > 0) {
-            // We scroll the viewport.
-            // We subtract a bit of padding so "Today" is centered or slightly to the left
-            scrollRef.current.scrollLeft = todayOffset;
+            scrollRef.current.scrollLeft = todayOffset - 50; // Offset slightly to give historical context
         }
     }, [todayOffset]);
 
@@ -117,7 +124,7 @@ export default function TimelinePage(): JSX.Element {
             <header className={styles.header}>
                 <div className={styles.titleGroup}>
                     <h1>Timeline</h1>
-                    <p>{user?.currentTeamId || 'EasyMoneySnipers'}</p>
+                    <p>{user?.currentTeamId ? `Team: ${user?.currentTeamId}` : (user?.username || 'EasyMoneySnipers')}</p>
                 </div>
             </header>
 

@@ -4,6 +4,7 @@ package com.springboot.MyTodoList.web.features.user;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.springboot.MyTodoList.web.features.role.Role;
+import com.springboot.MyTodoList.web.features.team.Team;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -61,7 +62,7 @@ public class User {
     @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
-    private com.springboot.MyTodoList.web.features.team.Team team;
+    private Team team;
 
 
 

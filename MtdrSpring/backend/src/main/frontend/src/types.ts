@@ -14,7 +14,7 @@ export interface User {
   username: string
   email: string
   role: UserRole
-  currentTeamId?: string | null
+  currentTeamId: number | null
 }
  
 /*

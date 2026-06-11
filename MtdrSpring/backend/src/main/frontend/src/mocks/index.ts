@@ -240,23 +240,34 @@ export const mockDashboardAPI = {
   },
 }
 
-export const mockTimelineAPI = {
-  getTasks: async (
-    _teamId?: string | null,
-    _params?: Record<string, string>,
-  ): Promise<AxiosResponse<TimelineTask[]>> => {
+// export const mockTimelineAPI = {
+//   getTasks: async (
+//     _teamId?: string | null,
+//     _params?: Record<string, string>,
+//   ): Promise<AxiosResponse<TimelineTask[]>> => {
+//     await delay(MOCK_DELAY)
+//     return {
+//       data: fixtures.mockTimelineTasks,
+//       status: 200,
+//       statusText: 'OK',
+//       headers: {},
+//       config: { headers: {} as any },
+//     } as AxiosResponse
+//   },
+// }
+
+export const mockTeamsAPI = {
+  getMy: async (): Promise<AxiosResponse<Team[]>> => {
     await delay(MOCK_DELAY)
     return {
-      data: fixtures.mockTimelineTasks,
+      data: mockTeamsStore,
       status: 200,
       statusText: 'OK',
       headers: {},
       config: { headers: {} as any },
     } as AxiosResponse
   },
-}
 
-export const mockTeamsAPI = {
   getAll: async (): Promise<AxiosResponse<Team[]>> => {
     await delay(MOCK_DELAY)
     return {

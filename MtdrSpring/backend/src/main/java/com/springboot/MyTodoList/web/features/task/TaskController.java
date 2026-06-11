@@ -15,16 +15,15 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
-    
+
     @Autowired
     private TaskService taskService;
 
-    //@Autowired
-    //private com.springboot.MyTodoList.web.features.user.UserRepository userRepository;
-
     @GetMapping
-    public ResponseEntity<List<TaskDTO>> getAllToDoItems(){
-        List<Task> tasks = taskService.findAll();
+    public ResponseEntity<List<TaskDTO>> getAllToDoItems(@RequestParam(required = false) Integer teamId) {
+        // Pass the optional teamId down to the service layer
+        List<Task> tasks = taskService.findAll(teamId);
+
         // Convert the list of raw entities to a list of DTOs
         List<TaskDTO> taskDTOs = tasks.stream()
                 .map(TaskDTO::fromEntity)
@@ -33,20 +32,20 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskDTO> getToDoItemById(@PathVariable int id){
+    public ResponseEntity<TaskDTO> getToDoItemById(@PathVariable int id) {
         Optional<Task> task = taskService.getTaskById(id);
         return task.map(t -> ResponseEntity.ok(TaskDTO.fromEntity(t)))
-                   .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<TaskDTO> addToDoItem(@RequestBody Task newTask) throws Exception{
+    public ResponseEntity<TaskDTO> addToDoItem(@RequestBody Task newTask) throws Exception {
         Task createdTask = taskService.createTask(newTask);
         return ResponseEntity.status(HttpStatus.CREATED).body(TaskDTO.fromEntity(createdTask));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskDTO> updateToDoItem(@RequestBody Task updatedData, @PathVariable int id){
+    public ResponseEntity<TaskDTO> updateToDoItem(@RequestBody Task updatedData, @PathVariable int id) {
         Task updatedTask = taskService.updateTask(id, updatedData);
         if (updatedTask != null) {
             return ResponseEntity.ok(TaskDTO.fromEntity(updatedTask));
@@ -56,13 +55,13 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteTaskItem(@PathVariable("id") int id){
-       boolean isDeleted = taskService.deleteTaskItem(id);
-       if (isDeleted){
-        return ResponseEntity.noContent().build();
-       } else{
-        return ResponseEntity.notFound().build();
-       }
+    public ResponseEntity<Boolean> deleteTaskItem(@PathVariable("id") int id) {
+        boolean isDeleted = taskService.deleteTaskItem(id);
+        if (isDeleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PatchMapping("/{id}/status")
@@ -70,7 +69,7 @@ public class TaskController {
         String statusString = requestBody.get("status");
         String userIdString = requestBody.get("userId");
         Long currentUserId = null;
-        
+
         if (userIdString != null) {
             currentUserId = Long.parseLong(userIdString);
         }
@@ -78,7 +77,7 @@ public class TaskController {
         try {
             TaskStatus newStatus = TaskStatus.valueOf(statusString.toUpperCase());
             Task updatedTask = taskService.updateTaskStatus(id, newStatus, currentUserId);
-            
+
             if (updatedTask != null) {
                 return ResponseEntity.ok(TaskDTO.fromEntity(updatedTask));
             } else {
@@ -111,11 +110,12 @@ public class TaskController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(taskDTOs);
     }
+
     @PostMapping("/telegram")
     public ResponseEntity<TaskDTO> addToDoItemFromTelegram(
-            @RequestBody Task newTask, 
+            @RequestBody Task newTask,
             @RequestParam String telegramId) throws Exception {
-        
+
         Task createdTask = taskService.createTaskFromTelegram(newTask, telegramId);
         return ResponseEntity.status(HttpStatus.CREATED).body(TaskDTO.fromEntity(createdTask));
     }
