@@ -1,0 +1,271 @@
+@startuml
+
+class com.springboot.telegrambot.dto.SprintDTO {
+	{field} +endDate : java.time.OffsetDateTime
+	{field} +id : Integer
+	{field} +name : String
+	{field} +startDate : java.time.OffsetDateTime
+}
+
+
+class com.springboot.telegrambot.dto.TaskDTO {
+	{field} +actualHours : Double
+	{field} +createdAt : java.time.OffsetDateTime
+	{field} +description : String
+	{field} +dueDate : java.time.OffsetDateTime
+	{field} +estimatedHours : Double
+	{field} +priority : String
+	{field} +responsible : String
+	{field} +responsibleId : Long
+	{field} +startDate : java.time.OffsetDateTime
+	{field} +taskId : Integer
+	{field} +title : String
+}
+
+
+class com.springboot.telegrambot.dto.TaskDTO$SprintReference {
+	{field} +sprintId : Integer
+	{field} +sprintName : String
+}
+
+
+enum com.springboot.telegrambot.dto.TaskStatus {
+	{field} +BLOCKED
+	{field} +DONE
+	{field} +IN_PROGRESS
+	{field} +IN_REVIEW
+	{field} +TODO
+}
+
+
+class com.springboot.telegrambot.dto.UserSessionDTO {
+	{field} +role : String
+	{field} +teamId : Integer
+	{field} +telegramUserId : String
+	{field} +userId : Long
+}
+
+
+class com.springboot.telegrambot.gemini.GeminiService {
+	{field} -geminiConfig : com.springboot.telegrambot.config.GeminiConfig
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -mapper : com.fasterxml.jackson.databind.ObjectMapper
+	{field} -webClient : org.springframework.web.reactive.function.client.WebClient
+	{method} -callGeminiApi ( prompt : String ) : String
+	{method} +generateLogsReport ( managerId : Integer , logs : java.util.List ) : String
+	{method} +generateSprintReport ( userId : Integer , tasks : java.util.List ) : String
+}
+
+
+class com.springboot.telegrambot.util.BotActions {
+	{field} +backendServiceClient : com.springboot.telegrambot.client.BackendServiceClient
+	{field} ~chatId : long
+	{field} ~exit : boolean
+	{field} {static} -logger : org.slf4j.Logger
+	{field} ~requestText : String
+	{field} ~taskCommandPublisher : com.springboot.telegrambot.messaging.TaskCommandPublisher
+	{field} ~taskRpcClient : com.springboot.telegrambot.messaging.TaskRpcClient
+	{field} ~telegramClient : org.telegram.telegrambots.meta.generics.TelegramClient
+	{method} -createKeyboard ( buttons : java.util.List ) : org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup
+	{method} -extractTaskIdForAction ( actionKeyword : String ) : Integer
+	{method} +fnAddItem () : void
+	{method} +fnCancel () : void
+	{method} +fnDelete () : void
+	{method} +fnElse () : void
+	{method} +fnGenerateReport () : void
+	{method} +fnListAll () : void
+	{method} +fnListSprints () : void
+	{method} +fnStart () : void
+	{method} -isLikelyUpdateCommand () : boolean
+	{method} +processTaskWizard () : void
+}
+
+
+enum com.springboot.telegrambot.util.BotActions$TaskCreationState {
+	{field} +AWAITING_DESCRIPTION
+	{field} +AWAITING_PRIORITY
+	{field} +AWAITING_SPRINT
+	{field} +AWAITING_TITLE
+}
+
+
+class com.springboot.telegrambot.util.BotActions$TaskDraftSession {
+}
+
+
+class com.springboot.telegrambot.util.BotClient {
+	{method} +telegramClient ( botProps : com.springboot.telegrambot.config.BotProps ) : org.telegram.telegrambots.meta.generics.TelegramClient
+}
+
+
+enum com.springboot.telegrambot.util.BotCommands {
+	{field} +ADD_ITEM
+	{field} +COMPLETE_TASK
+	{field} +HIDE_COMMAND
+	{field} +LINK
+	{field} +LLM_REPORT
+	{field} +SPRINTS_LIST
+	{field} +START_COMMAND
+	{field} +TODO_LIST
+	{field} +UPDATE_TASK
+}
+
+
+class com.springboot.telegrambot.util.BotHelper {
+	{field} {static} -logger : org.slf4j.Logger
+	{method}  {static} +createKeyboard ( buttons : java.util.List ) : org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup
+	{method}  {static} -escapeHtml ( text : String ) : String
+	{method}  {static} -sendHtmlChunk ( chatId : Long , htmlText : String , fallbackText : String , bot : org.telegram.telegrambots.meta.generics.TelegramClient ) : void
+	{method}  {static} +sendHtmlMessageToTelegram ( chatId : Long , text : String , bot : org.telegram.telegrambots.meta.generics.TelegramClient ) : void
+	{method}  {static} +sendHtmlMessageWithKeyboard ( chatId : Long , text : String , bot : org.telegram.telegrambots.meta.generics.TelegramClient , rk : org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard ) : void
+	{method}  {static} +sendMarkdown ( chatId : Long , markdownText : String , bot : org.telegram.telegrambots.meta.generics.TelegramClient ) : void
+	{method}  {static} +sendMessageToTelegram ( chatId : Long , text : String , bot : org.telegram.telegrambots.meta.generics.TelegramClient ) : void
+	{method}  {static} +sendMessageToTelegram ( chatId : Long , text : String , bot : org.telegram.telegrambots.meta.generics.TelegramClient , rk : org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup ) : void
+	{method}  {static} -toTelegramHtml ( markdownText : String ) : String
+}
+
+
+enum com.springboot.telegrambot.util.BotLabels {
+	{field} +ADD_NEW_ITEM
+	{field} +BLOCK
+	{field} +DASH
+	{field} +DELETE
+	{field} +DONE
+	{field} +GENERATE_REPORT
+	{field} +HIDE_MAIN_SCREEN
+	{field} +LIST_ALL_ITEMS
+	{field} +MY_TODO_LIST
+	{field} +SHOW_MAIN_SCREEN
+	{field} +START
+}
+
+
+enum com.springboot.telegrambot.util.BotMessages {
+	{field} +BOT_REGISTERED_STARTED
+	{field} +BYE
+	{field} +HELLO_MYTODO_BOT
+	{field} +ITEM_BLOCKED
+	{field} +ITEM_DELETED
+	{field} +ITEM_DONE
+	{field} +NEW_ITEM_ADDED
+	{field} +TYPE_NEW_TODO_ITEM
+	{field} +UPDATE_FORMAT_ERROR
+}
+
+
+class com.springboot.telegrambot.util.MyTodoListBot {
+	{field} -commandRouter : com.springboot.telegrambot.command.BotCommandRouter
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -telegramBotToken : String
+	{field} -telegramClient : org.telegram.telegrambots.meta.generics.TelegramClient
+	{method} +afterRegistration ( botSession : org.telegram.telegrambots.longpolling.BotSession ) : void
+	{method} +consume ( update : org.telegram.telegrambots.meta.api.objects.Update ) : void
+	{method} -escapeHtml ( text : String ) : String
+	{method} +getBotToken () : String
+	{method} +getUpdatesConsumer () : org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer
+	{method} -sendHtmlChunk ( chatId : long , htmlText : String , fallbackText : String ) : void
+	{method} -sendMarkdown ( chatId : long , markdownText : String ) : void
+	{method} -sendText ( chatId : long , text : String ) : void
+	{method} -toTelegramHtml ( markdownText : String ) : String
+}
+
+
+class com.springboot.telegrambot.util.UserSessionManager {
+	{field} -backendServiceClient : com.springboot.telegrambot.client.BackendServiceClient
+	{method} +getOrCreateSession ( telegramUserId : String ) : com.springboot.telegrambot.dto.UserSessionDTO
+}
+
+
+class com.springboot.telegrambot.wizard.TaskWizardManager {
+	{method} +clearDraft ( chatId : long ) : void
+	{method} +getDraft ( chatId : long ) : com.springboot.telegrambot.wizard.TaskWizardManager$TaskDraftSession
+	{method} +hasActiveDraft ( chatId : long ) : boolean
+	{method} +startDraft ( chatId : long ) : void
+}
+
+
+enum com.springboot.telegrambot.wizard.TaskWizardManager$TaskCreationState {
+	{field} +AWAITING_DESCRIPTION
+	{field} +AWAITING_ESTIMATED_HOURS
+	{field} +AWAITING_PRIORITY
+	{field} +AWAITING_SPRINT
+	{field} +AWAITING_TITLE
+}
+
+
+class com.springboot.telegrambot.wizard.TaskWizardManager$TaskDraftSession {
+}
+
+
+class com.springboot.telegrambot.wizard.TaskWizardProcessor {
+	{method} +processInput ( context : com.springboot.telegrambot.command.CommandContext ) : void
+}
+
+
+class com.springboot.telegrambot.wizard.state.AwaitingDescriptionState {
+	{field} -telegramClient : org.telegram.telegrambots.meta.generics.TelegramClient
+	{method} +execute ( context : com.springboot.telegrambot.command.CommandContext , session : com.springboot.telegrambot.wizard.TaskWizardManager$TaskDraftSession ) : void
+	{method} +getSupportedState () : com.springboot.telegrambot.wizard.TaskWizardManager$TaskCreationState
+}
+
+
+class com.springboot.telegrambot.wizard.state.AwaitingEstimatedHours {
+	{field} -telegramClient : org.telegram.telegrambots.meta.generics.TelegramClient
+	{method} +execute ( context : com.springboot.telegrambot.command.CommandContext , session : com.springboot.telegrambot.wizard.TaskWizardManager$TaskDraftSession ) : void
+	{method} +getSupportedState () : com.springboot.telegrambot.wizard.TaskWizardManager$TaskCreationState
+}
+
+
+class com.springboot.telegrambot.wizard.state.AwaitingPriorityState {
+	{field} -taskRpcClient : com.springboot.telegrambot.messaging.TaskRpcClient
+	{field} -telegramClient : org.telegram.telegrambots.meta.generics.TelegramClient
+	{method} +execute ( context : com.springboot.telegrambot.command.CommandContext , session : com.springboot.telegrambot.wizard.TaskWizardManager$TaskDraftSession ) : void
+	{method} +getSupportedState () : com.springboot.telegrambot.wizard.TaskWizardManager$TaskCreationState
+}
+
+
+class com.springboot.telegrambot.wizard.state.AwaitingSprintState {
+	{field} -taskCommandPublisher : com.springboot.telegrambot.messaging.TaskCommandPublisher
+	{field} -telegramClient : org.telegram.telegrambots.meta.generics.TelegramClient
+	{method} +execute ( context : com.springboot.telegrambot.command.CommandContext , session : com.springboot.telegrambot.wizard.TaskWizardManager$TaskDraftSession ) : void
+	{method} +getSupportedState () : com.springboot.telegrambot.wizard.TaskWizardManager$TaskCreationState
+}
+
+
+class com.springboot.telegrambot.wizard.state.AwaitingTitleState {
+	{field} -telegramClient : org.telegram.telegrambots.meta.generics.TelegramClient
+	{method} +execute ( context : com.springboot.telegrambot.command.CommandContext , session : com.springboot.telegrambot.wizard.TaskWizardManager$TaskDraftSession ) : void
+	{method} +getSupportedState () : com.springboot.telegrambot.wizard.TaskWizardManager$TaskCreationState
+}
+
+
+interface com.springboot.telegrambot.wizard.state.WizardState {
+	{method}  {abstract} +execute ( context : com.springboot.telegrambot.command.CommandContext , session : com.springboot.telegrambot.wizard.TaskWizardManager$TaskDraftSession ) : void
+	{method}  {abstract} +getSupportedState () : com.springboot.telegrambot.wizard.TaskWizardManager$TaskCreationState
+}
+
+
+
+
+com.springboot.telegrambot.dto.TaskDTO -->  com.springboot.telegrambot.dto.TaskDTO$SprintReference : sprint
+com.springboot.telegrambot.dto.TaskDTO -->  com.springboot.telegrambot.dto.TaskStatus : status
+com.springboot.telegrambot.util.BotActions "1" o-- "0..*"  com.springboot.telegrambot.util.BotActions$TaskDraftSession : activeDrafts
+com.springboot.telegrambot.util.BotActions -->  com.springboot.telegrambot.gemini.GeminiService : geminiService
+com.springboot.telegrambot.util.BotActions$TaskDraftSession -->  com.springboot.telegrambot.dto.TaskDTO : draftTask
+com.springboot.telegrambot.util.BotActions$TaskDraftSession -->  com.springboot.telegrambot.util.BotActions$TaskCreationState : state
+com.springboot.telegrambot.util.UserSessionManager "1" o-- "0..*"  com.springboot.telegrambot.dto.UserSessionDTO : activeSessions
+com.springboot.telegrambot.wizard.TaskWizardManager "1" o-- "0..*"  com.springboot.telegrambot.wizard.TaskWizardManager$TaskDraftSession : activeDrafts
+com.springboot.telegrambot.wizard.TaskWizardManager$TaskDraftSession -->  com.springboot.telegrambot.dto.TaskDTO : draftTask
+com.springboot.telegrambot.wizard.TaskWizardManager$TaskDraftSession -->  com.springboot.telegrambot.wizard.TaskWizardManager$TaskCreationState : state
+com.springboot.telegrambot.wizard.TaskWizardProcessor "1" o-- "0..*"  com.springboot.telegrambot.wizard.TaskWizardManager$TaskCreationState : stateHandlers
+com.springboot.telegrambot.wizard.TaskWizardProcessor "1" o-- "0..*"  com.springboot.telegrambot.wizard.state.WizardState : stateHandlers
+com.springboot.telegrambot.wizard.TaskWizardProcessor *--  com.springboot.telegrambot.wizard.TaskWizardManager : wizardManager
+com.springboot.telegrambot.wizard.state.AwaitingDescriptionState ..|>  com.springboot.telegrambot.wizard.state.WizardState
+com.springboot.telegrambot.wizard.state.AwaitingEstimatedHours ..|>  com.springboot.telegrambot.wizard.state.WizardState
+com.springboot.telegrambot.wizard.state.AwaitingPriorityState ..|>  com.springboot.telegrambot.wizard.state.WizardState
+com.springboot.telegrambot.wizard.state.AwaitingSprintState *--  com.springboot.telegrambot.wizard.TaskWizardManager : wizardManager
+com.springboot.telegrambot.wizard.state.AwaitingSprintState ..|>  com.springboot.telegrambot.wizard.state.WizardState
+com.springboot.telegrambot.wizard.state.AwaitingTitleState ..|>  com.springboot.telegrambot.wizard.state.WizardState
+
+
+@enduml

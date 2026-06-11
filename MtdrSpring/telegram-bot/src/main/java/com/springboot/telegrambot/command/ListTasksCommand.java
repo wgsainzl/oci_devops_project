@@ -95,13 +95,14 @@ public class ListTasksCommand implements BotCommand {
                     sb.append("<b>ID: ").append(item.getTaskId()).append("</b> | <code>[").append(item.getStatus()).append("]</code>\n");
                     sb.append(title).append("\n\n");
                 }
+                sb.append("<i>To complete a task, type:</i> <code>/complete &lt;TaskID&gt; &lt;HOURS&gt;</code>");
                 sb.append("<i>To update a task, type:</i> <code>/updatetask &lt;ID&gt; &lt;STATUS&gt;</code>");
             }
 
             BotHelper.sendHtmlMessageToTelegram(chatId, sb.toString(), telegramClient);
         } catch (Exception e) {
             logger.error("Failed to fetch tasks", e);
-            BotHelper.sendMessageToTelegram(chatId, "⚠️ Error: Cannot fetch tasks right now.", telegramClient);
+            BotHelper.sendMessageToTelegram(chatId, "Error: Cannot fetch tasks right now.", telegramClient);
         }
     }
 }

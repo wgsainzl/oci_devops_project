@@ -10,7 +10,8 @@ public class TaskWizardManager {
         AWAITING_TITLE,
         AWAITING_DESCRIPTION,
         AWAITING_PRIORITY,
-        AWAITING_SPRINT
+        AWAITING_SPRINT,
+        AWAITING_ESTIMATED_HOURS
     }
 
     public static class TaskDraftSession {

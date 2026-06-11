@@ -1,4 +1,4 @@
-import { type JSX, useState, useEffect } from 'react'
+import { type JSX, useState, useEffect, useRef } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/AuthContext'
 import styles from './AppShell.module.css'
@@ -32,13 +32,17 @@ export default function AppShell(): JSX.Element {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
 
+  // state to handle profile dropdown menu visibility
+  const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
   // Delay showing items when sidebar opens, hide immediately when it closes
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>
     
     if (sidebarOpen) {
       // Faster initial opening - only 20ms delay
-      timeoutId = setTimeout(() => setItemsVisible(true), 20)
+      timeoutId = setTimeout(() => setItemsVisible (true), 20)
     } else {
       // Hide immediately, no delay
       setItemsVisible(false)
@@ -50,8 +54,20 @@ export default function AppShell(): JSX.Element {
     }
   }, [sidebarOpen])
 
+  // Close dropdown if user clicks anywhere outside of it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   const handleSignOut = async (): Promise<void> => {
     await signOut()
+    setUserMenuOpen(false)
     navigate('/login', { replace: true })
   }
 
@@ -76,15 +92,48 @@ export default function AppShell(): JSX.Element {
           <span className={styles.appName}>Oracle Task Manager</span>
         </div>
 
-        <div className={styles.headerRight}>
-          <button
-            className={styles.iconBtnProfile}
-            aria-label="User menu"
-            title={user?.email}
-            onClick={handleSignOut}
-          >
-            <IconUser />
-          </button>
+        {/* User Profile Menu Container */}
+        <div className={styles.headerRight} ref={menuRef}>
+          <div className={styles.profileContainer}>
+            <button
+              className={`${styles.iconBtnProfile} ${userMenuOpen ? styles.activeProfileBtn : ''}`}
+              aria-label="User menu"
+              title={user?.email}
+              onClick={() => setUserMenuOpen((prev) => !prev)} // Toggles menu
+            >
+              <IconUser />
+            </button>
+
+            {userMenuOpen && (
+              <div className={styles.profileDropdown}>
+                <div className={styles.dropdownHeader}>
+                  <p className={styles.userEmail}>{user?.email}</p>
+                </div>
+                
+                {/* generate Telegram ID button */}
+                <button 
+                  type="button" 
+                  className={styles.dropdownItem}
+                  onClick={() => {
+                    alert("Future feature placeholder clicked!")
+                    setUserMenuOpen(false)
+                  }}
+                >
+                  Generate Telegram ID
+                </button>
+
+                <hr className={styles.dropdownDivider} />
+
+                <button
+                  type="button"
+                  className={`${styles.dropdownItem} ${styles.signOutBtn}`}
+                  onClick={handleSignOut}
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 

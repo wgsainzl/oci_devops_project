@@ -56,6 +56,28 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>de.elnarion.maven</groupId>
+                <artifactId>plantuml-generator-maven-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>generate-bot-controller-diagram</id>
+                        <goals><goal>generate</goal></goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <outputFilename>bot-controller.puml</outputFilename>
+                            <outputDirectory>${project.basedir}/docs/diagrams</outputDirectory>
+                            <scanPackages>
+                                <scanPackage>com.springboot.telegrambot.util</scanPackage>
+                                <scanPackage>com.springboot.telegrambot.gemini</scanPackage>
+                                <scanPackage>com.springboot.telegrambot.wizard</scanPackage>
+                                <scanPackage>com.springboot.telegrambot.dto</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

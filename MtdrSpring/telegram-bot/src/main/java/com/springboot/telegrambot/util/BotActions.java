@@ -126,7 +126,7 @@ public class BotActions {
         );
         exit = true;
     }
-
+/*
     public void fnDone() {
         if (exit) return;
         Integer id = extractTaskIdForAction("DONE");
@@ -154,7 +154,7 @@ public class BotActions {
             exit = true;
         }
     }
-
+*/
     public void fnDelete() {
         if (exit) return;
         Integer id = extractTaskIdForAction("DELETE");
@@ -454,7 +454,7 @@ public class BotActions {
         
         exit = true; 
     }
-
+/*
     public void fnUpdateTask() {
         if (exit || !requestText.trim().toLowerCase().startsWith(BotCommands.UPDATE_TASK.getCommand())) return;
 
@@ -496,5 +496,5 @@ public class BotActions {
         }
 
         exit = true;
-    }
+    }*/
 }
