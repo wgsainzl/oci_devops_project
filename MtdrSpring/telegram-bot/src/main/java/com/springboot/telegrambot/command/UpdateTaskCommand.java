@@ -36,13 +36,13 @@ public class UpdateTaskCommand implements BotCommand {
                 telegramClient);
             return;
         }
-
+        // add "try x command"
         try {
             int taskId = Integer.parseInt(parts[1]);
             String newStatus = parts[2].toUpperCase();
             TaskStatus.valueOf(newStatus); // Validates it's a real enum
 
-            taskCommandPublisher.updateTaskStatus(taskId, newStatus);
+            taskCommandPublisher.updateTaskStatus(taskId, newStatus, context.getUserSession().getTelegramUserId());
             BotHelper.sendHtmlMessageToTelegram(chatId, "<b>Task " + taskId + " updated to " + newStatus + "!</b>", telegramClient);
 
         } catch (IllegalArgumentException e) {

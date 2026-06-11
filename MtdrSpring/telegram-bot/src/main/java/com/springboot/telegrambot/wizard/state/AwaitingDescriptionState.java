@@ -24,11 +24,8 @@ public class AwaitingDescriptionState implements WizardState {
     @Override
     public void execute(CommandContext context, TaskWizardManager.TaskDraftSession session) {
         session.draftTask.setDescription(context.getMessageText());
-        session.state = TaskWizardManager.TaskCreationState.AWAITING_PRIORITY;
+        session.state = TaskWizardManager.TaskCreationState.AWAITING_ESTIMATED_HOURS;
+        BotHelper.sendHtmlMessageToTelegram(context.getChatId(), "<b>Description saved.</b>\n\nPlease enter the <b>Estimated Hours</b> below:", telegramClient);
         
-        BotHelper.sendHtmlMessageWithKeyboard(context.getChatId(), 
-            "<b>Description saved.</b>\n\nPlease select the <b>Priority</b> below:", 
-            telegramClient, 
-            BotHelper.createKeyboard(List.of("HIGH", "MEDIUM", "LOW")));
     }
 }

@@ -3,6 +3,7 @@ package com.springboot.telegrambot.messaging;
 import com.springboot.telegrambot.config.RabbitMQConfig;
 import com.springboot.telegrambot.dto.TaskDTO;
 import com.springboot.telegrambot.messaging.dto.TaskCommandMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -26,13 +27,25 @@ public class TaskCommandPublisher {
         logger.info("Sent CREATE task command for telegramId={}", telegramId);
     }
 
-    public void updateTaskStatus(Integer taskId, String newStatus) {
+    public void updateTaskStatus(Integer taskId, String newStatus, String telegramId) {
         TaskCommandMessage msg = new TaskCommandMessage();
         msg.setCommandType(TaskCommandMessage.CommandType.UPDATE_STATUS);
         msg.setTaskId(taskId);
         msg.setNewStatus(newStatus);
+        msg.setTelegramId(telegramId);
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.RK_TASK_COMMAND, msg);
         logger.info("Sent UPDATE_STATUS command for taskId={} status={}", taskId, newStatus);
+    }
+    
+    public void completeTask(Integer taskId, double hours, String telegramId){
+        TaskCommandMessage msg = new TaskCommandMessage();
+        msg.setCommandType(TaskCommandMessage.CommandType.COMPLETE_TASK);
+        msg.setTaskId(taskId);
+        msg.setActualHours(hours);
+        msg.setTelegramId(telegramId);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.RK_TASK_COMMAND, msg);
+        logger.info("Sent COMPLETE_TASK command for taskId={} hours={}", taskId, hours);
+
     }
 
     public void deleteTask(Integer taskId) {

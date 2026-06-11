@@ -1,15 +1,14 @@
 package com.springboot.telegrambot.command;
 
+import com.rabbitmq.client.Return;
 import com.springboot.telegrambot.messaging.TaskCommandPublisher;
+import com.springboot.telegrambot.util.BotCommands;
 import com.springboot.telegrambot.util.BotHelper;
-import com.springboot.telegrambot.util.BotMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 public class CompleteTaskCommand implements BotCommand {
@@ -18,7 +17,7 @@ public class CompleteTaskCommand implements BotCommand {
     private final TelegramClient telegramClient;
     private final TaskCommandPublisher taskCommandPublisher;
     
-    private final Pattern pattern = Pattern.compile("^(?i)(\\d+)\\s*[- ]\\s*DONE$");
+    //private final Pattern pattern = Pattern.compile("^(?i)(\\d+)\\s*[- ]\\s*DONE$");
 
     public CompleteTaskCommand(TelegramClient telegramClient, TaskCommandPublisher taskCommandPublisher) {
         this.telegramClient = telegramClient;
@@ -27,22 +26,27 @@ public class CompleteTaskCommand implements BotCommand {
 
     @Override
     public boolean supports(String messageText) {
-        return pattern.matcher(messageText.trim()).matches();
+        return messageText.trim().toLowerCase().startsWith(BotCommands.COMPLETE_TASK.getCommand());
     }
 
     @Override
     public void execute(CommandContext context) {
         long chatId = context.getChatId();
-        Matcher matcher = pattern.matcher(context.getMessageText().trim());
         
-        if (matcher.matches()) {
-            Integer id = Integer.valueOf(matcher.group(1));
-            try {
-                taskCommandPublisher.updateTaskStatus(id, "DONE");
-                BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DONE.getMessage(), telegramClient);
-            } catch (Exception e) {
-                logger.error("Failed to complete task", e);
-            }
+        String[] parts = context.getMessageText().trim().split("\\s+");
+        if (parts.length !=3){
+            BotHelper.sendHtmlMessageToTelegram(chatId, "\"<b>Invalid format.</b>\nUse: <code>/complete &lt;TaskID&gt; &lt;HOURS&gt;</code>", telegramClient);
+            return;
+        }
+    
+
+        try {
+            int taskId = Integer.parseInt(parts[1]);
+            double hours = Double.parseDouble(parts[2]);
+            taskCommandPublisher.completeTask(taskId, hours, context.getUserSession().getTelegramUserId());
+                        BotHelper.sendHtmlMessageToTelegram(chatId, "<b>Task " + taskId + " completed with " + hours + " actual hours!</b>", telegramClient);
+        } catch (Exception e){
+            logger.error("Error updating task", e);
         }
     }
 }

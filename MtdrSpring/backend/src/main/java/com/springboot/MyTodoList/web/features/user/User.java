@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "USERS")
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // ADD THIS LINE
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
 public class User {
     @Setter
     @Getter
@@ -48,7 +48,7 @@ public class User {
     @Getter
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @JsonIgnoreProperties({"users", "permissions", "hibernateLazyInitializer", "handler"})
+    @JsonManagedReference
     private Set<Role> roles = new HashSet<>();
 
     public User(String name, String email, String ociSubjectID) {

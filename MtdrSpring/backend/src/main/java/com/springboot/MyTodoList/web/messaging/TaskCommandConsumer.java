@@ -2,6 +2,7 @@ package com.springboot.MyTodoList.web.messaging;
 
 import com.springboot.MyTodoList.web.features.task.TaskService;
 import com.springboot.MyTodoList.web.features.task.TaskStatus;
+import com.springboot.MyTodoList.web.features.ai.TaskSemanticSearchService;
 import com.springboot.MyTodoList.web.features.task.Task;
 import com.springboot.MyTodoList.web.features.task.dto.TaskDTO;
 import com.springboot.MyTodoList.web.messaging.dto.TaskCommandMessage;
@@ -19,6 +20,9 @@ public class TaskCommandConsumer {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private TaskSemanticSearchService sematicService;
 
     @RabbitListener(queues = RabbitMQConfig.TASK_COMMANDS_QUEUE)
     public void handleTaskCommand(TaskCommandMessage message) {
@@ -38,7 +42,7 @@ public class TaskCommandConsumer {
             case UPDATE_STATUS -> {
                 try {
                     TaskStatus status = TaskStatus.valueOf(message.getNewStatus());
-                    taskService.updateTaskStatus(message.getTaskId(), status, null);
+                    taskService.updateTaskStatus(message.getTaskId(), status, message.getTelegramId());
                     logger.info("Task {} updated to status {}", message.getTaskId(), status);
                 } catch (IllegalArgumentException e) {
                     logger.error("Invalid status provided for task {}: {}", message.getTaskId(), message.getNewStatus(), e);
@@ -47,6 +51,15 @@ public class TaskCommandConsumer {
             case DELETE -> {
                 taskService.deleteTaskItem(message.getTaskId());
                 logger.info("Task {} deleted", message.getTaskId());
+            }
+
+            case COMPLETE_TASK -> {
+                try{
+                    taskService.completeTaskWithHours(message.getTaskId(), message.getActualHours(), message.getTelegramId());
+                    logger.info("Task {} updated to complete with {} hours", message.getTaskId(), message.getActualHours());
+                } catch (Error e){
+                    logger.error("Failed to complete task");
+                }
             }
             default -> logger.warn("Unknown command type: {}", message.getCommandType());
         }
