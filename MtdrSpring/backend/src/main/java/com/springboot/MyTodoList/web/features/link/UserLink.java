@@ -13,13 +13,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "USER_LINK")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserLink {
     @Setter
     @Getter
@@ -49,11 +50,14 @@ public class UserLink {
     @Column(name = "ACTIVE")
     private boolean active;
 
+
     public UserLink(User user, Integer code, OffsetDateTime createdAt, boolean active){
         this.user = user;
         this.code = code;
         this.active = active;
         this.createdAt = createdAt;
     }
+
+    
 
 }
