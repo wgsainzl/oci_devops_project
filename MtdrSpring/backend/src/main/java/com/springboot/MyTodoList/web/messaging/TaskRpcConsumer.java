@@ -31,7 +31,7 @@ public class TaskRpcConsumer {
     @Autowired private com.springboot.MyTodoList.web.features.sprint.SprintRepository sprintRepository;
     @Autowired private TaskSemanticSearchService semanticService;
     @Autowired private UserLinkService linkService;
-    @Transactional(readOnly = true)
+    //@Transactional(readOnly = true)
     @RabbitListener(queues = RabbitMQConfig.TASK_RPC_REQUEST)
     public Object handleRpcRequest(TaskRpcRequest request) {
         if (request == null || request.getQueryType() == null) {

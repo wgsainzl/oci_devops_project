@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.springboot.MyTodoList.web.features.user.User;
+import com.springboot.MyTodoList.web.features.user.UserRepository;
 import com.springboot.MyTodoList.web.features.user.UserService;
 
 import jakarta.transaction.Transactional;
@@ -16,10 +17,12 @@ import jakarta.transaction.Transactional;
 public class UserLinkService {
     private final UserLinkRepository userLinkRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
 
-    public UserLinkService(UserLinkRepository userLinkRepository, UserService userService){
+    public UserLinkService(UserLinkRepository userLinkRepository, UserService userService, UserRepository userRepository){
         this.userLinkRepository = userLinkRepository;
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     public Optional<UserLink> getUserLinkById(Long id){
@@ -45,11 +48,15 @@ public class UserLinkService {
         }
 
         try {
-            userService.updateTelegramId(userLink.getUser(), telegramId);
+            User user = userLink.getUser();
+            user.setTelegramUserID(telegramId);
+            userRepository.save(user);
+            //userService.updateTelegramId(userLink.getUser(), telegramId);
             userLink.setActive(false);
             userLinkRepository.save(userLink); 
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
