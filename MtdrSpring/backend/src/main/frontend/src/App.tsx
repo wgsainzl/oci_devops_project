@@ -1,6 +1,5 @@
 // function ProtectedRoute
 import { AuthProvider, useAuth } from "./hooks/AuthContext.tsx";
-import { TeamProvider } from "./hooks/TeamContext.tsx";
 import { Navigate, Route, Routes } from "react-router-dom";
 import AppShell from "./components/layout/AppShell.tsx";
 import LoadingPage from "./components/shared/LoadingPage.tsx";
@@ -71,9 +70,7 @@ function AppRoutes(): JSX.Element {
 export default function App(): JSX.Element {
   return (
     <AuthProvider>
-      <TeamProvider>
         <AppRoutes />
-      </TeamProvider>
     </AuthProvider>
   );
 }
