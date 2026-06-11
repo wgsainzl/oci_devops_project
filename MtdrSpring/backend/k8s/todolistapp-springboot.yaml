@@ -81,6 +81,21 @@ spec:
                 secretKeyRef:
                   name: app-secrets
                   key: gemini-url
+            - name: GEMINI_EMBEDDING_URL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: gemini-embedding-url
+            - name: GEMINI_EMBEDDING_MODEL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: gemini-embedding-model
+            - name: GEMINI_EMBEDDING_DIMENSIONS
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: gemini-embedding-dimensions
             - name: TELEGRAM_KEY
               valueFrom:
                 secretKeyRef:
