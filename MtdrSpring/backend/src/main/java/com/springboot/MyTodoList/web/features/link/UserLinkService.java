@@ -22,7 +22,7 @@ public class UserLinkService {
         this.userService = userService;
     }
 
-    public Optional<UserLink> getUserLinkById(Integer id){
+    public Optional<UserLink> getUserLinkById(Long id){
         return userLinkRepository.findById(id);
     }
 

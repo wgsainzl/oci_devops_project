@@ -9,8 +9,8 @@ import jakarta.transaction.Transactional;
 
 @Repository
 @Transactional
-public interface UserLinkRepository extends JpaRepository<UserLink, Integer> {
-    Optional<UserLink> findById(Integer id);
-    Optional<UserLink> findByUser_UserId(Integer userId);
+public interface UserLinkRepository extends JpaRepository<UserLink, Long> {
+    Optional<UserLink> findById(Long id);
+    Optional<UserLink> findByUser_UserId(Long userId);
     Optional<UserLink> findByCode(Integer code);
 }

@@ -9,7 +9,9 @@ import com.springboot.telegrambot.messaging.TaskRpcClient;
 import com.springboot.telegrambot.util.BotCommands;
 import com.springboot.telegrambot.util.BotHelper;
 import com.springboot.telegrambot.util.BotLabels;
+import org.springframework.stereotype.Component;
 
+@Component
 public class LinkCommand implements BotCommand {
     private static final Logger logger = LoggerFactory.getLogger(ListTasksCommand.class);
     private final TelegramClient telegramClient;
@@ -22,9 +24,20 @@ public class LinkCommand implements BotCommand {
 
     @Override
     public boolean supports(String messageText) {
-        String text = messageText.trim();
-        return text.startsWith(BotCommands.LINK.getCommand());
+    System.out.println("DEBUG BOT MSG: '" + messageText + "'");
+    if (messageText == null || messageText.isBlank()) {
+        return false;
     }
+    
+    String text = messageText.trim().toLowerCase();
+    String command = BotCommands.LINK.getCommand().toLowerCase();
+    
+    // Checks if it starts with "/link " (with space) or exactly matches "/link"
+    // OR matches group format "/link@yourbot"
+    return text.equals(command) || 
+           text.startsWith(command + " ") || 
+           text.startsWith(command + "@");
+}
 
     @Override
     public void execute(CommandContext context){
