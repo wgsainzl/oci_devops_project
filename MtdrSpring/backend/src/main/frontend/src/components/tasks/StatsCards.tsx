@@ -51,14 +51,16 @@ export default function StatsCards({ stats, isManager, onCreateTaskClick }: Prop
   return (
     <>
     {isManager && onCreateTaskClick && (
-            <button 
-              type="button" 
-              className={styles.inlineCreateBtn} 
-              onClick={onCreateTaskClick}
-            >
-              New Task
-            </button>
-          )}
+      <div className={styles.buttonRow}>
+          <button 
+            type="button" 
+            className={styles.inlineCreateBtn} 
+            onClick={onCreateTaskClick}
+          >
+            New Task
+          </button>
+      </div>
+      )}
       {CARDS.map((card) => (
         <div key={card.key} className={styles.card}>
           {/* Main layout container wrapper for card content */}
