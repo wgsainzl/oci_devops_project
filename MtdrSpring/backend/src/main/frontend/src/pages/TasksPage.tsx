@@ -3,6 +3,7 @@ import {useAPI} from "../useAPI";
 import {useAuth} from "../hooks/AuthContext";
 import type {Task, SemanticTaskSearchResult} from "../types";
 import styles from "./TasksPage.module.css";
+import TaskCompleteModal from "../components/tasks/TaskCompleteModal.tsx";
 
 export default function TasksPage(): JSX.Element {
     const {user} = useAuth();
@@ -15,6 +16,9 @@ export default function TasksPage(): JSX.Element {
     const [localIdFilter, setLocalIdFilter] = useState<string | null>(null);
     const [vectorResults, setVectorResults] = useState<Task[]>([]);
     const [isSearchingBackend, setIsSearchingBackend] = useState<boolean>(false);
+
+    // --- Popup Context State Handling ---
+    const [selectedTaskForComplete, setSelectedTaskForComplete] = useState<Task | null>(null);
 
     // Fetch baseline collection
     const fetchTasks = useCallback(async () => {
@@ -122,16 +126,26 @@ export default function TasksPage(): JSX.Element {
         }
     }
 
-    const handleCompleteTask = async (taskId: string) => {
+    // Handles trigger when user selects a row item
+    const handleInitiateComplete = (task: Task) => {
+        setSelectedTaskForComplete(task);
+    };
+
+    // Submits actual hours parsed inside our custom pretty popup to API handler
+    const handleConfirmComplete = async (actualHours: number) => {
+        if (!selectedTaskForComplete) return;
+        const taskId = selectedTaskForComplete.id;
+
         setUpdatingId(taskId);
         try {
-            await useAPI.tasks.updateStatus(taskId, "DONE");
+            await useAPI.tasks.complete(taskId, actualHours);
 
             const updateStatusInList = (list: Task[]) =>
-                list.map((t) => (t.id === taskId ? {...t, status: "DONE" as const} : t));
+                list.map((t) => (t.id === taskId ? {...t, status: "DONE" as const, actualHours} : t));
 
             setTasks((prev) => updateStatusInList(prev));
             setVectorResults((prev) => updateStatusInList(prev));
+            setSelectedTaskForComplete(null); // Close popup gracefully
         } catch (err) {
             console.error("Could not update task status:", err);
         } finally {
@@ -145,7 +159,6 @@ export default function TasksPage(): JSX.Element {
         setVectorResults([]);
     };
 
-    // Helper to generate multiple skeleton placeholder rows
     const renderSkeletons = () => {
         return Array.from({ length: 5 }).map((_, index) => (
             <tr key={`skeleton-${index}`} className={styles.skeletonRow}>
@@ -196,18 +209,26 @@ export default function TasksPage(): JSX.Element {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             disabled={loading}
-                            style={{padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', flexGrow: 1}}
+                            style={{
+                                padding: '0.5rem var(--space-3)',
+                                borderRadius: 'var(--radius-sm)',
+                                border: '1px solid var(--color-border)',
+                                backgroundColor: 'var(--color-bg-content)',
+                                color: 'var(--color-text-primary)',
+                                flexGrow: 1
+                            }}
                         />
-                        {localIdFilter && <span style={{fontSize: '0.85rem', color: '#2e7d32', fontWeight: 'bold'}}>✓ Matched Local ID</span>}
+                        {localIdFilter && <span style={{fontSize: '0.85rem', color: '#16a34a', fontWeight: 'bold'}}>✓ Matched Local ID</span>}
                         {isSearchingBackend &&
-                            <span style={{fontSize: '0.85rem', color: '#666'}}>AI Scanning Database...</span>}
+                            <span style={{fontSize: '0.85rem', color: 'var(--color-text-muted)'}}>AI Scanning Database...</span>}
                         {searchQuery && (
                             <button type="button" onClick={handleClearSearch} style={{
                                 background: 'transparent',
                                 border: 'none',
                                 cursor: 'pointer',
                                 padding: '0.5rem',
-                                color: '#ff4d4d'
+                                color: 'var(--color-oracle-red, #ff4d4d)',
+                                fontWeight: 700
                             }}>
                                 Clear
                             </button>
@@ -234,7 +255,7 @@ export default function TasksPage(): JSX.Element {
                                     <tr>
                                         <td colSpan={6} className={styles.emptyCell}>
                                             {isSearchingBackend ? (
-                                                <span style={{color: '#666', fontStyle: 'italic'}}>
+                                                <span style={{color: 'var(--color-text-muted)', fontStyle: 'italic'}}>
                                                     Searching AI database...
                                                 </span>
                                             ) : searchQuery.trim() ? (
@@ -278,7 +299,7 @@ export default function TasksPage(): JSX.Element {
                                                         type="button"
                                                         className={styles.completeBtn}
                                                         disabled={isCompleted || updatingId === task.id}
-                                                        onClick={() => handleCompleteTask(task.id)}
+                                                        onClick={() => handleInitiateComplete(task)}
                                                     >
                                                         {updatingId === task.id ? "Updating..." : isCompleted ? "Done" : "Complete"}
                                                     </button>
@@ -293,6 +314,17 @@ export default function TasksPage(): JSX.Element {
                     </div>
                 </div>
             </div>
+
+            {/* Custom Pretty Work Log Modal Trigger */}
+            {selectedTaskForComplete && (
+                <TaskCompleteModal
+                    task={selectedTaskForComplete}
+                    isOpen={selectedTaskForComplete !== null}
+                    isUpdating={updatingId === selectedTaskForComplete.id}
+                    onClose={() => setSelectedTaskForComplete(null)}
+                    onConfirm={handleConfirmComplete}
+                />
+            )}
         </div>
     );
 }

@@ -1142,6 +1142,21 @@ export const tasksAPI = {
             throw new Error(`Vector search failed: ${response.statusText}`);
         }
         return response.json();
+    },
+    /*
+     * Complete a task and log actual hours
+     */
+    complete: async (id: string | number, actualHours: number): Promise<Task> => {
+        const response = await fetch(`${BASE_URL}/tasks/${id}/complete`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({actualHours}),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error completing task ${id}: ${response.statusText}`);
+        }
+        return response.json();
     }
 };
 // END NEW CHANGES LOL

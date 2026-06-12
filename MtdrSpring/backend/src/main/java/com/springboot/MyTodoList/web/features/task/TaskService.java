@@ -25,33 +25,34 @@ public class TaskService {
     @Autowired
     private com.springboot.MyTodoList.web.features.sprint.SprintRepository sprintRepository;
 
-    public List<Task> findAll(){
+    public List<Task> findAll() {
         return taskRepository.findAll();
     }
 
-    public Optional<Task> getTaskById(int id){
+    public Optional<Task> getTaskById(int id) {
         return taskRepository.findById(id);
     }
 
     public List<Task> getTasksByUserId(Integer userId) {
         return taskRepository.findByResponsible_UserId(userId);
     }
-    
-    public Task createTask(Task task){
+
+    public Task createTask(Task task) {
         if (task.getStatus() == null) {
             task.setStatus(TaskStatus.TODO);
         }
         return taskRepository.save(task);
     }
 
-    public boolean deleteTaskItem(int id){
-        if (taskRepository.existsById(id)){
+    public boolean deleteTaskItem(int id) {
+        if (taskRepository.existsById(id)) {
             taskRepository.deleteById(id);
             return true;
         }
         return false;
     }
-    public Task updateTask(int id, Task updatedTask){
+
+    public Task updateTask(int id, Task updatedTask) {
         Optional<Task> existingData = taskRepository.findById(id);
 
         if (existingData.isPresent()) {
@@ -61,7 +62,8 @@ public class TaskService {
             if (updatedTask.getDescription() != null) existingTask.setDescription(updatedTask.getDescription());
             if (updatedTask.getStartDate() != null) existingTask.setStartDate(updatedTask.getStartDate());
             if (updatedTask.getDueDate() != null) existingTask.setDueDate(updatedTask.getDueDate());
-            if (updatedTask.getEstimatedHours() != null) existingTask.setEstimatedHours(updatedTask.getEstimatedHours());
+            if (updatedTask.getEstimatedHours() != null)
+                existingTask.setEstimatedHours(updatedTask.getEstimatedHours());
             if (updatedTask.getActualHours() != null) existingTask.setActualHours(updatedTask.getActualHours());
             if (updatedTask.getPriority() != null) existingTask.setPriority(updatedTask.getPriority());
 
@@ -82,12 +84,13 @@ public class TaskService {
             return null;
         }
     }
+
     public Task updateTaskStatus(int id, TaskStatus newStatus, Long currentUserId) {
         Optional<Task> existingData = taskRepository.findById(id);
-        
+
         if (existingData.isPresent()) {
             Task task = existingData.get();
-            TaskStatus oldStatus = task.getStatus(); 
+            TaskStatus oldStatus = task.getStatus();
             task.setStatus(newStatus);
 
             if (newStatus == TaskStatus.DONE) {
@@ -114,11 +117,14 @@ public class TaskService {
         }
         return null;
     }
+
     public Task updateTaskStatus(int id, TaskStatus newStatus, String telegramId) {
 
         Optional<Task> existingData = taskRepository.findById(id);
         Optional<User> user = userRepository.findByTelegramUserID(telegramId);
-        if (!user.isPresent()) { return null; }
+        if (!user.isPresent()) {
+            return null;
+        }
 
         if (existingData.isPresent()) {
             Task task = existingData.get();
@@ -144,12 +150,14 @@ public class TaskService {
         }
         return null;
     }
-    
-    
+
+
     public Task completeTaskWithHours(int id, Double actualHours, String telegramId) {
         Optional<Task> existingData = taskRepository.findById(id);
         Optional<User> user = userRepository.findByTelegramUserID(telegramId);
-        if (!user.isPresent()) { return null; }
+        if (!user.isPresent()) {
+            return null;
+        }
 
         if (existingData.isPresent()) {
             Task task = existingData.get();
@@ -173,15 +181,15 @@ public class TaskService {
         return taskRepository.findBySprint_SprintId(sprintId);
     }
 
-    public List<Task> getTasksByTeamAndSprint(Integer sprintId, Integer teamId){
+    public List<Task> getTasksByTeamAndSprint(Integer sprintId, Integer teamId) {
         return taskRepository.findBySprint_SprintIdAndResponsible_Team_TeamId(sprintId, teamId);
     }
 
-    public List<Task> getTasksByTeamId(Integer teamId){
+    public List<Task> getTasksByTeamId(Integer teamId) {
         return taskRepository.findByResponsible_Team_TeamId(teamId);
     }
-    
-    public List<Task> findWeeklySummaryTasksByTeamId(Integer teamId, OffsetDateTime weekStart, OffsetDateTime weekEnd){
+
+    public List<Task> findWeeklySummaryTasksByTeamId(Integer teamId, OffsetDateTime weekStart, OffsetDateTime weekEnd) {
         return taskRepository.findTeamWeeklySummaryTasks(teamId, weekStart, weekEnd);
     }
 
@@ -194,7 +202,7 @@ public class TaskService {
     }
 
 
-   public Task createTaskFromTelegram(Task task, String telegramId) {
+    public Task createTaskFromTelegram(Task task, String telegramId) {
         // 1. Set default status
         if (task.getStatus() == null) {
             task.setStatus(TaskStatus.TODO);
@@ -217,4 +225,29 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
+    public Task completeTask(int id, Double actualHours) {
+        Optional<Task> existingData = taskRepository.findById(id);
+
+        if (existingData.isPresent()) {
+            Task task = existingData.get();
+            TaskStatus oldStatus = task.getStatus();
+
+            // Update required completion metrics
+            task.setStatus(TaskStatus.DONE);
+            task.setActualHours(actualHours);
+            task.setCompletedAt(OffsetDateTime.now());
+
+            Task savedTask = taskRepository.save(task);
+
+            // Audit Log generation
+            if (oldStatus != TaskStatus.DONE) {
+                String oldStatusStr = (oldStatus != null) ? oldStatus.name() : "NONE";
+                // Setting user to null for system/API calls unless security context is introduced later
+                taskLogRepository.save(new TaskLog(savedTask, null, "status", oldStatusStr, "DONE"));
+            }
+
+            return savedTask;
+        }
+        return null;
+    }
 }
