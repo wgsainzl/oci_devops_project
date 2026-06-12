@@ -5,12 +5,21 @@ import styles from './AppShell.module.css'
 
 // inline SVG icons 
 const IconMenu = (): JSX.Element => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-    <rect y="3" width="20" height="2" rx="1" />
-    <rect y="9" width="20" height="2" rx="1" />
-    <rect y="15" width="20" height="2" rx="1" />
+  <svg 
+    width="20" 
+    height="20" 
+    viewBox="0 0 20 20" 
+    fill="currentColor" 
+    className={styles.burgerSvg}
+  >
+    {/* up line */}
+    <rect className={`${styles.burgerLine} ${styles.lineTop}`} y="3" width="20" height="2" rx="1" />
+    {/* center line*/}
+    <rect className={`${styles.burgerLine} ${styles.lineMiddle}`} y="9" width="20" height="2" rx="1" />
+    {/* down line */}
+    <rect className={`${styles.burgerLine} ${styles.lineBottom}`} y="15" width="20" height="2" rx="1" />
   </svg>
-)
+);
 const IconBell = (): JSX.Element => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
     <path d="M10 2a6 6 0 0 0-6 6v3.586l-.707.707A1 1 0 0 0 4 14h12a1 1 0 0 0 .707-1.707L16 11.586V8a6 6 0 0 0-6-6zm0 16a2 2 0 0 1-2-2h4a2 2 0 0 1-2 2z" />
