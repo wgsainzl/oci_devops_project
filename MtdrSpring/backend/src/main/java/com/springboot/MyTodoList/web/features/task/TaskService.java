@@ -9,6 +9,9 @@ import com.springboot.MyTodoList.web.features.tasklog.TaskLogRepository;
 import com.springboot.MyTodoList.web.features.user.User;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.springboot.MyTodoList.web.features.task.dto.TaskDTO;
+import java.util.stream.Collectors;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
