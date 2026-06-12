@@ -1,6 +1,6 @@
 // const BASE = import.meta.env.VITE_BACKEND_URL;
-const BASE = 'http://localhost:8080';
-// const BASE = ""
+// const BASE = 'http://localhost:8080';
+const BASE = "http://163.192.136.37"
 
 export const API_URLS = {
     BASE: BASE,
