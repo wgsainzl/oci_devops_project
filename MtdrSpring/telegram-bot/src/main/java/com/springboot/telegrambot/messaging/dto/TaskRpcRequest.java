@@ -35,6 +35,9 @@ public class TaskRpcRequest implements Serializable {
     public double getActualHours() {return actualHours; }
     public void setActualHours(double actualHours) { this.actualHours = actualHours; }
 
+    public double getActualHours() {return actualHours; }
+    public void setActualHours(double actualHours) { this.actualHours = actualHours; }
+
     public String getTelegramId() { return telegramId; }
     public void setTelegramId(String telegramId) { this.telegramId = telegramId; }
     

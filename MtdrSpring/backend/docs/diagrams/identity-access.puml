@@ -1,0 +1,171 @@
+@startuml
+
+class com.springboot.MyTodoList.web.auth.AuthController {
+	{method} +getCurrentUser ( authentication : org.springframework.security.core.Authentication ) : org.springframework.http.ResponseEntity
+	{method} +invite ( email : String , first : String , last : String ) : org.springframework.http.ResponseEntity
+}
+
+
+class com.springboot.MyTodoList.web.auth.AuthService {
+	{method} +getCurrentUserAuth ( authentication : org.springframework.security.core.Authentication ) : org.springframework.http.ResponseEntity
+	{method} -getEffectivePermissions ( userDetails : com.springboot.MyTodoList.web.features.user.userDetails.CustomUserDetails ) : java.util.List
+	{method} -mapToUserInfo ( userDetails : com.springboot.MyTodoList.web.features.user.userDetails.CustomUserDetails ) : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo
+}
+
+
+class com.springboot.MyTodoList.web.auth.CurrentUserController {
+	{method} +getCurrentUser ( authentication : org.springframework.security.core.Authentication ) : org.springframework.http.ResponseEntity
+}
+
+
+class com.springboot.MyTodoList.web.auth.RegisterRequest {
+	{field} -email : String
+	{field} -firstName : String
+	{field} -lastName : String
+	{method} +email () : String
+	{method} +equals ( o : Object ) : boolean
+	{method} +firstName () : String
+	{method} +hashCode () : int
+	{method} +lastName () : String
+	{method} +toString () : String
+}
+
+
+class com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO {
+	{field} +effectivePermissions : java.util.List
+	{method}  {static} +builder () : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserAuthResponseDTOBuilder
+	{method} #canEqual ( other : Object ) : boolean
+	{method} +equals ( o : Object ) : boolean
+	{method} +hashCode () : int
+	{method} +toString () : String
+}
+
+
+class com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserAuthResponseDTOBuilder {
+	{field} -effectivePermissions : java.util.List
+	{method} +build () : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO
+	{method} +effectivePermissions ( effectivePermissions : java.util.List ) : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserAuthResponseDTOBuilder
+	{method} +toString () : String
+	{method} +user ( user : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo ) : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserAuthResponseDTOBuilder
+}
+
+
+class com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo {
+	{field} +email : String
+	{field} +name : String
+	{field} +ociSubjectID : String
+	{field} +roles : java.util.List
+	{field} +telegramUserID : String
+	{field} +userId : String
+	{method}  {static} +builder () : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo$UserInfoBuilder
+	{method} #canEqual ( other : Object ) : boolean
+	{method} +equals ( o : Object ) : boolean
+	{method} +hashCode () : int
+	{method} +toString () : String
+}
+
+
+class com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo$UserInfoBuilder {
+	{field} -email : String
+	{field} -name : String
+	{field} -ociSubjectID : String
+	{field} -roles : java.util.List
+	{field} -telegramUserID : String
+	{field} -userId : String
+	{method} +build () : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo
+	{method} +email ( email : String ) : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo$UserInfoBuilder
+	{method} +name ( name : String ) : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo$UserInfoBuilder
+	{method} +ociSubjectID ( ociSubjectID : String ) : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo$UserInfoBuilder
+	{method} +roles ( roles : java.util.List ) : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo$UserInfoBuilder
+	{method} +telegramUserID ( telegramUserID : String ) : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo$UserInfoBuilder
+	{method} +toString () : String
+	{method} +userId ( userId : String ) : com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo$UserInfoBuilder
+}
+
+
+class com.springboot.MyTodoList.web.auth.filters.JwtFilter {
+	{field} -applicationContext : org.springframework.context.ApplicationContext
+	{field} {static} -log : org.slf4j.Logger
+	{field} -objectMapper : com.fasterxml.jackson.databind.ObjectMapper
+	{field} -publicUrlConfig : com.springboot.MyTodoList.web.config.PublicUrlConfig
+	{method} #doFilterInternal ( request : jakarta.servlet.http.HttpServletRequest , response : jakarta.servlet.http.HttpServletResponse , filterChain : jakarta.servlet.FilterChain ) : void
+	{method} -extractToken ( request : jakarta.servlet.http.HttpServletRequest ) : java.util.Optional
+	{method} -processToken ( token : String , request : jakarta.servlet.http.HttpServletRequest ) : void
+	{method} -setErrorResponse ( response : jakarta.servlet.http.HttpServletResponse , status : org.springframework.http.HttpStatus , error : String , message : String ) : void
+	{method} #shouldNotFilter ( request : jakarta.servlet.http.HttpServletRequest ) : boolean
+}
+
+
+class com.springboot.MyTodoList.web.auth.filters.PermissionEvaluatorImpl {
+	{field} {static} -log : org.slf4j.Logger
+	{method} -extractAuthorities ( auth : org.springframework.security.core.Authentication ) : java.util.Set
+	{method} +hasAllPermissions ( auth : org.springframework.security.core.Authentication , permissions : [Ljava.lang.String; ) : boolean
+	{method} +hasAnyPermission ( auth : org.springframework.security.core.Authentication , permissions : [Ljava.lang.String; ) : boolean
+	{method} +hasPermission ( auth : org.springframework.security.core.Authentication , permissionName : String ) : boolean
+	{method} +hasPermission ( auth : org.springframework.security.core.Authentication , targetDomainObject : Object , permission : Object ) : boolean
+	{method} +hasPermission ( auth : org.springframework.security.core.Authentication , targetId : java.io.Serializable , targetType : String , permission : Object ) : boolean
+}
+
+
+class com.springboot.MyTodoList.web.auth.jwt.JwtUtil {
+	{field} -secretKey : String
+	{method} -createToken ( claims : java.util.Map , username : String , validity : Long ) : String
+	{method} -extractAllClaims ( token : String ) : io.jsonwebtoken.Claims
+	{method} -extractClaim ( token : String , claimsResolver : java.util.function.Function ) : Object
+	{method} -extractExpiration ( token : String ) : java.util.Date
+	{method} +extractIssuedAt ( token : String ) : java.util.Date
+	{method} +extractUsername ( token : String ) : String
+	{method} +generateAccessToken ( username : String ) : String
+	{method} -getKey () : javax.crypto.SecretKey
+	{method} -isTokenExpired ( token : String ) : Boolean
+	{method} +validateToken ( token : String , userDetails : org.springframework.security.core.userdetails.UserDetails ) : Boolean
+}
+
+
+class com.springboot.MyTodoList.web.auth.oci.OciIdentityService {
+	{field} -clientId : String
+	{field} -clientSecret : String
+	{field} -domainUrl : String
+	{field} -groupId : String
+	{field} -userService : com.springboot.MyTodoList.web.features.user.UserService
+	{field} -webClient : org.springframework.web.reactive.function.client.WebClient
+	{method} -getAdminToken () : String
+	{method} +inviteOracleUser ( email : String , firstName : String , lastName : String ) : String
+	{method} +inviteUser ( email : String , firstName : String , lastName : String ) : void
+}
+
+
+class com.springboot.MyTodoList.web.auth.oci.OciOidcUserService {
+	{field} {static} -logger : org.slf4j.Logger
+	{field} -userService : com.springboot.MyTodoList.web.features.user.UserService
+	{method} +loadUser ( userRequest : org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest ) : org.springframework.security.oauth2.core.oidc.user.OidcUser
+}
+
+
+class com.springboot.MyTodoList.web.security.SpaController {
+	{method} +forward () : String
+}
+
+
+class com.springboot.MyTodoList.web.security.WebSecurityConfiguration {
+	{field} -frontendUrl : String
+	{field} -redirectBaseUrl : String
+	{method} -oidcLogoutSuccessHandler ( clientRegistrationRepository : org.springframework.security.oauth2.client.registration.ClientRegistrationRepository ) : org.springframework.security.web.authentication.logout.LogoutSuccessHandler
+	{method} +securityFilterChain ( http : org.springframework.security.config.annotation.web.builders.HttpSecurity , jwtFilter : com.springboot.MyTodoList.web.auth.filters.JwtFilter , clientRegistrationRepository : org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository ) : org.springframework.security.web.SecurityFilterChain
+	{method} +webSecurityCustomizer () : org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
+}
+
+
+
+
+com.springboot.MyTodoList.web.auth.AuthController *--  com.springboot.MyTodoList.web.auth.AuthService : authService
+com.springboot.MyTodoList.web.auth.AuthController *--  com.springboot.MyTodoList.web.auth.oci.OciIdentityService : ociIdentityService
+com.springboot.MyTodoList.web.auth.CurrentUserController *--  com.springboot.MyTodoList.web.auth.AuthService : authService
+com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO -->  com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo : user
+com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserAuthResponseDTOBuilder -->  com.springboot.MyTodoList.web.auth.dto.UserAuthResponseDTO$UserInfo : user
+com.springboot.MyTodoList.web.auth.filters.JwtFilter *--  com.springboot.MyTodoList.web.auth.jwt.JwtUtil : jwtUtil
+com.springboot.MyTodoList.web.security.WebSecurityConfiguration *--  com.springboot.MyTodoList.web.auth.jwt.JwtUtil : jwtUtil
+com.springboot.MyTodoList.web.security.WebSecurityConfiguration *--  com.springboot.MyTodoList.web.auth.oci.OciOidcUserService : ociOidcUserService
+
+
+@enduml
