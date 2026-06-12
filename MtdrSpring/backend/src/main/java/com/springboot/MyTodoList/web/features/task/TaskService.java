@@ -239,4 +239,12 @@ public class TaskService {
         }
         return null;
     }
+
+    @Transactional(readOnly = true)
+    public List<TaskDTO> getTaskDTOsBySprintId(Integer sprintId) {
+        return getTasksBySprintId(sprintId)
+                .stream()
+                .map(TaskDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 }

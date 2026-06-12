@@ -48,10 +48,7 @@ public class TaskRpcConsumer {
                         .collect(Collectors.toList());
             }
             case GET_TASKS_FOR_SPRINT: {
-                return taskService.getTasksBySprintId(request.getSprintId())
-                        .stream()
-                        .map(TaskDTO::fromEntity)
-                        .collect(Collectors.toList());
+                return taskService.getTaskDTOsBySprintId(request.getSprintId());
             }
             case GET_USER_ROLE: {
                 return userRepository.findByTelegramUserID(request.getTelegramId())
