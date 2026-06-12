@@ -1,21 +1,21 @@
 .card {
-  background: #fbf9f8;
-  border: 1px solid var(--color-border-light);
-  border-radius: 5px;
-  padding: var(--space-4) var(--space-5);
-  display: flex;
-  align-items: center; /* Changed from flex-start to align button horizontally */
-  justify-content: space-between; /* Pushes content left and button right if needed */
-  gap: var(--space-4);
-  transition: box-shadow var(--transition-fast);
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    background: #fbf9f8;
+    border: 1px solid var(--color-border-light);
+    border-radius: 5px;
+    padding: var(--space-4) var(--space-5);
+    display: flex;
+    align-items: center; /* Changed from flex-start to align button horizontally */
+    justify-content: space-between; /* Pushes content left and button right if needed */
+    gap: var(--space-4);
+    transition: box-shadow var(--transition-fast);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
 .cardContent {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    flex: 1;
 }
 
 /* .card:hover {
@@ -23,78 +23,81 @@
 } */
 
 .icon {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  flex-shrink: 0;
-  margin-top: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 8px;
 }
 
 .iconImage {
-  width: 50px;
-  height: 35px;
-  display: block;
+    width: 50px;
+    height: 35px;
+    display: block;
 }
 
 .text {
-  flex: 1.5;
+    flex: 1.5;
 }
 
 .count {
-  color: var(--color-text-primary);
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
+    color: var(--color-text-primary);
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
 }
 
 .label {
-  color: var(--color-text-primary);
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
+    color: var(--color-text-primary);
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
 }
 
 .sub {
-  margin-top: 2px;
-  font-size: 16px;
-  color: #000000;
-  font-style: normal;
-  font-weight: 300;
-  line-height: normal;
-}
-
-.buttonRow {
-  display: flex;
-  justify-content: flex-end; 
-  width: 100%;
-  padding-bottom: var(--space-2); 
-  grid-column: 1 / -1; 
+    margin-top: 2px;
+    font-size: 16px;
+    color: #000000;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
 }
 
 .inlineCreateBtn {
-  display: inline-block;
-  width: auto;
-  min-width: 0;
-  max-width: 140px;
-  padding: var(--space-1) var(--space-3);
-  background: #0d1e3f; /* Deep navy matching your header */
-  color: #ffffff;
-  font-size: 0.82rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background var(--transition-fast);
-  text-align: center;
+    /* Make it take full width of the parent column, just like a card */
+    display: block;
+    width: 100%;
+
+    /* Matches the exact structure and spacing of your stat cards */
+    background: #0d1e3f; /* Deep navy */
+    border: 1px solid #0d1e3f;
+    border-radius: 5px;
+    padding: var(--space-4) var(--space-5);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+
+    /* Text styling */
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+
+    /* Interaction */
+    cursor: pointer;
+    border: none;
+    transition: background var(--transition-fast), transform 0.1s ease;
 }
 
 .inlineCreateBtn:hover {
-  background: #1a3260;
+    background: #162c56; /* Slightly lighter navy for hover effect */
+    box-shadow: 0 6px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+.inlineCreateBtn:active {
+    transform: scale(0.99); /* Slight click feedback tactile feel */
 }

@@ -1,104 +1,103 @@
 .header {
-  position: relative;
-  background-color: #0d1e3f;
-  background-image:
-    linear-gradient(rgba(7, 18, 40, 0.4), rgba(7, 18, 40, 0.4)),
+    position: relative;
+    background-color: #0d1e3f;
+    background-image: linear-gradient(rgba(7, 18, 40, 0.4), rgba(7, 18, 40, 0.4)),
     url('/oracle-banner-header.png');
-  background-size: cover;
-  background-position: center;
-  overflow: hidden;
-  padding: var(--space-6) var(--space-6) var(--space-4);
-  min-height: 110px;
-  border-left: none;
-  
-  /* Add flexbox structure to align actions on the left of titles */
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    padding: 16px 40px; /* Matched padding with your other headers */
+    min-height: 110px; /* Matched height exactly */
+    border-left: none;
+
+    /* Add flexbox structure to align actions on the left of titles */
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
 }
 
 .inner {
-  position: relative;
-  z-index: 1;
-  /* Remove or decrease bottom margins to let it align inside the row */
-  margin-bottom: 0; 
+    position: relative;
+    z-index: 1;
+    /* Remove or decrease bottom margins to let it align inside the row */
+    margin-bottom: 0;
 }
 
 .toolbar {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
 }
 
-.titleGroup {}
+.titleGroup {
+}
 
 .title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #000000;
-  /* text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35); */
-  line-height: 1.2;
-  margin-left: 10px;
+    font-size: 32px; /* Matched typography size exactly with h1 */
+    font-weight: 700; /* Matched weight */
+    color: #ffffff; /* Flipped to white so it's readable on dark blue */
+    line-height: 1.2;
+    margin: 0; /* Cleaned up margins to align vertically */
 }
 
 .subtitle {
-  font-size: 0.8rem;
-  color: #000000;
-  /* text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); */
-  margin-top: 2px;
-  margin-left: 10px;
+    font-size: 14px; /* Matched typography size exactly with p */
+    font-weight: 400;
+    color: #b0b8c6; /* Smooth lighter gray/blue text for dark mode readability */
+    margin-top: 4px; /* Matched exact spacing between title and subtitle */
+    margin-left: 0;
 }
 
 .actionBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(13, 30, 63, 0.18);
-  color: #0d1e3f;
-  font-size: 0.9rem;
-  font-weight: 700;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(13, 30, 63, 0.18);
+    color: #0d1e3f;
+    font-size: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
 }
 
 .actionBtn:hover {
-  transform: translateY(-1px);
-  background: #ffffff;
-  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.16);
+    transform: translateY(-1px);
+    background: #ffffff;
+    box-shadow: 0 12px 22px rgba(0, 0, 0, 0.16);
 }
 
 .actionBtn:focus-visible {
-  outline: 2px solid var(--color-oracle-red);
-  outline-offset: 2px;
+    outline: 2px solid var(--color-oracle-red);
+    outline-offset: 2px;
 }
 
 .actionBtn:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .filterBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-sm);
-  background: rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(4px);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #ffffff;
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius-sm);
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(4px);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #ffffff;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
 }
 
 .filterBtn:hover {
-  background: rgba(0, 0, 0, 0.38);
-  border-color: rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.38);
+    border-color: rgba(255, 255, 255, 0.8);
 }

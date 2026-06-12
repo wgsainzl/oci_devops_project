@@ -1,6 +1,7 @@
 package com.springboot.MyTodoList.web.features.role;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.springboot.MyTodoList.web.features.permission.Permission;
 import com.springboot.MyTodoList.web.features.user.User;
 import jakarta.persistence.*;
@@ -32,7 +33,7 @@ public class Role {
     private String description;
 
     @ManyToMany(mappedBy = "roles")
-    @JsonBackReference
+    @JsonIgnoreProperties("roles")
     private Set<User> users = new HashSet<>();
 
 
@@ -43,6 +44,7 @@ public class Role {
             inverseJoinColumns = @JoinColumn(name = "permission_id")
 
     )
+    @JsonIgnoreProperties("roles")
     private Set<Permission> permissions = new HashSet<>();
 
     @Column(name = "is_cosmetic")
@@ -85,6 +87,7 @@ public class Role {
 
     @ManyToOne
     @JoinColumn(name = "deleted_by_user_id")
+    @JsonIgnoreProperties({"roles", "team"})
     private User deletedByUserId;
 
 }

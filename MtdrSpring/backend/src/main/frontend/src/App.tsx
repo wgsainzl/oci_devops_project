@@ -1,6 +1,6 @@
 // function ProtectedRoute
-import { AuthProvider, useAuth } from "./hooks/AuthContext.tsx";
-import { Navigate, Route, Routes } from "react-router-dom";
+import {AuthProvider, useAuth} from "./hooks/AuthContext.tsx";
+import {Navigate, Route, Routes} from "react-router-dom";
 import AppShell from "./components/layout/AppShell.tsx";
 import LoadingPage from "./components/shared/LoadingPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
@@ -9,6 +9,7 @@ import ApiDocsPage from "./pages/ApiDocsPage.tsx";
 import OAuth2RedirectHandler from "./pages/OAuth2RedirectHandler.tsx";
 import RegisterPage from "./pages/RegisterPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
+import TasksPage from "./pages/TasksPage.tsx";
 
 /*function ProtectedRoute({ children }: { children: JSX.Element }): JSX.Element {
   const { user, loading } = useAuth();
@@ -23,54 +24,55 @@ import LoginPage from "./pages/LoginPage.tsx";
 }*/
 
 // app routes
-function ProtectedRoute({ children }: { children: JSX.Element }): JSX.Element {
-  const { user, loading } = useAuth();
+function ProtectedRoute({children}: { children: JSX.Element }): JSX.Element {
+    const {user, loading} = useAuth();
 
-  if (loading) {
-    return (
-      <LoadingPage
-        title="Loading session"
-        description="Checking your account and recent activity."
-      />
-    );
-  }
+    if (loading) {
+        return (
+            <LoadingPage
+                title="Loading session"
+                description="Checking your account and recent activity."
+            />
+        );
+    }
 
-  return user ? children : <Navigate to="/login" replace />;
+    return user ? children : <Navigate to="/login" replace/>;
 }
 
 function AppRoutes(): JSX.Element {
-  return (
-    <Routes>
-      {/* public routes */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
+    return (
+        <Routes>
+            {/* public routes */}
+            <Route path="/login" element={<LoginPage/>}/>
+            <Route path="/register" element={<RegisterPage/>}/>
+            <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler/>}/>
 
-      {/* protected routes */}
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <AppShell />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Navigate to="/home" replace />} />
-        <Route path="home" element={<HomePage />} />
-        <Route path="timeline" element={<TimelinePage />} />
-        <Route path="api-docs" element={<ApiDocsPage />} />
-      </Route>
+            {/* protected routes */}
+            <Route
+                path="/"
+                element={
+                    <ProtectedRoute>
+                        <AppShell/>
+                    </ProtectedRoute>
+                }
+            >
+                <Route index element={<Navigate to="/home" replace/>}/>
+                <Route path="home" element={<HomePage/>}/>
+                <Route path="timeline" element={<TimelinePage/>}/>
+                <Route path="api-docs" element={<ApiDocsPage/>}/>
+                <Route path="tasks" element={<TasksPage/>}/> {/* Add this row */}
+            </Route>
 
-      {/* catch-all */}
-      <Route path="*" element={<Navigate to="/home" replace />} />
-    </Routes>
-  );
+            {/* catch-all */}
+            <Route path="*" element={<Navigate to="/home" replace/>}/>
+        </Routes>
+    );
 }
 
 export default function App(): JSX.Element {
-  return (
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
-  );
+    return (
+        <AuthProvider>
+            <AppRoutes/>
+        </AuthProvider>
+    );
 }
