@@ -71,7 +71,7 @@ public class ListTasksCommand implements BotCommand {
             }
 
             //List<TaskDTO> activeItems = taskRpcClient.getTasksForSprint(targetSprintId);
-            List<TaskDTO> activeItems = taskRpcClient.getTasksForSprintByTeam(targetSprintId, context.getUserSession().getTeamId());
+            List<TaskDTO> activeItems = taskRpcClient.getTasksForSprint(targetSprintId);
 
             if (targetStatus != null) {
                 TaskStatus finalStatus = targetStatus;
