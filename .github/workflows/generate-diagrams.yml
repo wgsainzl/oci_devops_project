@@ -2,8 +2,6 @@ name: Auto-Generate PlantUML Diagrams
 
 on:
   push:
-    branches:
-      - '**'
     branches-ignore:
       - main
 
