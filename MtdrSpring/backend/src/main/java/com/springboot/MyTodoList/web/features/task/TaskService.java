@@ -7,6 +7,7 @@ import com.springboot.MyTodoList.web.features.user.UserRepository;
 import com.springboot.MyTodoList.web.features.tasklog.TaskLog;
 import com.springboot.MyTodoList.web.features.tasklog.TaskLogRepository;
 import com.springboot.MyTodoList.web.features.user.User;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
