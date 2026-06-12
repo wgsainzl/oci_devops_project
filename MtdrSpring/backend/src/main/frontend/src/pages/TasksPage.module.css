@@ -1,0 +1,308 @@
+/*TasksPage.module.css*/
+.header {
+    background: #F3EFE3;
+    background-image: url('/oracle-banner-header.png'); /* Using the banner graphic if desired */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    padding: 16px 40px;
+    position: relative;
+    min-height: 110px;
+
+    /* These properties ensure the title text sits perfectly in the center, not too high */
+    display: flex;
+    align-items: center;
+}
+
+/* Bright tint overlay to make text highly readable */
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(243, 239, 227, 0.85); /* Slightly stronger overlay for text contrast */
+    pointer-events: none;
+    z-index: 1;
+}
+
+.titleGroup {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Removed height: 100% to let flex alignment handle the vertical centering */
+}
+
+.titleGroup h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: #0d1e3f; /* Using the dark corporate blue for the text color so it pops elegantly */
+    line-height: 1.2;
+}
+
+.titleGroup p {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: #555555; /* Mid-tone gray for the subtitle */
+}
+
+
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background-color: var(--color-bg);
+    background-image: url('/bg-oci.png');
+    background-repeat: repeat;
+    background-position: center top;
+    background-size: auto;
+}
+
+.content {
+    padding: var(--space-6) var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    max-width: calc(100% - 80px);
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.sectionBlock {
+    display: flex;
+    flex-direction: column;
+}
+
+.sectionTitle {
+    margin-bottom: var(--space-4);
+    color: var(--color-text-primary);
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-top: 7px;
+    margin-bottom: 20px;
+}
+
+.sectionHint {
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--color-text-muted);
+}
+
+.card {
+    background: var(--color-bg-content);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25); /* Matches activityCard and workloadCard shadows */
+}
+
+/* ── Table Layout Structure ── */
+.tableResponsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.table th {
+    color: var(--color-text-secondary);
+    font-weight: 700;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 2px solid var(--color-border);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.table td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border-light);
+    color: var(--color-text-primary);
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background-color: var(--color-bg-hover);
+}
+
+.rowCompleted td {
+    color: var(--color-text-muted);
+}
+
+.taskId {
+    font-family: monospace;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+}
+
+.taskTitle {
+    font-weight: 500;
+    max-width: 320px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rowCompleted .taskTitle {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.responsible {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    object-fit: cover;
+}
+
+/* ── Badges & Interaction Elements ── */
+.priorityBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+}
+
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+}
+
+/* Status variants matching application logic definitions */
+.COMPLETED {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #16a34a;
+}
+
+.IN_PROGRESS {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #2563eb;
+}
+
+.TODO, .PENDING {
+    background-color: rgba(234, 179, 8, 0.15);
+    color: #ca8a04;
+}
+
+.emptyCell {
+    text-align: center;
+    padding: var(--space-6) !important;
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+/* Complete Action Button inherited directly from .createTaskBtn design rules */
+.completeBtn {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(13, 30, 63, 0.88);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.completeBtn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: rgba(13, 30, 63, 1);
+}
+
+.completeBtn:focus-visible {
+    outline: 2px solid var(--color-oracle-red);
+    outline-offset: 2px;
+}
+
+.completeBtn:disabled {
+    background: var(--color-bg);
+    border-color: var(--color-border-light);
+    color: var(--color-text-muted);
+    box-shadow: none;
+    transform: none;
+    cursor: not-allowed;
+}
+
+/* ── Responsive Architecture matching homepage media points ── */
+@media (min-width: 1200px) {
+    .content {
+        max-width: calc(100% - 120px);
+        padding: var(--space-6) var(--space-2);
+    }
+}
+
+@media (max-width: 600px) {
+    .content {
+        max-width: calc(100% - 32px);
+        padding: var(--space-4) var(--space-1);
+        gap: var(--space-4);
+    }
+}
+
+@keyframes skeletonPulse {
+    0% {
+        background-color: #f0f0f0;
+    }
+    50% {
+        background-color: #e0e0e0;
+    }
+    100% {
+        background-color: #f0f0f0;
+    }
+}
+
+.skeletonRow td {
+    padding: 12px 8px;
+    vertical-align: middle;
+}
+
+.skeletonText {
+    height: 1rem;
+    border-radius: 4px;
+    animation: skeletonPulse 1.5s infinite ease-in-out;
+}
+
+.skeletonAvatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    animation: skeletonPulse 1.5s infinite ease-in-out;
+}
+
+.skeletonBtn {
+    width: 80px;
+    height: 32px;
+    border-radius: 4px;
+    display: inline-block;
+    animation: skeletonPulse 1.5s infinite ease-in-out;
+}

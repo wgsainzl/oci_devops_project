@@ -9,7 +9,8 @@ public enum BotCommands {
 	LLM_REPORT("/report"),
 	SPRINTS_LIST("/sprints"),
 	UPDATE_TASK("/updatetask"),
-	COMPLETE_TASK("/complete");
+	COMPLETE_TASK("/complete"),
+	LINK("/link");
 
 	private String command;
 

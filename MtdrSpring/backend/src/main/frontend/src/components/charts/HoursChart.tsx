@@ -30,7 +30,8 @@ function formatDataForStacking(data: HoursEntry[]) {
   return data.map((entry) => ({
     ...entry,
     actualOnTrack: Math.min(entry.actual, entry.estimated),
-    actualOverflow: Math.max(0, entry.actual - entry.estimated)
+    actualOverflow: Math.max(0, entry.actual - entry.estimated),
+    totalActual: entry.actual 
   }))
 }
 
@@ -126,10 +127,15 @@ export default function HoursChart({ data }: Props): JSX.Element {
         {/* stacked bars */}
         {/* use stackId="a" to group them together */}
         <Bar dataKey="actualOnTrack" stackId="a" name="Actual (On Track)" fill="#5ba87a" radius={[0, 0, 0, 0]} maxBarSize={32}>
-          <LabelList dataKey="actualOnTrack" position="top" fill="#5f6772" fontSize={11} formatter={nonZeroLabel} />
         </Bar>
-        <Bar dataKey="actualOverflow" stackId="a" name="Actual (Over)" fill="#c74634" radius={[3, 3, 0, 0]} maxBarSize={32}>
-          <LabelList dataKey="actualOverflow" position="top" fill="#5f6772" fontSize={11} formatter={nonZeroLabel} />
+        <Bar dataKey="actualOverflow" stackId="a" name="Actual (Over)" fill="#e25c5c" radius={[3, 3, 0, 0]} maxBarSize={32}>
+          <LabelList 
+            dataKey="totalActual" 
+            position="top" 
+            fill="#5f6772" 
+            fontSize={11} 
+            formatter={nonZeroLabel} 
+          />
         </Bar>
         
       </BarChart>

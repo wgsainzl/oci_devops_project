@@ -25,7 +25,7 @@ interface Props {
 }
 
 // ── Palette — matches your dashboard CSS vars ─────────────────────────────
-const SPRINT_COLORS = ['#5aacbe', '#c74634', '#5ba87a', '#c4a86a', '#a07bc4']
+const SPRINT_COLORS = ['#5aacbe', '#8ab4c8', '#a0c8b8', '#d4c7b8', '#b5b0a8']
 
 // format labels with currency and hide zeros
 const formatCostLabel = (value: number | string): string => {

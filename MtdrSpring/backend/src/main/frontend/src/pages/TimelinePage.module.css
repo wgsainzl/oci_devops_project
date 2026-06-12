@@ -1,26 +1,47 @@
+/* TimelinePage.module.css */
+
+:root {
+    --color-bg: #F9F9F8;
+    --color-bg-content: #ffffff;
+    --color-bg-hover: #F5F4F0;
+    --color-text-primary: #0d1e3f;
+    --color-text-secondary: #4a5568;
+    --color-text-muted: #718096;
+    --color-border: #D1D1D1;
+    --color-border-light: #EBEBEB;
+    --color-oracle-purple: #581DED;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-8: 48px;
+
+    --radius-sm: 4px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-full: 999px;
+
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .pageWrapper {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    background: #fff;
-    background-image: url('/bg-oci.png');
-    background-repeat: repeat;
-    background-position: center top;
-    background-size: auto;
+    min-height: 100vh;
+    background-color: var(--color-bg);
 }
 
-.banner {
-    background-image: url('/banner_timeline.png');
-
-}
 .header {
     background: #F3EFE3;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    padding: 16px 40px;
+    padding: var(--space-6) clamp(var(--space-6), 5vw, var(--space-8));
     position: relative;
     min-height: 120px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
 }
 
 .header::before {
@@ -30,7 +51,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(243, 239, 227, 0.7);
+    background: rgba(243, 239, 227, 0.88);
     pointer-events: none;
     z-index: 1;
 }
@@ -40,29 +61,31 @@
     z-index: 2;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    height: 100%;
 }
 
 .titleGroup h1 {
     margin: 0;
-    font-size: 32px;
+    font-size: 34px;
     font-weight: 700;
-    color: #333;
+    color: var(--color-text-primary);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
 }
 
 .titleGroup p {
-    margin: 4px 0 0 0;
+    margin: var(--space-2) 0 0 0;
     font-size: 14px;
-    color: #666;
+    color: var(--color-text-secondary);
 }
 
 .outerContainer {
     flex: 1;
     overflow: hidden;
-    margin: 20px;
-    border: 1px solid #A6A6A6;
-    /* border-radius: 8px; */
+    margin: var(--space-5) clamp(var(--space-5), 5vw, var(--space-8)) var(--space-6);
+    background: var(--color-bg-content);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 30px -10px rgba(13, 30, 63, 0.07);
 }
 
 .scrollViewport {
@@ -77,98 +100,254 @@
     min-width: 100%;
 }
 
-/* STICKY COLUMN LOGIC */
 .stickyCol {
     position: sticky;
     z-index: 20;
     background: inherit;
-    border-right: 1px solid #A6A6A6;
+    border-right: 1px solid var(--color-border);
 }
 
 .headerRow {
     display: flex;
-    height: 44px;
+    height: 48px;
     position: sticky;
     top: 0;
     z-index: 30;
-    background: #D9D9D9;
+    background: #E5E5E5;
 }
 
 .hCell {
     display: flex;
     align-items: center;
-    padding: 0 12px;
-    font-weight: 600;
-    font-size: 13px;
-    border-bottom: 1px solid #A6A6A6;
+    padding: 0 var(--space-4);
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--color-border);
 }
 
 .dataRow {
     display: flex;
-    min-height: 56px;
-    height: auto;
-    background: #fff;
+    min-height: 64px;
+    width: 100%; /* Force matching lengths across both data and skeleton instances */
+    background: var(--color-bg-content);
+    transition: background-color var(--transition-fast);
 }
 
 .dataRow:nth-child(even) {
-    background: #FBF9F8;
+    background: #FAF8F6;
+}
+
+.dataRow:hover {
+    background-color: var(--color-bg-hover);
 }
 
 .cell {
     display: flex;
-    align-items: center; /* Keeps content centered vertically */
-    padding: 10px 12px; /* Add a little vertical padding for breathing room */
-    font-size: 13px;
-    border-bottom: 1px solid #EBEBEB;
-    height: auto; /* Ensure cell grows with row */
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border-light);
 }
 
 .taskId {
-    font-weight: 800; /* Makes the ID bold */
-    margin-right: 16px; /* Creates clear separation from the title */
-    color: #000; /* Makes it stand out against the title */
-    flex-shrink: 0; /* Prevents the ID from squishing */
+    font-family: monospace;
+    font-weight: 700;
+    margin-right: var(--space-4);
+    color: var(--color-text-secondary);
+    background: rgba(0, 0, 0, 0.04);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
 }
 
 .taskTitle {
-    color: #444;
+    font-weight: 500;
+    color: var(--color-text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: block; /* Necessary for width/wrapping logic */
-    width: 100%; /* Stay within the 220px limit */
+    display: block;
+    width: 100%;
 }
 
-/* When hovering, let the text wrap and the row expand */
-.cell:hover .taskTitle {
-    white-space: normal; /* Allows text to wrap to next line */
-    overflow: visible;
-    word-break: break-word; /* Prevents long words from breaking the container */
+/* Successfully maps down to child row nodes if completed state applied */
+.rowCompleted .taskTitle {
+    text-decoration: line-through;
+    color: var(--color-text-muted);
+    opacity: 0.6;
 }
 
 .ganttHeaderPart {
     display: flex;
-    background: #D9D9D9;
-    position: relative; /* This is crucial */
-    min-height: 44px; /* Match your headerRow height */
-    flex: 1; /* Allow it to fill the remaining space after sticky cols */
+    background: #E5E5E5;
+    position: relative;
+    min-height: 48px;
+    flex: 1;
+}
+
+.weekLabel {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .todayLabel {
     position: absolute;
-    top: 2px;
-    /* Use z-index higher than the header cells (30) */
+    top: 3px;
     z-index: 50;
     transform: translateX(-50%);
-    background: #581DED;
+    background: var(--color-oracle-purple);
     color: #fff;
     font-size: 10px;
     font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 4px;
-    white-space: nowrap; /* Prevent "Today" from wrapping */
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
     pointer-events: none;
-    animation: fadeIn 0.2s ease-in;
+    box-shadow: 0 4px 10px rgba(88, 29, 237, 0.3);
+    animation: fadeIn 0.25s ease-in;
+}
+
+.todayLabel::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid var(--color-oracle-purple);
+}
+
+.ganttTrack {
+    position: relative;
+    flex: 1;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.gridLine {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: #F3F3F3;
+}
+
+.todayLine {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-oracle-purple);
+    z-index: 5;
+    opacity: 0.85;
+}
+
+.cylinder {
+    position: absolute;
+    top: 16px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-4);
+    box-shadow: 0 4px 12px rgba(13, 30, 63, 0.12);
+    z-index: 10;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+
+.cylinder:hover {
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 0 6px 16px rgba(13, 30, 63, 0.18);
+    filter: brightness(1.05);
+}
+
+.barLabel {
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+}
+
+.DONE, .COMPLETED {
+    background-color: rgba(34, 197, 94, 0.14);
+    color: #15803d;
+}
+
+.IN_PROGRESS {
+    background-color: rgba(59, 130, 246, 0.14);
+    color: #1d4ed8;
+}
+
+.critical {
+    background-color: rgba(239, 68, 68, 0.14);
+    color: #b91c1c;
+}
+
+.responsible {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+}
+
+@keyframes skeletonPulse {
+    0%, 100% {
+        background-color: #f2f2f2;
+    }
+    50% {
+        background-color: #e6e6e6;
+    }
+}
+
+.skeleton, .skeletonCircle, .skeletonBadge, .skeletonBar {
+    animation: skeletonPulse 1.5s infinite ease-in-out;
+}
+
+.skeletonCircle {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+}
+
+.skeletonBadge {
+    width: 76px;
+    height: 22px;
+    border-radius: var(--radius-sm);
+}
+
+.skeletonBar {
+    position: absolute;
+    top: 16px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    opacity: 0.4;
 }
 
 @keyframes fadeIn {
@@ -180,133 +359,19 @@
     }
 }
 
-/* Optional: Add a little triangle pointing down */
-.todayLabel::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid #581DED;
+/* Gracefully handle scrollbars when content is purely skeletal */
+.viewportIsLoading {
+    overflow-x: hidden !important;
 }
 
-.weekLabel {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    border-right: 1px solid #A6A6A6;
-    border-bottom: 1px solid #A6A6A6;
-}
-
-.ganttTrack {
+/* Cleaner, capped tracking slot for skeletons that won't spill out past 750px */
+.ganttTrackSkeleton {
     position: relative;
     flex: 1;
-    border-bottom: 1px solid #EBEBEB;
+    background: #FAF8F6;
+    border-bottom: 1px solid var(--color-border-light);
+    overflow: hidden; /* Stops bleeding structural objects from generating native layout shifts */
 }
 
-.gridLine {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: #F0F0F0;
-}
 
-.todayLine {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #581DED;
-    z-index: 5;
-}
 
-.cylinder {
-    position: absolute;
-    top: 13px;
-    height: 30px;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    padding: 0 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    z-index: 10;
-}
-
-.barLabel {
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-}
-
-.badge {
-    font-size: 11px;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-weight: 500;
-}
-
-.DONE {
-    background: #62A678;
-}
-
-.IN_PROGRESS {
-    background: #6293A6;
-}
-
-.critical {
-    background: #D37568;
-}
-
-.avatar {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    margin-right: 8px;
-}
-
-.responsible {
-    display: flex;
-    align-items: center;
-}
-
-/* SKELETON ANIMATIONS */
-.skeleton, .skeletonCircle, .skeletonBadge, .skeletonBar {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-    0% {
-        background-position: -200% 0;
-    }
-    100% {
-        background-position: 200% 0;
-    }
-}
-
-.skeletonCircle {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.skeletonBadge {
-    width: 70px;
-    height: 22px;
-    border-radius: 12px;
-}
-
-.skeletonBar {
-    position: absolute;
-    top: 13px;
-    height: 30px;
-    border-radius: 15px;
-    opacity: 0.5;
-}

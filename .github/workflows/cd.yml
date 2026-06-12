@@ -155,6 +155,9 @@ jobs:
           --from-literal=app-redirect-base-url="${{ secrets.VITE_BACKEND_URL }}" \
             --from-literal=gemini-api-key="${{ secrets.GEMINI_API_KEY }}" \
             --from-literal=gemini-url="${{ secrets.GEMINI_URL }}" \
+            --from-literal=gemini-embedding-url="${{ secrets.GEMINI_EMBEDDING_URL }}" \
+            --from-literal=gemini-embedding-model="${{ secrets.GEMINI_EMBEDDING_MODEL }}" \
+            --from-literal=gemini-embedding-dimensions="${{ secrets.GEMINI_EMBEDDING_DIMENSIONS }}" \
             --from-literal=telegram-key="${{ secrets.TELEGRAM_KEY }}" \
             --from-literal=telegram-bot-name="${{ secrets.TELEGRAM_BOT_NAME }}" \
             --from-literal=jwt-secret-key="${{ secrets.JWT_SECRET_KEY }}" \

@@ -1,8 +1,12 @@
 package com.springboot.MyTodoList.web.messaging;
 
 import com.springboot.MyTodoList.web.config.RabbitMQConfig;
+import com.springboot.MyTodoList.web.features.ai.TaskSemanticSearchService;
+import com.springboot.MyTodoList.web.features.link.UserLinkService;
 import com.springboot.MyTodoList.web.features.task.TaskService;
+import com.springboot.MyTodoList.web.features.task.TaskStatus;
 import com.springboot.MyTodoList.web.features.task.dto.TaskDTO;
+import com.springboot.MyTodoList.web.features.task.dto.TaskDTO.SprintReference;
 import com.springboot.MyTodoList.web.features.user.UserRepository;
 import com.springboot.MyTodoList.web.messaging.dto.TaskRpcRequest;
 
@@ -25,8 +29,9 @@ public class TaskRpcConsumer {
     @Autowired private TaskService taskService;
     @Autowired private UserRepository userRepository;
     @Autowired private com.springboot.MyTodoList.web.features.sprint.SprintRepository sprintRepository;
-
-    @Transactional(readOnly = true)
+    @Autowired private TaskSemanticSearchService semanticService;
+    @Autowired private UserLinkService linkService;
+    //@Transactional(readOnly = true)
     @RabbitListener(queues = RabbitMQConfig.TASK_RPC_REQUEST)
     public Object handleRpcRequest(TaskRpcRequest request) {
         if (request == null || request.getQueryType() == null) {
@@ -99,6 +104,23 @@ public class TaskRpcConsumer {
                         })
                         .collect(Collectors.toList());
             }
+
+            case VECTOR_SEARCH: {
+                return semanticService.searchTasks(request.getVectorQuery(), 5).stream()
+                        .map(t -> {
+                            Integer taskId = null;
+                            if (t.taskId() != null) {
+                                taskId = t.taskId().intValue();
+                            }
+                            return new TaskDTO(taskId, t.title(), TaskStatus.fromString(t.status()));
+                        })
+                        .toList(); // 4. Collect it into a List properly
+            }
+
+            case LINK: {
+                return linkService.linkTelegramId(request.getCode(), request.getTelegramId());
+            }
+
             
             default: {
                 logger.warn("Unknown RPC query type: {}", request.getQueryType());

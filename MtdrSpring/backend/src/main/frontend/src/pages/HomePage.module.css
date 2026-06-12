@@ -1,136 +1,283 @@
 .page {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  background-color: var(--color-bg);
-  background-image: url('/bg-oci.png');
-  background-repeat: repeat;
-  background-position: center top;
-  background-size: auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background-color: var(--color-bg);
+    background-image: url('/bg-oci.png');
+    background-repeat: repeat;
+    background-position: center top;
+    background-size: auto;
+}
+
+.createTaskBtn {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(13, 30, 63, 0.88);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+    transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.createTaskBtn:hover {
+    transform: translateY(-1px);
+    background: rgba(13, 30, 63, 1);
+}
+
+.createTaskBtn:focus-visible {
+    outline: 2px solid var(--color-oracle-red);
+    outline-offset: 2px;
+}
+
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    padding: var(--space-4);
+    background: rgba(4, 10, 22, 0.72);
+    backdrop-filter: blur(4px);
+}
+
+.modalCard {
+    width: min(760px, 100%);
+    max-height: min(90vh, 980px);
+    overflow: auto;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-content);
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.35);
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5) 0;
+}
+
+.modalTitle {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.modalCloseBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-content);
+    color: var(--color-text-secondary);
+    line-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+}
+
+.modalCloseBtn span {
+    width: 36px;
+    height: 36px;
+    color: var(--color-text-secondary);
+    font-size: 1.0rem;
+    line-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    position: relative;
+    top: -1px; /* Moves text 3 pixels up */
+    left: 0.6px; /* Moves text 5 pixels to the right */
+}
+
+.modalCloseBtn:hover {
+    background: var(--color-bg-hover);
 }
 
 .content {
-  padding: var(--space-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  max-width: 1700px;
-  width: 100%;
-  margin: 0 auto;
+    padding: var(--space-6) var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    max-width: calc(100% - 80px);
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
 .card {
-  background: var(--color-bg-content);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md);
-  padding: var(--space-5);
-  box-shadow: var(--shadow-sm);
+    background: var(--color-bg-content);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-sm);
 }
 
 .sectionTitle {
-  margin-bottom: var(--space-4);
-  color: var(--color-text-primary);
-  font-size: 28px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  margin-top: 7px;
-  margin-bottom: 20px;
+    margin-bottom: var(--space-4);
+    color: var(--color-text-primary);
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-top: 7px;
+    margin-bottom: 20px;
 }
 
 /* Small grey hint text inside a section title */
 .sectionHint {
-  font-size: 0.78rem;
-  font-weight: 400;
-  color: var(--color-text-muted);
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--color-text-muted);
 }
 
 .sectionBlock {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 /* ── Row 1: Pending + Stats ── */
 .row1 {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: var(--space-6);
-  align-items: start;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-6);
+    align-items: start;
 }
 
 .pendingCard {
-  overflow-x: auto;
-  padding: 0;
-  background: transparent;
-  border: none;
-  box-shadow: none !important;
-  filter: none !important;
-  border-radius: 0;
+    overflow-x: auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none !important;
+    filter: none !important;
+    border-radius: 0;
 }
 
 .card.pendingCard {
-  padding: 0;
-  background: transparent;
-  border: none;
-  box-shadow: none !important;
-  filter: none !important;
-  border-radius: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none !important;
+    filter: none !important;
+    border-radius: 0;
 }
 
 .statsAside {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  max-width: 320px;
-  margin-left: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: 320px;
+    margin-left: 100px;
 }
 
 .activityCard {
-  background: #fbf9f8;
-  border-color: #e4e0dc;
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    background: #fbf9f8;
+    border-color: #e4e0dc;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
 /* ── Row 2: Activity + Workload ── */
 .row2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-6);
-  align-items: start;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    align-items: start;
 }
 
 /* ── Row 3 (reused for rows 3, 4, 5): two-column charts ── */
 .row3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-6);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
 }
 
 .chartCard {
-  min-height: 300px;
-  box-shadow: 0px 8px 10px -6px rgba(0, 0, 0, 0.3);
+    min-height: 300px;
+    box-shadow: 0px 8px 10px -6px rgba(0, 0, 0, 0.3);
 }
 
 .workloadCard {
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 
 }
 
 /* ── Responsive ── */
-@media (max-width: 1024px) {
-  .row1,
-  .row2,
-  .row3 {
-    grid-template-columns: 1fr;
-  }
-  .statsAside {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
+@media (min-width: 1200px) {
+    .content {
+        /* En pantallas grandes, aumentamos ligeramente el colchón lateral a 120px totales */
+        max-width: calc(100% - 120px);
+        padding: var(--space-6) var(--space-2); /* Reducimos padding interno para que la tarjeta use más su espacio */
+    }
 }
 
+/* Ajuste para pantallas pequeñas (Móviles) */
 @media (max-width: 600px) {
-  .content {
-    padding: var(--space-4);
-  }
+    .content {
+        max-width: calc(100% - 32px); /* Un respiro más pequeño en teléfonos */
+        padding: var(--space-4) var(--space-1);
+        gap: var(--space-4);
+    }
+}
+
+.dashboardContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5); /* Unified vertical spacing between rows */
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Row wrapper for KPI summary cards */
+.kpiRow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-4);
+}
+
+/* Responsive grid layout separating your charts */
+.chartsGrid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-6);
+    width: 100%;
+}
+
+/* Large full-width sections for tables and workload metrics */
+.tableSection {
+    background: #ffffff;
+    border: 1px solid #e0d8cc;
+    border-radius: 8px;
+    padding: var(--space-5);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Fix for full screen width breaks on smaller monitors */
+@media (max-width: 1024px) {
+    .chartsGrid {
+        grid-template-columns: 1fr; /* Pasa a una sola columna en pantallas compactas */
+        gap: var(--space-4);
+    }
+}
+
+@keyframes skeletonPulse {
+    0% {
+        background-color: #f3f4f6;
+    }
+    50% {
+        background-color: #e5e7eb;
+    }
+    100% {
+        background-color: #f3f4f6;
+    }
+}
+
+.skeletonPulse {
+    animation: skeletonPulse 1.5s infinite ease-in-out;
+    background-color: #f3f4f6;
 }

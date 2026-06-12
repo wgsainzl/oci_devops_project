@@ -19,14 +19,16 @@ public class BotCommandRouter {
     private final UserSessionManager userSessionManager;
     private final TaskWizardManager wizardManager;
     private final TaskWizardProcessor wizardProcessor;
+    private final VectorSearch vectorSearch;
     
     @Autowired
-    public BotCommandRouter(List<BotCommand> availableCommands, TelegramClient telegramClient,  UserSessionManager userSessionManager, TaskWizardManager wizardManager, TaskWizardProcessor wizardProcessor){
+    public BotCommandRouter(List<BotCommand> availableCommands, TelegramClient telegramClient,  UserSessionManager userSessionManager, TaskWizardManager wizardManager, TaskWizardProcessor wizardProcessor, VectorSearch vectorSearch){
         this.availableCommands = availableCommands;
         this.telegramClient = telegramClient;
         this.userSessionManager = userSessionManager;
         this.wizardManager = wizardManager;
         this.wizardProcessor = wizardProcessor;
+        this.vectorSearch = vectorSearch;
     }
 
     public void processMessage(long chatId, String telegramUserId, String messageText) {
@@ -51,7 +53,8 @@ public class BotCommandRouter {
             }
         }
 
-        BotHelper.sendHtmlMessageToTelegram(chatId, "I didn't recognize that command, type /start to see the menu.", telegramClient);
+        vectorSearch.execute(context);
+        //BotHelper.sendHtmlMessageToTelegram(chatId, "I didn't recognize that command, type /start to see the menu.", telegramClient);
     }
     
 }

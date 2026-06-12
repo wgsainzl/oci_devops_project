@@ -2,6 +2,7 @@ package com.springboot.MyTodoList.web.messaging;
 
 import com.springboot.MyTodoList.web.features.task.TaskService;
 import com.springboot.MyTodoList.web.features.task.TaskStatus;
+import com.springboot.MyTodoList.web.features.ai.TaskSemanticSearchService;
 import com.springboot.MyTodoList.web.features.task.Task;
 import com.springboot.MyTodoList.web.features.task.dto.TaskDTO;
 import com.springboot.MyTodoList.web.messaging.dto.TaskCommandMessage;
@@ -19,6 +20,9 @@ public class TaskCommandConsumer {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private TaskSemanticSearchService sematicService;
 
     @RabbitListener(queues = RabbitMQConfig.TASK_COMMANDS_QUEUE)
     public void handleTaskCommand(TaskCommandMessage message) {

@@ -12,6 +12,7 @@ public class SpaController {
             "/oauth2/redirect",
             "/home",
             "/timeline",
+            "/tasks",
             "/api-docs"
     })
     public String forward() {

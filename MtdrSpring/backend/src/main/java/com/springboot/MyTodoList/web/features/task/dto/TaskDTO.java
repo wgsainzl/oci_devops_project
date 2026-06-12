@@ -24,6 +24,10 @@ public record TaskDTO(
     // A clean, strict definition for the nested JSON object
     public record SprintReference(Integer sprintId, String sprintName) {}
 
+    public TaskDTO(Integer id, String title, TaskStatus status) {
+        this(id, title, null, status, null, null, null, null, null, null, null, null, null);
+    }
+
     public static TaskDTO fromEntity(Task task) {
         
         SprintReference sprintRef = null;
