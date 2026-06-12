@@ -7,6 +7,10 @@ import com.springboot.MyTodoList.web.features.user.UserRepository;
 import com.springboot.MyTodoList.web.features.tasklog.TaskLog;
 import com.springboot.MyTodoList.web.features.tasklog.TaskLogRepository;
 import com.springboot.MyTodoList.web.features.user.User;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.springboot.MyTodoList.web.features.task.dto.TaskDTO;
+import java.util.stream.Collectors;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -238,5 +242,13 @@ public class TaskService {
             return savedTask;
         }
         return null;
+    }
+
+    @Transactional(readOnly = true)
+    public List<TaskDTO> getTaskDTOsBySprintId(Integer sprintId) {
+        return getTasksBySprintId(sprintId)
+                .stream()
+                .map(TaskDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 }
