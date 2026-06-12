@@ -22,6 +22,7 @@ class com.springboot.MyTodoList.web.features.task.Task {
 class com.springboot.MyTodoList.web.features.task.TaskController {
 	{method} +addToDoItem ( newTask : com.springboot.MyTodoList.web.features.task.Task ) : org.springframework.http.ResponseEntity
 	{method} +addToDoItemFromTelegram ( newTask : com.springboot.MyTodoList.web.features.task.Task , telegramId : String ) : org.springframework.http.ResponseEntity
+	{method} +completeTask ( id : int , request : com.springboot.MyTodoList.web.features.task.dto.CompleteTaskRequestDTO ) : org.springframework.http.ResponseEntity
 	{method} +deleteTaskItem ( id : int ) : org.springframework.http.ResponseEntity
 	{method} +findAllWeeklySummaryTasks ( weekStart : java.time.OffsetDateTime , weekEnd : java.time.OffsetDateTime ) : org.springframework.http.ResponseEntity
 	{method} +getAllToDoItems () : org.springframework.http.ResponseEntity
@@ -58,6 +59,7 @@ class com.springboot.MyTodoList.web.features.task.TaskService {
 	{field} -sprintRepository : com.springboot.MyTodoList.web.features.sprint.SprintRepository
 	{field} -taskLogRepository : com.springboot.MyTodoList.web.features.tasklog.TaskLogRepository
 	{field} -userRepository : com.springboot.MyTodoList.web.features.user.UserRepository
+	{method} +completeTask ( id : int , actualHours : Double ) : com.springboot.MyTodoList.web.features.task.Task
 	{method} +completeTaskWithHours ( id : int , actualHours : Double , telegramId : String ) : com.springboot.MyTodoList.web.features.task.Task
 	{method} +createTask ( task : com.springboot.MyTodoList.web.features.task.Task ) : com.springboot.MyTodoList.web.features.task.Task
 	{method} +createTaskFromTelegram ( task : com.springboot.MyTodoList.web.features.task.Task , telegramId : String ) : com.springboot.MyTodoList.web.features.task.Task
@@ -66,6 +68,7 @@ class com.springboot.MyTodoList.web.features.task.TaskService {
 	{method} +findAllWeeklySummaryTasks ( weekStart : java.time.OffsetDateTime , weekEnd : java.time.OffsetDateTime ) : java.util.List
 	{method} +findWeeklySummaryTasksByTeamId ( teamId : Integer , weekStart : java.time.OffsetDateTime , weekEnd : java.time.OffsetDateTime ) : java.util.List
 	{method} +getTaskById ( id : int ) : java.util.Optional
+	{method} +getTaskDTOsBySprintId ( sprintId : Integer ) : java.util.List
 	{method} +getTasksBySprintId ( sprintId : Integer ) : java.util.List
 	{method} +getTasksByTeamAndSprint ( sprintId : Integer , teamId : Integer ) : java.util.List
 	{method} +getTasksByTeamId ( teamId : Integer ) : java.util.List
@@ -83,6 +86,15 @@ enum com.springboot.MyTodoList.web.features.task.TaskStatus {
 	{field} +IN_PROGRESS
 	{field} +IN_REVIEW
 	{field} +TODO
+}
+
+
+class com.springboot.MyTodoList.web.features.task.dto.CompleteTaskRequestDTO {
+	{field} -actualHours : Double
+	{method} +actualHours () : Double
+	{method} +equals ( o : Object ) : boolean
+	{method} +hashCode () : int
+	{method} +toString () : String
 }
 
 

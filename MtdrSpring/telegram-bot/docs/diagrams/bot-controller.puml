@@ -102,10 +102,7 @@ enum com.springboot.telegrambot.util.BotCommands {
 	{field} +ADD_ITEM
 	{field} +COMPLETE_TASK
 	{field} +HIDE_COMMAND
-<<<<<<< HEAD
 	{field} +LINK
-=======
->>>>>>> origin/main
 	{field} +LLM_REPORT
 	{field} +SPRINTS_LIST
 	{field} +START_COMMAND
